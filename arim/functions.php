@@ -56,7 +56,7 @@ function arim_enqueue_assets() {
         'searchNonce'  => wp_create_nonce('arim_public_product_search'),
         'currencyCode' => function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : 'TRY',
         'searchMinChars' => arim_live_search_min_chars(),
-        'searchDebounce' => 220,
+        'searchDebounce' => arim_live_search_debounce_ms(),
         'labels'       => [
             'favoritesTitle'       => __('Favorilerim', 'arim'),
             'favoritesDescription' => __('Beğendiğin ürünleri burada sakla, karşılaştır ve alışverişe kaldığın yerden devam et.', 'arim'),
@@ -878,6 +878,10 @@ function arim_live_search_min_chars() {
     return max(1, (int) apply_filters('arim_live_search_min_chars', 2));
 }
 
+function arim_live_search_debounce_ms() {
+    return max(100, (int) apply_filters('arim_live_search_debounce_ms', 220));
+}
+
 function arim_public_product_search_ajax() {
     check_ajax_referer('arim_public_product_search', 'nonce');
 
@@ -886,6 +890,7 @@ function arim_public_product_search_ajax() {
     }
 
     $query = isset($_POST['q']) ? sanitize_text_field(wp_unslash($_POST['q'])) : '';
+    $query = mb_substr($query, 0, 100);
 
     if (mb_strlen($query) < arim_live_search_min_chars()) {
         wp_send_json_success([

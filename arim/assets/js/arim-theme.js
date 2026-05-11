@@ -587,7 +587,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     window.clearTimeout(debounceTimer);
                 }
 
-                if (Array.from(query).length < liveSearchMinChars) {
+                if (query.length < liveSearchMinChars) {
                     if (activeController) {
                         activeController.abort();
                     }
@@ -603,7 +603,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             input.addEventListener('focus', function () {
-                if (Array.from(input.value.trim()).length >= liveSearchMinChars && resultsWrap.childNodes.length) {
+                if (input.value.trim().length >= liveSearchMinChars && resultsWrap.childNodes.length) {
                     showSuggestions(panel);
                 }
             });

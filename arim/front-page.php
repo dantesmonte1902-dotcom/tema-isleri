@@ -544,9 +544,9 @@ $marketplace_labels = arim_home_collect_brand_names(
 );
 
 if (empty($marketplace_labels) && !empty($homepage_categories)) {
-    $marketplace_labels = array_map(static function($term) {
-        return $term->name;
-    }, array_slice($homepage_categories, 0, 8));
+    $marketplace_labels = array_values(array_filter(array_map(static function($term) {
+        return (is_object($term) && isset($term->name)) ? $term->name : '';
+    }, array_slice($homepage_categories, 0, 8))));
 }
 ?>
 
