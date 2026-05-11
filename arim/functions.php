@@ -57,6 +57,7 @@ function arim_enqueue_assets() {
         'currencyCode' => function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : 'TRY',
         'searchMinChars' => arim_live_search_min_chars(),
         'searchDebounce' => arim_live_search_debounce_ms(),
+        'recentlyViewedLimit' => 6,
         'labels'       => [
             'favoritesTitle'       => __('Favorilerim', 'arim'),
             'favoritesDescription' => __('Beğendiğin ürünleri burada sakla, karşılaştır ve alışverişe kaldığın yerden devam et.', 'arim'),
@@ -75,6 +76,10 @@ function arim_enqueue_assets() {
             'searchNoResults'      => __('Aramana uygun ürün bulunamadı.', 'arim'),
             'searchViewAll'        => __('Tüm sonuçları gör', 'arim'),
             'searchPopular'        => __('Hızlı arama', 'arim'),
+            'recentlyViewedTitle'  => __('Son görüntülenen ürünler', 'arim'),
+            'recentlyViewedText'   => __('İncelediğin ürünleri burada tut, dilediğin zaman hızlıca geri dön.', 'arim'),
+            'recentlyViewedEmpty'  => __('Bir ürün detay sayfasını ziyaret ettiğinde burada görünür.', 'arim'),
+            'viewAgain'            => __('Tekrar İncele', 'arim'),
         ],
     ]);
 

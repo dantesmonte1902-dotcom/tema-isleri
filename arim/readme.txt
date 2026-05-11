@@ -59,3 +59,8 @@ Geliştirilen Özellikler
 - Header arama alanı için AJAX destekli canlı ürün öneri deneyimi eklendi.
 - Arama sonuçlarında görsel, mağaza, marka ve fiyat bilgisi gösterilir hale getirildi.
 - Sonuç bulunamadığında ve tüm sonuçlara gitmek istendiğinde özel yönlendirme yüzeyi tasarlandı.
+
+3. Son Görüntülenen Ürünler
+- Ürün detay sayfalarında ziyaret edilen ürünler otomatik olarak son görüntülenenler listesine eklenir hale getirildi.
+- Favoriler sayfasına alışverişe geri dönüşü hızlandıran ayrı bir son görüntülenen ürünler alanı eklendi.
+- Bu alanda ürün görseli, mağaza, marka ve fiyat bilgileri kart yapısıyla yeniden sunuldu.

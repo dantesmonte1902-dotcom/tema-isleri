@@ -44,6 +44,20 @@ $shop_url = function_exists('arim_shop_url') ? arim_shop_url() : home_url('/shop
         </div>
 
         <div class="arim-favorites-dynamic" data-arim-favorites-page></div>
+
+        <section class="arim-favorites-secondary-section" data-arim-recently-viewed-section>
+            <div class="arim-favorites-section-head">
+                <div>
+                    <span class="arim-favorites-section-kicker"><?php esc_html_e('Alışverişe kaldığın yerden devam et', 'arim'); ?></span>
+                    <h2><?php esc_html_e('Son görüntülenen ürünler', 'arim'); ?></h2>
+                </div>
+                <a class="arim-favorites-toolbar-link" href="<?php echo esc_url($shop_url); ?>">
+                    <?php esc_html_e('Mağazaya dön', 'arim'); ?>
+                </a>
+            </div>
+
+            <div data-arim-recently-viewed-page></div>
+        </section>
     </div>
 </div>
 

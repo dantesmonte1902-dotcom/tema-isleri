@@ -3,12 +3,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const DEFAULT_SEARCH_MIN_CHARS = 2;
     const themeConfig = window.arimTheme || {};
     const favoriteStorageKey = 'arimFavorites';
+    const recentlyViewedStorageKey = 'arimRecentlyViewed';
     const favoriteLabels = themeConfig.labels || {};
     const activeIntervals = [];
     const parsedSearchDebounce = Number(themeConfig.searchDebounce);
     const parsedSearchMinChars = Number(themeConfig.searchMinChars);
+    const parsedRecentlyViewedLimit = Number(themeConfig.recentlyViewedLimit);
     const searchDebounceDelay = Number.isFinite(parsedSearchDebounce) ? parsedSearchDebounce : DEFAULT_SEARCH_DEBOUNCE;
     const liveSearchMinChars = Math.max(1, Number.isFinite(parsedSearchMinChars) ? parsedSearchMinChars : DEFAULT_SEARCH_MIN_CHARS);
+    const recentlyViewedLimit = Math.max(1, Number.isFinite(parsedRecentlyViewedLimit) ? parsedRecentlyViewedLimit : 6);
     const currencyFormatter = typeof Intl !== 'undefined' && typeof Intl.NumberFormat === 'function'
         ? new Intl.NumberFormat('tr-TR', {
             style: 'currency',
@@ -164,6 +167,45 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function safeParseRecentlyViewed() {
+        try {
+            const storedProducts = window.localStorage.getItem(recentlyViewedStorageKey);
+            const parsedProducts = storedProducts ? JSON.parse(storedProducts) : [];
+
+            if (!Array.isArray(parsedProducts)) {
+                return [];
+            }
+
+            return parsedProducts
+                .map(function (item) {
+                    if (!item || typeof item !== 'object') {
+                        return null;
+                    }
+
+                    const id = String(item.id || '').trim();
+                    if (!id) {
+                        return null;
+                    }
+
+                    return {
+                        id: id,
+                        title: String(item.title || ''),
+                        price: String(item.price || ''),
+                        image: String(item.image || ''),
+                        url: String(item.url || ''),
+                        brand: String(item.brand || ''),
+                        store: String(item.store || ''),
+                        badge: String(item.badge || ''),
+                        currentPrice: Number.isFinite(Number(item.currentPrice)) ? Number(item.currentPrice) : 0,
+                        regularPrice: Number.isFinite(Number(item.regularPrice)) ? Number(item.regularPrice) : 0,
+                    };
+                })
+                .filter(Boolean);
+        } catch (error) {
+            return [];
+        }
+    }
+
     function saveFavorites(items) {
         try {
             window.localStorage.setItem(favoriteStorageKey, JSON.stringify(items));
@@ -188,25 +230,25 @@ document.addEventListener('DOMContentLoaded', function () {
         return Number.isFinite(numericValue) ? numericValue : 0;
     }
 
-    function collectProductData(button) {
-        const productId = String(button.getAttribute('data-product-id') || '').trim();
+    function collectProductData(element) {
+        const productId = String(element.getAttribute('data-product-id') || '').trim();
 
         if (!productId) {
             return null;
         }
 
-        const currentPrice = toNumber(button.getAttribute('data-product-current-price'));
-        const regularPrice = toNumber(button.getAttribute('data-product-regular-price'));
+        const currentPrice = toNumber(element.getAttribute('data-product-current-price'));
+        const regularPrice = toNumber(element.getAttribute('data-product-regular-price'));
 
         return {
             id: productId,
-            title: String(button.getAttribute('data-product-title') || '').trim(),
-            price: String(button.getAttribute('data-product-price') || '').trim(),
-            image: String(button.getAttribute('data-product-image') || '').trim(),
-            url: String(button.getAttribute('data-product-url') || '').trim(),
-            brand: String(button.getAttribute('data-product-brand') || '').trim(),
-            store: String(button.getAttribute('data-product-store') || '').trim(),
-            badge: String(button.getAttribute('data-product-badge') || '').trim(),
+            title: String(element.getAttribute('data-product-title') || '').trim(),
+            price: String(element.getAttribute('data-product-price') || '').trim(),
+            image: String(element.getAttribute('data-product-image') || '').trim(),
+            url: String(element.getAttribute('data-product-url') || '').trim(),
+            brand: String(element.getAttribute('data-product-brand') || '').trim(),
+            store: String(element.getAttribute('data-product-store') || '').trim(),
+            badge: String(element.getAttribute('data-product-badge') || '').trim(),
             currentPrice: currentPrice,
             regularPrice: regularPrice,
         };
@@ -244,7 +286,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function createFavoriteCard(item) {
+    function createFavoriteCard(item, options) {
+        const cardOptions = options || {};
         const card = document.createElement('article');
         card.className = 'arim-favorites-card arim-favorite-page-card';
 
@@ -283,13 +326,15 @@ document.addEventListener('DOMContentLoaded', function () {
             imageWrap.appendChild(badge);
         }
 
-        const removeButton = document.createElement('button');
-        removeButton.type = 'button';
-        removeButton.className = 'arim-favorite-btn is-favorited arim-favorites-remove-btn';
-        removeButton.setAttribute('aria-label', favoriteLabels.removeFavorite || 'Favorilerden kaldır');
-        removeButton.setAttribute('data-product-id', item.id);
-        removeButton.textContent = '♥';
-        imageWrap.appendChild(removeButton);
+        if (cardOptions.removable !== false) {
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'arim-favorite-btn is-favorited arim-favorites-remove-btn';
+            removeButton.setAttribute('aria-label', favoriteLabels.removeFavorite || 'Favorilerden kaldır');
+            removeButton.setAttribute('data-product-id', item.id);
+            removeButton.textContent = '♥';
+            imageWrap.appendChild(removeButton);
+        }
 
         productLink.appendChild(imageWrap);
         media.appendChild(productLink);
@@ -341,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const viewLink = document.createElement('a');
         viewLink.className = 'arim-favorites-card-link';
         viewLink.href = item.url || themeConfig.shopUrl || '#';
-        viewLink.textContent = favoriteLabels.viewProduct || 'Ürünü İncele';
+        viewLink.textContent = cardOptions.viewLabel || favoriteLabels.viewProduct || 'Ürünü İncele';
         footer.appendChild(viewLink);
 
         content.appendChild(footer);
@@ -417,6 +462,80 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         favoritesPage.appendChild(grid);
+    }
+
+    function saveRecentlyViewed(items) {
+        try {
+            window.localStorage.setItem(recentlyViewedStorageKey, JSON.stringify(items));
+        } catch (error) {
+            return;
+        }
+
+        renderRecentlyViewedSection();
+    }
+
+    function trackRecentlyViewedProduct() {
+        const productElement = document.querySelector('[data-arim-recent-product]');
+        if (!productElement) {
+            return;
+        }
+
+        const product = collectProductData(productElement);
+        if (!product) {
+            return;
+        }
+
+        const items = safeParseRecentlyViewed().filter(function (item) {
+            return item.id !== product.id;
+        });
+
+        items.unshift(product);
+        saveRecentlyViewed(items.slice(0, recentlyViewedLimit));
+    }
+
+    function renderRecentlyViewedSection() {
+        const recentlyViewedPage = document.querySelector('[data-arim-recently-viewed-page]');
+        const recentlyViewedSection = document.querySelector('[data-arim-recently-viewed-section]');
+
+        if (!recentlyViewedPage || !recentlyViewedSection) {
+            return;
+        }
+
+        const items = safeParseRecentlyViewed();
+        recentlyViewedPage.innerHTML = '';
+
+        if (!items.length) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'arim-favorites-empty arim-favorites-empty-secondary';
+
+            const title = document.createElement('h2');
+            title.textContent = favoriteLabels.recentlyViewedTitle || 'Son görüntülenen ürünler';
+            emptyState.appendChild(title);
+
+            const description = document.createElement('p');
+            description.textContent = favoriteLabels.recentlyViewedEmpty || 'Bir ürün detay sayfasını ziyaret ettiğinde burada görünür.';
+            emptyState.appendChild(description);
+
+            recentlyViewedPage.appendChild(emptyState);
+            return;
+        }
+
+        const intro = document.createElement('p');
+        intro.className = 'arim-favorites-secondary-note';
+        intro.textContent = favoriteLabels.recentlyViewedText || 'İncelediğin ürünleri burada tut, dilediğin zaman hızlıca geri dön.';
+        recentlyViewedPage.appendChild(intro);
+
+        const grid = document.createElement('div');
+        grid.className = 'arim-favorites-grid arim-favorites-grid-secondary';
+
+        items.forEach(function (item) {
+            grid.appendChild(createFavoriteCard(item, {
+                removable: false,
+                viewLabel: favoriteLabels.viewAgain || favoriteLabels.viewProduct || 'Tekrar İncele',
+            }));
+        });
+
+        recentlyViewedPage.appendChild(grid);
     }
 
     function initLiveSearch() {
@@ -657,7 +776,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     window.addEventListener('storage', function (event) {
-        if (event.key !== favoriteStorageKey) {
+        if (event.key !== favoriteStorageKey && event.key !== recentlyViewedStorageKey) {
             return;
         }
 
@@ -669,12 +788,15 @@ document.addEventListener('DOMContentLoaded', function () {
             updateFavoriteButtons();
             updateFavoriteCounters();
             renderFavoritesPage();
+            renderRecentlyViewedSection();
             crossTabSyncDebounceTimer = null;
         }, 80);
     });
 
+    trackRecentlyViewedProduct();
     updateFavoriteButtons();
     updateFavoriteCounters();
     renderFavoritesPage();
+    renderRecentlyViewedSection();
     initLiveSearch();
 });

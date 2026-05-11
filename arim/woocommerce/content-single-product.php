@@ -37,7 +37,21 @@ if ($product->is_on_sale()) {
     $product_badge = __('Öne Çıkan', 'arim');
 }
 ?>
-<div id="product-<?php the_ID(); ?>" <?php wc_product_class('arim-single-product', $product); ?>>
+<div
+    id="product-<?php the_ID(); ?>"
+    <?php wc_product_class('arim-single-product', $product); ?>
+    data-arim-recent-product
+    data-product-id="<?php echo esc_attr($product_id); ?>"
+    data-product-title="<?php echo esc_attr($product->get_name()); ?>"
+    data-product-price="<?php echo esc_attr($price_text); ?>"
+    data-product-image="<?php echo esc_url($main_image_url); ?>"
+    data-product-url="<?php echo esc_url(get_permalink($product_id)); ?>"
+    data-product-brand="<?php echo esc_attr($brand ? $brand : __('ARIM', 'arim')); ?>"
+    data-product-store="<?php echo esc_attr($store_name); ?>"
+    data-product-badge="<?php echo esc_attr($product_badge); ?>"
+    data-product-current-price="<?php echo esc_attr($current_price_value); ?>"
+    data-product-regular-price="<?php echo esc_attr($regular_price_value); ?>"
+>
 
     <div class="arim-single-grid">
         <div class="arim-single-gallery">
