@@ -14,6 +14,8 @@ $hero       = isset($order_data['hero']) && is_array($order_data['hero']) ? $ord
 $summary    = isset($order_data['summary']) && is_array($order_data['summary']) ? $order_data['summary'] : [];
 $status     = isset($order_data['status']) && is_array($order_data['status']) ? $order_data['status'] : [];
 $items      = isset($order_data['items']) && is_array($order_data['items']) ? $order_data['items'] : [];
+$highlights = isset($order_data['highlights']) && is_array($order_data['highlights']) ? $order_data['highlights'] : [];
+$contacts   = isset($order_data['contacts']) && is_array($order_data['contacts']) ? $order_data['contacts'] : [];
 $actions    = isset($order_data['actions']) && is_array($order_data['actions']) ? $order_data['actions'] : [];
 $campaigns  = isset($order_data['campaigns']) && is_array($order_data['campaigns']) ? $order_data['campaigns'] : [];
 $metrics    = isset($order_data['metrics']) && is_array($order_data['metrics']) ? $order_data['metrics'] : [];
@@ -131,6 +133,61 @@ $links      = isset($order_data['links']) && is_array($order_data['links']) ? $o
             <?php endif; ?>
         </aside>
     </div>
+
+    <?php if (!empty($highlights)) : ?>
+        <div class="arim-myaccount-view-order-summary arim-myaccount-view-order-highlights">
+            <?php foreach ($highlights as $highlight) : ?>
+                <div class="arim-myaccount-view-order-stat">
+                    <span><?php echo esc_html($highlight['label'] ?? ''); ?></span>
+                    <strong><?php echo esc_html($highlight['value'] ?? '—'); ?></strong>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($contacts)) : ?>
+        <div class="arim-myaccount-view-order-contact-grid">
+            <?php foreach ($contacts as $contact) : ?>
+                <section class="arim-myaccount-view-order-contact-card">
+                    <div class="arim-myaccount-address-card-top">
+                        <div>
+                            <span class="arim-myaccount-panel-kicker"><?php echo esc_html($contact['label'] ?? ''); ?></span>
+                            <h3><?php echo esc_html($contact['name'] ?? __('Belirtilmedi', 'arim')); ?></h3>
+                        </div>
+                        <span class="arim-myaccount-address-badge <?php echo esc_attr($contact['badgeClass'] ?? 'is-empty'); ?>">
+                            <?php echo esc_html($contact['badge'] ?? __('Eksik', 'arim')); ?>
+                        </span>
+                    </div>
+
+                    <div class="arim-myaccount-view-order-contact-body">
+                        <?php if (!empty($contact['address'])) : ?>
+                            <address><?php echo wp_kses_post($contact['address']); ?></address>
+                        <?php else : ?>
+                            <p><?php esc_html_e('Adres bilgisi henüz tamamlanmamış.', 'arim'); ?></p>
+                        <?php endif; ?>
+
+                        <?php if (!empty($contact['phone'])) : ?>
+                            <a href="tel:<?php echo esc_attr(preg_replace('/[^0-9\+]/', '', (string) $contact['phone'])); ?>">
+                                <?php echo esc_html($contact['phone']); ?>
+                            </a>
+                        <?php endif; ?>
+
+                        <?php if (!empty($contact['email'])) : ?>
+                            <a href="mailto:<?php echo esc_attr($contact['email']); ?>">
+                                <?php echo esc_html($contact['email']); ?>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="arim-myaccount-address-card-actions">
+                        <a class="button" href="<?php echo esc_url($contact['url'] ?? ($links['account'] ?? wc_get_account_endpoint_url('edit-account'))); ?>">
+                            <?php esc_html_e('Bilgileri güncelle', 'arim'); ?>
+                        </a>
+                    </div>
+                </section>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
     <div class="arim-myaccount-view-order-details">
         <?php do_action('woocommerce_view_order', $order_id); ?>

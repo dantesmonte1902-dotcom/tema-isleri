@@ -124,3 +124,5 @@ Geliştirilen Özellikler
 - Sipariş detay ekranına durum odaklı hero alanı, ödeme/teslimat/tutar özet kartları ve sipariş içeriği ön izlemesi eklendi.
 - Sipariş aksiyonları, hesap düzenleme ve alışverişe dönüş bağlantıları ayrı destek panelinde toplanarak sonraki adımlar belirginleştirildi.
 - WooCommerce sipariş detay, müşteri bilgileri ve indirme tabloları tema geneliyle uyumlu kart ve tablo stiline taşındı.
+- Fatura ve teslimat bilgileri için ayrı iletişim kartları eklenerek adres, telefon ve e-posta takibi daha görünür hale getirildi.
+- Sipariş detay ekranına ödeme, teslimat modeli, destek kanalı ve içerik tipi özetlerini taşıyan ek bilgi kartları yerleştirildi.

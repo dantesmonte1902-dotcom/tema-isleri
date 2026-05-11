@@ -1262,6 +1262,10 @@
     margin-bottom: 18px;
 }
 
+.arim-myaccount-view-order-highlights {
+    margin-top: -2px;
+}
+
 .arim-myaccount-view-order-stat {
     padding: 16px 18px;
     background: #fafafa;
@@ -1354,6 +1358,48 @@
 .arim-myaccount-view-order-details {
     display: grid;
     gap: 18px;
+}
+
+.arim-myaccount-view-order-contact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.arim-myaccount-view-order-contact-card {
+    padding: 20px;
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: #fff;
+}
+
+.arim-myaccount-view-order-contact-body {
+    display: grid;
+    gap: 10px;
+}
+
+.arim-myaccount-view-order-contact-body address,
+.arim-myaccount-view-order-contact-body p,
+.arim-myaccount-view-order-contact-body a {
+    margin: 0;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.arim-myaccount-view-order-contact-body address {
+    font-style: normal;
+}
+
+.arim-myaccount-view-order-contact-body a {
+    color: #f27a1a;
+    text-decoration: none;
+    word-break: break-word;
+}
+
+.arim-myaccount-view-order-contact-body a:hover {
+    text-decoration: underline;
 }
 
 .arim-myaccount-view-order-details .woocommerce-order-details,
@@ -1539,7 +1585,8 @@
     .arim-myaccount-account-layout,
     .arim-myaccount-account-summary,
     .arim-myaccount-view-order-layout,
-    .arim-myaccount-view-order-summary {
+    .arim-myaccount-view-order-summary,
+    .arim-myaccount-view-order-contact-grid {
         grid-template-columns: 1fr;
     }
 
@@ -1562,6 +1609,10 @@
     .arim-myaccount-account-summary,
     .arim-myaccount-view-order-summary {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .arim-myaccount-view-order-contact-grid {
+        grid-template-columns: 1fr;
     }
 
     .arim-myaccount-orders-panels,
@@ -1625,6 +1676,7 @@
     .arim-myaccount-account-hero-card,
     .arim-myaccount-account-stat,
     .arim-myaccount-view-order-panel,
+    .arim-myaccount-view-order-contact-card,
     .arim-myaccount-view-order-details .woocommerce-order-details,
     .arim-myaccount-view-order-details .woocommerce-customer-details,
     .arim-myaccount-view-order-details .woocommerce-order-downloads,

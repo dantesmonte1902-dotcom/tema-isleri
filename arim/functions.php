@@ -1400,6 +1400,8 @@ function arim_myaccount_view_order_data($order) {
             'summary'   => [],
             'status'    => [],
             'items'     => [],
+            'highlights'=> [],
+            'contacts'  => [],
             'actions'   => [],
             'campaigns' => arim_single_product_campaigns(2),
             'links'     => [
@@ -1413,6 +1415,11 @@ function arim_myaccount_view_order_data($order) {
     $status_key   = sanitize_html_class($order->get_status());
     $status_label = wc_get_order_status_name($order->get_status());
     $item_count   = max(0, $order->get_item_count() - $order->get_item_count_refunded());
+    $needs_payment = $order->needs_payment();
+    $has_shipping  = count($order->get_shipping_methods()) > 0;
+    $has_digital   = $order->has_downloadable_item();
+    $billing_name  = method_exists($order, 'get_formatted_billing_full_name') ? trim($order->get_formatted_billing_full_name()) : trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
+    $shipping_name = method_exists($order, 'get_formatted_shipping_full_name') ? trim($order->get_formatted_shipping_full_name()) : trim($order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name());
 
     if ($order->has_status(['pending', 'processing', 'on-hold'])) {
         $hero_text = __('Siparişin hazırlanıyor. Ürün hareketleri, teslimat akışı ve sonraki adımlar bu alanda düzenli şekilde görünür.', 'arim');
@@ -1443,6 +1450,25 @@ function arim_myaccount_view_order_data($order) {
         ],
     ];
 
+    $highlights = [
+        [
+            'label' => __('Ödeme akışı', 'arim'),
+            'value' => $needs_payment ? __('Ödeme bekleniyor', 'arim') : __('Ödeme doğrulandı', 'arim'),
+        ],
+        [
+            'label' => __('Teslimat modeli', 'arim'),
+            'value' => $has_shipping ? __('Adres teslimatı aktif', 'arim') : __('Dijital / adres gerektirmeyen teslimat', 'arim'),
+        ],
+        [
+            'label' => __('Destek kanalı', 'arim'),
+            'value' => $order->get_billing_email() ? $order->get_billing_email() : __('Hesap ayarlarından güncellenebilir', 'arim'),
+        ],
+        [
+            'label' => __('İçerik tipi', 'arim'),
+            'value' => $has_digital ? __('İndirilebilir ürün içeriyor', 'arim') : __('Standart ürün siparişi', 'arim'),
+        ],
+    ];
+
     $items = [];
 
     foreach ($order->get_items('line_item') as $item) {
@@ -1463,6 +1489,34 @@ function arim_myaccount_view_order_data($order) {
         ];
     }
 
+    $contacts = [
+        [
+            'label'   => __('Fatura iletişimi', 'arim'),
+            'name'    => $billing_name !== '' ? $billing_name : __('Belirtilmedi', 'arim'),
+            'address' => $order->get_formatted_billing_address(),
+            'phone'   => $order->get_billing_phone(),
+            'email'   => $order->get_billing_email(),
+            'badge'   => $order->get_billing_address_1() ? __('Hazır', 'arim') : __('Eksik', 'arim'),
+            'badgeClass' => $order->get_billing_address_1() ? 'is-ready' : 'is-empty',
+            'url'     => function_exists('wc_get_endpoint_url') ? wc_get_endpoint_url('edit-address', 'billing') : arim_account_url(),
+        ],
+    ];
+
+    if ($has_shipping) {
+        $shipping_phone = method_exists($order, 'get_shipping_phone') ? $order->get_shipping_phone() : '';
+
+        $contacts[] = [
+            'label'   => __('Teslimat adresi', 'arim'),
+            'name'    => $shipping_name !== '' ? $shipping_name : ($billing_name !== '' ? $billing_name : __('Belirtilmedi', 'arim')),
+            'address' => $order->get_formatted_shipping_address(),
+            'phone'   => $shipping_phone ? $shipping_phone : $order->get_billing_phone(),
+            'email'   => $order->get_billing_email(),
+            'badge'   => $order->get_shipping_address_1() ? __('Hazır', 'arim') : __('Eksik', 'arim'),
+            'badgeClass' => $order->get_shipping_address_1() ? 'is-ready' : 'is-empty',
+            'url'     => function_exists('wc_get_endpoint_url') ? wc_get_endpoint_url('edit-address', 'shipping') : arim_account_url(),
+        ];
+    }
+
     return [
         'hero' => [
             'title' => sprintf(__('Sipariş #%s', 'arim'), $order->get_order_number()),
@@ -1474,6 +1528,8 @@ function arim_myaccount_view_order_data($order) {
             'key'   => $status_key,
         ],
         'items' => $items,
+        'highlights' => $highlights,
+        'contacts' => $contacts,
         'actions' => wc_get_account_orders_actions($order),
         'campaigns' => arim_single_product_campaigns(2),
         'metrics' => [
