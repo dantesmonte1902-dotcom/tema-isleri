@@ -36,10 +36,7 @@ $quick_actions = [
         'title' => __('Favorilerim', 'arim'),
         'text'  => __('Kaydettiğin ürünleri, karşılaştırmalarını ve önerileri yeniden keşfet.', 'arim'),
         'url'   => arim_favorites_url(),
-        'meta'  => sprintf(
-            _n('%s aktif kampanya', '%s aktif kampanya', (int) ($dashboard_stats['campaignCount'] ?? 0), 'arim'),
-            number_format_i18n((int) ($dashboard_stats['campaignCount'] ?? 0))
-        ),
+        'meta'  => __('Favori ve karşılaştırma alanı', 'arim'),
     ],
 ];
 ?>
