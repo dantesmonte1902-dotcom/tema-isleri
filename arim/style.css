@@ -112,6 +112,11 @@ textarea {
     color: var(--arim-primary);
 }
 
+.arim-topbar-promo {
+    color: var(--arim-primary);
+    font-weight: 700;
+}
+
 /* HEADER */
 .arim-header {
     background: #fff;
@@ -315,6 +320,55 @@ textarea {
 .arim-has-mega {
     color: var(--arim-primary) !important;
     font-weight: 700 !important;
+}
+
+.arim-header-trend-strip {
+    border-top: 1px solid #f6f6f6;
+    background: linear-gradient(180deg, #fff8f2 0%, #fff 100%);
+}
+
+.arim-header-trend-inner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 42px;
+}
+
+.arim-header-trend-label {
+    color: var(--arim-primary);
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.arim-header-trend-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: thin;
+}
+
+.arim-header-trend-links a {
+    min-height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid #f1dfcf;
+    color: #333;
+    font-size: 11.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    transition: .2s ease;
+}
+
+.arim-header-trend-links a:hover {
+    color: var(--arim-primary);
+    border-color: #f4c9a5;
 }
 
 /* MEGA MENU */
@@ -613,6 +667,56 @@ textarea {
     color: #fff;
 }
 
+.arim-footer-app-strip {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(90deg, #171717 0%, #202020 100%);
+}
+
+.arim-footer-app-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 78px;
+}
+
+.arim-footer-app-copy span {
+    display: block;
+    margin-bottom: 6px;
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.arim-footer-app-copy strong {
+    display: block;
+    font-size: 19px;
+    line-height: 1.35;
+    color: #fff;
+    max-width: 660px;
+}
+
+.arim-footer-app-badges {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.arim-footer-app-badges a {
+    min-height: 38px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .arim-footer-top {
     border-bottom: 1px solid rgba(255,255,255,0.08);
     padding: 28px 0;
@@ -745,6 +849,12 @@ textarea {
         grid-template-columns: 1fr 1fr;
     }
 
+    .arim-footer-app-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 18px 0;
+    }
+
     .arim-header-main {
         grid-template-columns: 130px minmax(0, 1fr) auto;
         gap: 14px;
@@ -795,6 +905,13 @@ textarea {
         padding: 8px 0;
     }
 
+    .arim-header-trend-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        padding: 8px 0;
+    }
+
     .arim-footer-bottom-inner {
         flex-direction: column;
         align-items: flex-start;
@@ -830,6 +947,10 @@ textarea {
 
     .arim-logo-text {
         font-size: 28px;
+    }
+
+    .arim-header-trend-links {
+        width: 100%;
     }
 
     .arim-search-wrap {
@@ -929,5 +1050,9 @@ textarea {
         min-width: 18px;
         height: 18px;
         font-size: 10px;
+    }
+
+    .arim-footer-app-copy strong {
+        font-size: 17px;
     }
 }

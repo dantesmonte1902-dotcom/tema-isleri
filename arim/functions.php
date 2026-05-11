@@ -821,6 +821,38 @@ function arim_cart_count() {
     return 0;
 }
 
+function arim_shop_url() {
+    if (function_exists('wc_get_page_permalink')) {
+        return wc_get_page_permalink('shop');
+    }
+
+    return home_url('/shop');
+}
+
+function arim_account_url() {
+    if (function_exists('wc_get_page_permalink')) {
+        return wc_get_page_permalink('myaccount');
+    }
+
+    return wp_login_url();
+}
+
+function arim_cart_url() {
+    if (function_exists('wc_get_cart_url')) {
+        return wc_get_cart_url();
+    }
+
+    return home_url('/cart');
+}
+
+function arim_checkout_url() {
+    if (function_exists('wc_get_checkout_url')) {
+        return wc_get_checkout_url();
+    }
+
+    return home_url('/checkout');
+}
+
 
 /**
  * WooCommerce ürün sayısı

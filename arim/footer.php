@@ -1,9 +1,29 @@
 <?php
 defined('ABSPATH') || exit;
+
+$shop_url     = function_exists('arim_shop_url') ? arim_shop_url() : home_url('/shop');
+$account_url  = function_exists('arim_account_url') ? arim_account_url() : wp_login_url();
+$cart_url     = function_exists('arim_cart_url') ? arim_cart_url() : home_url('/cart');
+$checkout_url = function_exists('arim_checkout_url') ? arim_checkout_url() : home_url('/checkout');
 ?>
     </main>
 
     <footer class="arim-footer">
+        <div class="arim-footer-app-strip">
+            <div class="arim-container arim-footer-app-inner">
+                <div class="arim-footer-app-copy">
+                    <span><?php esc_html_e('Mobil alışveriş deneyimi', 'arim'); ?></span>
+                    <strong><?php esc_html_e('ARIM uygulama hissini web vitrininize taşıyan yoğun marketplace tasarımı', 'arim'); ?></strong>
+                </div>
+
+                <div class="arim-footer-app-badges">
+                    <a href="#"><?php esc_html_e('App Store', 'arim'); ?></a>
+                    <a href="#"><?php esc_html_e('Google Play', 'arim'); ?></a>
+                    <a href="#"><?php esc_html_e('Hızlı Market', 'arim'); ?></a>
+                </div>
+            </div>
+        </div>
+
         <div class="arim-footer-top">
             <div class="arim-container">
                 <div class="arim-footer-features">
@@ -54,7 +74,7 @@ defined('ABSPATH') || exit;
                     <div class="arim-footer-col">
                         <h3><?php esc_html_e('Müşteri Hizmetleri', 'arim'); ?></h3>
                         <ul>
-                            <li><a href="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>"><?php esc_html_e('Hesabım', 'arim'); ?></a></li>
+                            <li><a href="<?php echo esc_url($account_url); ?>"><?php esc_html_e('Hesabım', 'arim'); ?></a></li>
                             <li><a href="<?php echo esc_url(home_url('/my-account/orders')); ?>"><?php esc_html_e('Siparişlerim', 'arim'); ?></a></li>
                             <li><a href="#"><?php esc_html_e('İade Koşulları', 'arim'); ?></a></li>
                             <li><a href="#"><?php esc_html_e('Sık Sorulan Sorular', 'arim'); ?></a></li>
@@ -64,10 +84,10 @@ defined('ABSPATH') || exit;
                     <div class="arim-footer-col">
                         <h3><?php esc_html_e('Mağaza', 'arim'); ?></h3>
                         <ul>
-                            <li><a href="<?php echo esc_url(home_url('/shop')); ?>"><?php esc_html_e('Tüm Ürünler', 'arim'); ?></a></li>
-                            <li><a href="<?php echo esc_url(wc_get_cart_url()); ?>"><?php esc_html_e('Sepetim', 'arim'); ?></a></li>
-                            <li><a href="<?php echo esc_url(wc_get_checkout_url()); ?>"><?php esc_html_e('Ödeme', 'arim'); ?></a></li>
-                            <li><a href="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>"><?php esc_html_e('Üyelik', 'arim'); ?></a></li>
+                            <li><a href="<?php echo esc_url($shop_url); ?>"><?php esc_html_e('Tüm Ürünler', 'arim'); ?></a></li>
+                            <li><a href="<?php echo esc_url($cart_url); ?>"><?php esc_html_e('Sepetim', 'arim'); ?></a></li>
+                            <li><a href="<?php echo esc_url($checkout_url); ?>"><?php esc_html_e('Ödeme', 'arim'); ?></a></li>
+                            <li><a href="<?php echo esc_url($account_url); ?>"><?php esc_html_e('Üyelik', 'arim'); ?></a></li>
                         </ul>
                     </div>
                 </div>

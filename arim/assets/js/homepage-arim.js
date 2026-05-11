@@ -64,5 +64,55 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         updateSlider();
+
+        if (getCards().length > getVisibleCount()) {
+            setInterval(function () {
+                const cards = getCards();
+                const visibleCount = getVisibleCount();
+                const maxIndex = Math.max(0, cards.length - visibleCount);
+
+                currentIndex = currentIndex >= maxIndex ? 0 : currentIndex + 1;
+                updateSlider();
+            }, 5000);
+        }
+    });
+
+    const countdownBlocks = document.querySelectorAll('[data-countdown]');
+
+    countdownBlocks.forEach(function (block) {
+        const targetValue = block.getAttribute('data-countdown');
+        if (!targetValue) return;
+
+        const targetTime = new Date(targetValue).getTime();
+        if (Number.isNaN(targetTime)) return;
+
+        const daysEl = block.querySelector('[data-countdown-days]');
+        const hoursEl = block.querySelector('[data-countdown-hours]');
+        const minutesEl = block.querySelector('[data-countdown-minutes]');
+        const secondsEl = block.querySelector('[data-countdown-seconds]');
+
+        function setValue(element, value) {
+            if (element) {
+                element.textContent = String(Math.max(0, value)).padStart(2, '0');
+            }
+        }
+
+        function updateCountdown() {
+            const now = Date.now();
+            const distance = Math.max(0, targetTime - now);
+            const totalSeconds = Math.floor(distance / 1000);
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            setValue(daysEl, days);
+            setValue(hoursEl, hours);
+            setValue(minutesEl, minutes);
+            setValue(secondsEl, seconds);
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
     });
 });

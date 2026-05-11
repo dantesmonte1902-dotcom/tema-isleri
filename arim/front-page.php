@@ -9,6 +9,9 @@ if (!function_exists('WC')) {
     return;
 }
 
+$shop_url    = function_exists('arim_shop_url') ? arim_shop_url() : home_url('/shop');
+$account_url = function_exists('arim_account_url') ? arim_account_url() : wp_login_url();
+
 function arim_homepage_get_category_slugs_with_children($category_slug) {
     if (!$category_slug) {
         return [];
@@ -117,6 +120,15 @@ $product_categories = get_terms([
     'parent'     => 0,
     'number'     => 12,
 ]);
+
+$homepage_categories = array_slice(is_array($product_categories) ? $product_categories : [], 0, 10);
+$flash_sale_products = arim_homepage_get_products_by_source('on_sale', 6);
+
+if (empty($flash_sale_products)) {
+    $flash_sale_products = arim_homepage_get_products_by_source('featured', 6);
+}
+
+$flash_sale_deadline = gmdate('c', strtotime('+2 days 21:00:00'));
 
 $show_hero       = arim_homepage_option('arim_section_show_hero', '1') === '1';
 $show_coupons    = arim_homepage_option('arim_section_show_coupons', '1') === '1';
@@ -283,6 +295,49 @@ function arim_home_brand_name($product_id) {
 function arim_home_store_name($product_id) {
     $store = get_post_meta($product_id, 'store_name', true);
     return $store ? $store : __('ARIM Store', 'arim');
+}
+
+function arim_home_category_image_url($term) {
+    if (!$term || is_wp_error($term)) {
+        return '';
+    }
+
+    $thumbnail_id = get_term_meta($term->term_id, 'thumbnail_id', true);
+
+    if (!$thumbnail_id) {
+        return '';
+    }
+
+    return wp_get_attachment_image_url($thumbnail_id, 'woocommerce_thumbnail');
+}
+
+function arim_home_collect_brand_names($products, $limit = 8) {
+    $brands = [];
+
+    foreach ((array) $products as $product) {
+        if (!$product instanceof WC_Product) {
+            continue;
+        }
+
+        $brand = arim_home_brand_name($product->get_id());
+
+        if (!$brand) {
+            $terms = get_the_terms($product->get_id(), 'product_cat');
+            if (!empty($terms) && !is_wp_error($terms)) {
+                $brand = $terms[0]->name;
+            }
+        }
+
+        if ($brand) {
+            $brands[sanitize_title($brand)] = $brand;
+        }
+
+        if (count($brands) >= $limit) {
+            break;
+        }
+    }
+
+    return array_values($brands);
 }
 
 function arim_render_home_product_card_v5($product, $badge = '', $context = 'slider') {
@@ -473,10 +528,49 @@ function arim_render_homepage_section($key, $callback, &$sections) {
         'enabled'  => !empty($callback['enabled']),
     ];
 }
+
+$marketplace_brands = arim_home_collect_brand_names(
+    array_merge($featured_products, $showcase_1_products, $showcase_2_products, $showcase_3_products),
+    8
+);
+
+if (empty($marketplace_brands) && !empty($homepage_categories)) {
+    $marketplace_brands = array_map(static function($term) {
+        return $term->name;
+    }, array_slice($homepage_categories, 0, 8));
+}
 ?>
 
 <?php
 $homepage_sections = [];
+
+arim_render_homepage_section('categories', [
+    'order'   => 5,
+    'enabled' => !empty($homepage_categories),
+    'render'  => function() use ($homepage_categories) {
+        ?>
+        <section class="arim-v4-categories arim-v4-categories-strong">
+            <div class="arim-container">
+                <div class="arim-v4-categories-strip">
+                    <?php foreach ($homepage_categories as $category) : ?>
+                        <?php $category_image = arim_home_category_image_url($category); ?>
+                        <a href="<?php echo esc_url(get_term_link($category)); ?>" class="arim-v4-category-item">
+                            <span class="arim-v4-category-image">
+                                <?php if ($category_image) : ?>
+                                    <img src="<?php echo esc_url($category_image); ?>" alt="<?php echo esc_attr($category->name); ?>">
+                                <?php else : ?>
+                                    <span class="arim-v4-category-fallback"><?php echo esc_html(mb_substr($category->name, 0, 1)); ?></span>
+                                <?php endif; ?>
+                            </span>
+                            <span class="arim-v4-category-text"><?php echo esc_html($category->name); ?></span>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
+        <?php
+    }
+], $homepage_sections);
 
 arim_render_homepage_section('hero', [
     'order'   => $section_order_hero,
@@ -610,6 +704,47 @@ arim_render_homepage_section('slider', [
                         </div>
                     </div>
                     <button class="arim-widget-arrow next" type="button" data-next aria-label="<?php esc_attr_e('Sonraki ürünler', 'arim'); ?>">›</button>
+                </div>
+            </div>
+        </section>
+        <?php
+    }
+], $homepage_sections);
+
+arim_render_homepage_section('flash_deals', [
+    'order'   => 35,
+    'enabled' => !empty($flash_sale_products),
+    'render'  => function() use ($flash_sale_products, $flash_sale_deadline, $shop_url) {
+        ?>
+        <section class="arim-v6-flash-deals">
+            <div class="arim-container">
+                <div class="arim-v6-flash-shell">
+                    <div class="arim-v6-flash-intro" data-countdown="<?php echo esc_attr($flash_sale_deadline); ?>">
+                        <span class="arim-v6-flash-badge"><?php esc_html_e('Flaş Fırsatlar', 'arim'); ?></span>
+                        <h2><?php esc_html_e('Bugünün en güçlü kampanya vitrini', 'arim'); ?></h2>
+                        <p><?php esc_html_e('Trendyol hissini güçlendiren yoğun indirim alanı ile hızlı karar verdiren ürünleri tek blokta öne çıkar.', 'arim'); ?></p>
+
+                        <div class="arim-v6-flash-countdown">
+                            <div><strong data-countdown-days>00</strong><span><?php esc_html_e('Gün', 'arim'); ?></span></div>
+                            <div><strong data-countdown-hours>00</strong><span><?php esc_html_e('Saat', 'arim'); ?></span></div>
+                            <div><strong data-countdown-minutes>00</strong><span><?php esc_html_e('Dakika', 'arim'); ?></span></div>
+                            <div><strong data-countdown-seconds>00</strong><span><?php esc_html_e('Saniye', 'arim'); ?></span></div>
+                        </div>
+
+                        <div class="arim-v6-flash-perks">
+                            <span><?php esc_html_e('Sepette ekstra indirim', 'arim'); ?></span>
+                            <span><?php esc_html_e('Sınırlı stok fırsatları', 'arim'); ?></span>
+                            <span><?php esc_html_e('Hızlı teslimat seçkisi', 'arim'); ?></span>
+                        </div>
+
+                        <a href="<?php echo esc_url($shop_url); ?>" class="arim-v6-flash-link"><?php esc_html_e('Tüm kampanyaya git', 'arim'); ?></a>
+                    </div>
+
+                    <div class="arim-v6-flash-products">
+                        <?php foreach ($flash_sale_products as $product) : ?>
+                            <?php arim_render_home_product_card_v5($product, __('Fırsat', 'arim'), 'grid'); ?>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         </section>
@@ -777,8 +912,62 @@ arim_render_homepage_section('showcase_3', [
 arim_render_homepage_section('seo', [
     'order'   => $section_order_seo,
     'enabled' => $show_seo,
-    'render'  => function() {
+    'render'  => function() use ($homepage_categories, $featured_products, $marketplace_brands, $shop_url, $account_url) {
         ?>
+        <section class="arim-v6-marketplace">
+            <div class="arim-container">
+                <div class="arim-v6-marketplace-grid">
+                    <div class="arim-v6-marketplace-main">
+                        <span class="arim-v6-marketplace-badge"><?php esc_html_e('Marketplace Yoğunluğu', 'arim'); ?></span>
+                        <h2><?php esc_html_e('ARIM ile güçlü marketplace tarzı vitrin deneyimi', 'arim'); ?></h2>
+                        <p><?php esc_html_e('ARIM anasayfa yapısı, yoğun kampanya blokları, kategori şeritleri, yatay ürün alanları ve vitrin odaklı showcase düzeni ile kullanıcıya daha aktif bir keşif deneyimi sunmak için hazırlanmıştır. Bu yapı, klasik tek mağaza görünümünden çıkarak daha büyük ölçekli bir alışveriş platformu etkisi oluşturur.', 'arim'); ?></p>
+                        <p><?php esc_html_e('Kampanyalar, ürünler ve kategori geçişleri birlikte çalışarak anasayfayı yalnızca giriş alanı olmaktan çıkarır ve aktif bir satış vitrini haline getirir. Böylece ziyaretçilerin daha fazla ürün görmesi ve daha uzun süre sayfada kalması hedeflenir.', 'arim'); ?></p>
+
+                        <div class="arim-v6-marketplace-stats">
+                            <div>
+                                <strong><?php echo esc_html(count($homepage_categories)); ?>+</strong>
+                                <span><?php esc_html_e('Kategori vitrini', 'arim'); ?></span>
+                            </div>
+                            <div>
+                                <strong><?php echo esc_html(count($featured_products)); ?>+</strong>
+                                <span><?php esc_html_e('Öne çıkan ürün', 'arim'); ?></span>
+                            </div>
+                            <div>
+                                <strong><?php echo esc_html(count($marketplace_brands)); ?>+</strong>
+                                <span><?php esc_html_e('Marka / mağaza teması', 'arim'); ?></span>
+                            </div>
+                        </div>
+
+                        <div class="arim-v6-marketplace-actions">
+                            <a href="<?php echo esc_url($shop_url); ?>"><?php esc_html_e('Ürün vitrini', 'arim'); ?></a>
+                            <a href="<?php echo esc_url($account_url); ?>" class="is-secondary"><?php esc_html_e('Müşteri alanı', 'arim'); ?></a>
+                        </div>
+                    </div>
+
+                    <div class="arim-v6-marketplace-side">
+                        <div class="arim-v6-marketplace-card">
+                            <h3><?php esc_html_e('Öne çıkan marka akışı', 'arim'); ?></h3>
+                            <div class="arim-v6-brand-cloud">
+                                <?php foreach ($marketplace_brands as $brand_name) : ?>
+                                    <span><?php echo esc_html($brand_name); ?></span>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+
+                        <div class="arim-v6-marketplace-card is-dark">
+                            <h3><?php esc_html_e('Trendyol hissini güçlendiren detaylar', 'arim'); ?></h3>
+                            <ul>
+                                <li><?php esc_html_e('Yoğun kampanya kartları ve indirim yüzeyleri', 'arim'); ?></li>
+                                <li><?php esc_html_e('Kategori keşfi için hızlı yatay gezinme', 'arim'); ?></li>
+                                <li><?php esc_html_e('Satıcı / marka odaklı ürün kart yapısı', 'arim'); ?></li>
+                                <li><?php esc_html_e('Mobilde de korunan marketplace yoğunluğu', 'arim'); ?></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="arim-home-seo-text">
             <div class="arim-container">
                 <div class="arim-home-seo-box">
