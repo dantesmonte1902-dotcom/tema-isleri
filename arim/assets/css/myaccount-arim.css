@@ -1,0 +1,317 @@
+.woocommerce-account .woocommerce {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    align-items: start;
+    padding: 28px 0 40px;
+}
+
+.arim-myaccount-nav-box {
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+    overflow: hidden;
+}
+
+.arim-myaccount-nav-title {
+    margin: 0;
+    padding: 20px 20px 16px;
+    font-size: 22px;
+    color: #222;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.arim-myaccount-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 10px;
+}
+
+.arim-myaccount-nav ul li {
+    margin: 0;
+}
+
+.arim-myaccount-nav ul li a {
+    display: flex;
+    align-items: center;
+    min-height: 46px;
+    padding: 0 14px;
+    border-radius: 10px;
+    color: #444;
+    font-weight: 600;
+    text-decoration: none;
+    transition: .25s ease;
+}
+
+.arim-myaccount-nav ul li a:hover {
+    background: #fff2e8;
+    color: #f27a1a;
+}
+
+.arim-myaccount-nav ul li.is-active a {
+    background: #f27a1a;
+    color: #fff;
+}
+
+.woocommerce-MyAccount-content {
+    min-width: 0;
+}
+
+.arim-myaccount-dashboard,
+.arim-myaccount-orders,
+.arim-myaccount-empty {
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: #fff;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+}
+
+.arim-myaccount-hero {
+    border-radius: 18px;
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, rgba(242, 122, 26, 0.95), rgba(255, 157, 0, 0.85)),
+        linear-gradient(90deg, #f3f3f3, #ececec);
+    color: #fff;
+    padding: 30px;
+    margin-bottom: 22px;
+}
+
+.arim-myaccount-badge {
+    display: inline-flex;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.16);
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.arim-myaccount-hero h2 {
+    margin: 0 0 10px;
+    font-size: 32px;
+    line-height: 1.2;
+}
+
+.arim-myaccount-hero p {
+    margin: 0;
+    color: rgba(255,255,255,0.92);
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+.arim-myaccount-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.arim-myaccount-card {
+    display: block;
+    border: 1px solid #ececec;
+    border-radius: 14px;
+    padding: 20px;
+    background: #fafafa;
+    text-decoration: none;
+    transition: .25s ease;
+}
+
+.arim-myaccount-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.06);
+    border-color: #f27a1a;
+}
+
+.arim-myaccount-card h3 {
+    margin: 0 0 8px;
+    color: #222;
+    font-size: 18px;
+}
+
+.arim-myaccount-card p {
+    margin: 0;
+    color: #666;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.arim-myaccount-note {
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
+    background: #fafafa;
+    padding: 18px;
+    color: #555;
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+.arim-myaccount-section-head {
+    margin-bottom: 18px;
+}
+
+.arim-myaccount-section-head h2 {
+    margin: 0;
+    font-size: 28px;
+    color: #222;
+}
+
+.arim-myaccount-orders-table-wrap {
+    overflow-x: auto;
+}
+
+.arim-orders-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.arim-orders-table th,
+.arim-orders-table td {
+    padding: 14px;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: left;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+.arim-orders-table th {
+    background: #fafafa;
+    color: #222;
+    font-weight: 700;
+}
+
+.arim-orders-table td {
+    color: #555;
+}
+
+.arim-orders-table td a {
+    color: #f27a1a;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.arim-orders-table .button {
+    min-height: 38px;
+    border-radius: 10px !important;
+    border: 1px solid #f27a1a !important;
+    background: #fff !important;
+    color: #f27a1a !important;
+    font-weight: 700 !important;
+    box-shadow: none !important;
+    padding: 0 14px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arim-orders-table .button:hover {
+    background: #f27a1a !important;
+    color: #fff !important;
+}
+
+.arim-myaccount-pagination {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+}
+
+.arim-myaccount-pagination .button,
+.arim-myaccount-empty .button {
+    min-height: 44px;
+    border-radius: 10px !important;
+    border: 1px solid #f27a1a !important;
+    background: #f27a1a !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+    box-shadow: none !important;
+}
+
+.arim-myaccount-empty h2 {
+    margin: 0 0 10px;
+    font-size: 28px;
+    color: #222;
+}
+
+.arim-myaccount-empty p {
+    margin: 0 0 18px;
+    color: #666;
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+.woocommerce-account .addresses .title h3,
+.woocommerce-account .woocommerce-Address-title h3,
+.woocommerce-account .woocommerce-column__title,
+.woocommerce-account h2,
+.woocommerce-account h3 {
+    color: #222;
+}
+
+.woocommerce-account .woocommerce-EditAccountForm,
+.woocommerce-account .woocommerce-address-fields,
+.woocommerce-account .woocommerce-form-login,
+.woocommerce-account .woocommerce-form-register {
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: #fff;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+}
+
+.woocommerce-account .form-row input.input-text,
+.woocommerce-account .form-row select,
+.woocommerce-account .form-row textarea {
+    min-height: 46px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 0 14px;
+}
+
+.woocommerce-account .form-row textarea {
+    min-height: 120px;
+    padding: 14px;
+}
+
+.woocommerce-account button.button,
+.woocommerce-account .button {
+    border-radius: 10px !important;
+}
+
+@media (max-width: 1100px) {
+    .arim-myaccount-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 992px) {
+    .woocommerce-account .woocommerce {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .arim-myaccount-dashboard,
+    .arim-myaccount-orders,
+    .arim-myaccount-empty {
+        padding: 16px;
+    }
+
+    .arim-myaccount-hero {
+        padding: 22px;
+    }
+
+    .arim-myaccount-hero h2 {
+        font-size: 24px;
+    }
+
+    .arim-myaccount-section-head h2,
+    .arim-myaccount-empty h2 {
+        font-size: 22px;
+    }
+}
