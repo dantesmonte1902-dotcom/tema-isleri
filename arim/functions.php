@@ -1384,6 +1384,66 @@ function arim_myaccount_orders_page_data() {
 }
 
 /**
+ * Adres yönetimi sayfası için özet verileri döndürür.
+ *
+ * @return array<string, mixed>
+ */
+function arim_myaccount_address_page_data() {
+    $user_id = get_current_user_id();
+    $user    = $user_id > 0 ? get_userdata($user_id) : false;
+
+    $addresses = [
+        'billing'  => [
+            'label'   => __('Fatura adresi', 'arim'),
+            'address' => function_exists('wc_get_account_formatted_address') ? wc_get_account_formatted_address('billing') : '',
+            'url'     => function_exists('wc_get_endpoint_url') ? wc_get_endpoint_url('edit-address', 'billing') : arim_account_url(),
+        ],
+        'shipping' => [
+            'label'   => __('Teslimat adresi', 'arim'),
+            'address' => function_exists('wc_get_account_formatted_address') ? wc_get_account_formatted_address('shipping') : '',
+            'url'     => function_exists('wc_get_endpoint_url') ? wc_get_endpoint_url('edit-address', 'shipping') : arim_account_url(),
+        ],
+    ];
+
+    if (function_exists('wc_ship_to_billing_address_only') && function_exists('wc_shipping_enabled') && (wc_ship_to_billing_address_only() || !wc_shipping_enabled())) {
+        unset($addresses['shipping']);
+    }
+
+    $saved_count = 0;
+
+    foreach ($addresses as $address_key => $address_data) {
+        if (!empty($address_data['address'])) {
+            $saved_count++;
+        }
+
+        $addresses[$address_key]['isComplete'] = !empty($address_data['address']);
+    }
+
+    $phone = '';
+
+    if ($user_id > 0) {
+        $phone = trim((string) get_user_meta($user_id, 'billing_phone', true));
+    }
+
+    return [
+        'stats' => [
+            'savedCount'    => $saved_count,
+            'expectedCount' => count($addresses),
+            'completion'    => count($addresses) > 0 ? (int) round(($saved_count / count($addresses)) * 100) : 0,
+        ],
+        'contact' => [
+            'name'  => $user instanceof WP_User ? $user->display_name : '',
+            'email' => $user instanceof WP_User ? $user->user_email : '',
+            'phone' => $phone,
+        ],
+        'addresses'   => $addresses,
+        'campaigns'   => arim_single_product_campaigns(2),
+        'supportUrl'  => wc_get_account_endpoint_url('edit-account'),
+        'dashboardUrl'=> arim_account_url(),
+    ];
+}
+
+/**
  * Geçerli shop archive URL'sini döndürür.
  *
  * @return string

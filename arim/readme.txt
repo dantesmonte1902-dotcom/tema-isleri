@@ -104,3 +104,8 @@ Geliştirilen Özellikler
 - Siparişler sayfasına toplam sipariş, aktif akış, tamamlanan sipariş ve son sipariş tarihi özet kartları eklendi.
 - Tablo üstüne teslimat/destek odaklı bilgilendirme paneli ile kampanya fırsat alanları yerleştirildi.
 - Sipariş durumları rozet yapısına taşınarak boş durumda favorilere geri dönüş ve kampanya görünürlüğü güçlendirildi.
+
+12. Adres Yönetimi Sayfası Geliştirmeleri
+- Adreslerim ekranına kayıtlı adres sayısı, hazırlık oranı, e-posta ve telefon özet kartları eklendi.
+- Fatura ve teslimat adresleri kart bazlı yapıya taşınarak hazır/eksik rozetleri ve hızlı düzenleme aksiyonları görünür hale getirildi.
+- Adres düzenleme formu için ayrı hero alanı, yardımcı notlar ve kampanya kutularıyla daha güçlü bir hesap yönetimi deneyimi sağlandı.
