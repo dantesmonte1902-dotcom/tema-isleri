@@ -847,6 +847,12 @@ function arim_homepage_product_search_ajax() {
 }
 add_action('wp_ajax_arim_homepage_product_search', 'arim_homepage_product_search_ajax');
 
+/**
+ * Ürün için gösterilecek marka adını döndürür.
+ *
+ * @param int $product_id Ürün kimliği.
+ * @return string
+ */
 function arim_product_brand_name($product_id) {
     $brand = get_post_meta($product_id, 'brand', true);
 
@@ -861,6 +867,12 @@ function arim_product_brand_name($product_id) {
     return is_string($brand) ? $brand : '';
 }
 
+/**
+ * Ürün için gösterilecek mağaza adını döndürür.
+ *
+ * @param int $product_id Ürün kimliği.
+ * @return string
+ */
 function arim_product_store_name($product_id) {
     $store = get_post_meta($product_id, 'store_name', true);
 
