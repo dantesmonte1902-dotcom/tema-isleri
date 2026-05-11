@@ -23,8 +23,11 @@ $regular_price_value = (float) $product->get_regular_price();
 $store_name = arim_product_store_name($product_id);
 $delivery_details = arim_single_product_delivery_details($product);
 $campaigns = arim_single_product_campaigns(3);
-$store_rating = $rating > 0 ? sprintf(__('%s / 5 mağaza puanı', 'arim'), number_format((float) $rating, 1)) : __('4.8 / 5 mağaza puanı', 'arim');
-$store_review_text = sprintf(_n('%s değerlendirme', '%s değerlendirme', max(1, $review_count), 'arim'), number_format_i18n(max(1, $review_count)));
+$store_rating = $rating > 0 ? sprintf(__('%s / 5 mağaza puanı', 'arim'), number_format((float) $rating, 1)) : __('Henüz değerlendirilmedi', 'arim');
+$store_review_count = max(0, (int) $review_count);
+$store_review_text = $store_review_count > 0
+    ? sprintf(_n('%s değerlendirme', '%s değerlendirme', $store_review_count, 'arim'), number_format_i18n($store_review_count))
+    : __('İlk yorumu sen bırak', 'arim');
 $store_shipping_text = $product->is_in_stock() ? __('Bugün kargoda fırsatı', 'arim') : __('Siparişe göre hazırlanır', 'arim');
 
 $product_badge = '';

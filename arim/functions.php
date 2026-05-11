@@ -979,9 +979,11 @@ function arim_single_product_delivery_details($product) {
     $delivery_offset    = $is_in_stock ? 2 : 5;
     $delivery_timestamp = current_time('timestamp') + (DAY_IN_SECONDS * $delivery_offset);
 
+    $date_format = (string) apply_filters('arim_single_delivery_date_format', 'j F l');
+
     return [
         'badge' => $is_in_stock ? __('Tahmini teslimat', 'arim') : __('Siparişe özel tedarik', 'arim'),
-        'date'  => wp_date('j F l', $delivery_timestamp, wp_timezone()),
+        'date'  => wp_date($date_format, $delivery_timestamp, wp_timezone()),
         'note'  => $is_in_stock
             ? __('Hızlı kargo ağıyla teslim edilir, sipariş durumun panelden takip edilebilir.', 'arim')
             : __('Ürün hazırlanır hazırlanmaz öncelikli gönderim planına alınır.', 'arim'),
@@ -1028,7 +1030,10 @@ function arim_live_search_max_query_length() {
 }
 
 function arim_require_post_request() {
-    if (strtoupper((string) wp_unslash($_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST') {
+    $request_method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_UNSAFE_RAW);
+    $request_method = is_string($request_method) ? strtoupper(sanitize_text_field($request_method)) : '';
+
+    if ($request_method !== 'POST') {
         wp_send_json_error([], 405);
     }
 }
