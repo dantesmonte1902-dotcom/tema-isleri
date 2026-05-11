@@ -3,10 +3,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const favoriteStorageKey = 'arimFavorites';
     const favoriteLabels = themeConfig.labels || {};
     const activeIntervals = [];
+    const searchDebounceDelay = Number(themeConfig.searchDebounce) || 220;
+    const liveSearchMinChars = Math.max(1, Number(themeConfig.searchMinChars) || 2);
     const currencyFormatter = typeof Intl !== 'undefined' && typeof Intl.NumberFormat === 'function'
         ? new Intl.NumberFormat('tr-TR', {
             style: 'currency',
-            currency: 'TRY',
+            currency: themeConfig.currencyCode || 'TRY',
             maximumFractionDigits: 0,
         })
         : null;
@@ -585,7 +587,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     window.clearTimeout(debounceTimer);
                 }
 
-                if (query.length < 2) {
+                if (Array.from(query).length < liveSearchMinChars) {
                     if (activeController) {
                         activeController.abort();
                     }
@@ -597,11 +599,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 debounceTimer = window.setTimeout(function () {
                     requestSearch(query);
-                }, 220);
+                }, searchDebounceDelay);
             });
 
             input.addEventListener('focus', function () {
-                if (input.value.trim().length >= 2 && resultsWrap.childNodes.length) {
+                if (Array.from(input.value.trim()).length >= liveSearchMinChars && resultsWrap.childNodes.length) {
                     showSuggestions(panel);
                 }
             });

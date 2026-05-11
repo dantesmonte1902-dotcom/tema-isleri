@@ -54,6 +54,9 @@ function arim_enqueue_assets() {
         'shopUrl'      => arim_shop_url(),
         'ajaxUrl'      => admin_url('admin-ajax.php'),
         'searchNonce'  => wp_create_nonce('arim_public_product_search'),
+        'currencyCode' => function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : 'TRY',
+        'searchMinChars' => arim_live_search_min_chars(),
+        'searchDebounce' => 220,
         'labels'       => [
             'favoritesTitle'       => __('Favorilerim', 'arim'),
             'favoritesDescription' => __('Beğendiğin ürünleri burada sakla, karşılaştır ve alışverişe kaldığın yerden devam et.', 'arim'),
@@ -863,6 +866,18 @@ function arim_product_store_name($product_id) {
     return is_string($store) ? $store : __('ARIM Store', 'arim');
 }
 
+function arim_product_price_text($product) {
+    if (!$product instanceof WC_Product) {
+        return '';
+    }
+
+    return trim(preg_replace('/\s+/', ' ', wp_strip_all_tags($product->get_price_html())));
+}
+
+function arim_live_search_min_chars() {
+    return max(1, (int) apply_filters('arim_live_search_min_chars', 2));
+}
+
 function arim_public_product_search_ajax() {
     check_ajax_referer('arim_public_product_search', 'nonce');
 
@@ -872,7 +887,7 @@ function arim_public_product_search_ajax() {
 
     $query = isset($_POST['q']) ? sanitize_text_field(wp_unslash($_POST['q'])) : '';
 
-    if (mb_strlen($query) < 2) {
+    if (mb_strlen($query) < arim_live_search_min_chars()) {
         wp_send_json_success([
             'items'      => [],
             'resultsUrl' => add_query_arg([
@@ -903,7 +918,7 @@ function arim_public_product_search_ajax() {
             'title' => $product->get_name(),
             'url'   => get_permalink($product_id),
             'image' => $image_id ? wp_get_attachment_image_url($image_id, 'woocommerce_thumbnail') : wc_placeholder_img_src(),
-            'price' => trim(preg_replace('/\s+/', ' ', wp_strip_all_tags($product->get_price_html()))),
+            'price' => arim_product_price_text($product),
             'brand' => arim_product_brand_name($product_id),
             'store' => arim_product_store_name($product_id),
         ];
