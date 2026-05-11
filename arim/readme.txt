@@ -79,3 +79,8 @@ Geliştirilen Özellikler
 - Ürün detay sayfasına tahmini teslimat ve sipariş sonrası takip bilgisini öne çıkaran ayrı bir teslimat kartı eklendi.
 - Satıcı adı, mağaza puanı, değerlendirme sayısı ve hazırlık bilgisi tek blokta toplanarak güven alanı güçlendirildi.
 - Homepage manager kupon alanları ürün detayda yeniden kullanılarak kampanya ve sepet avantajları görünür hale getirildi.
+
+7. Checkout Dönüşüm Alanları
+- Checkout ekranına sepet-bilgiler-ödeme akışını görünür kılan adım alanı ve güven odaklı bilgi stripi eklendi.
+- Sağ kolona tahmini teslimat, ürün/paket adedi ve canlı destek vurgusu taşıyan ayrı bir teslimat özeti kartı yerleştirildi.
+- Homepage manager kupon verileri checkout tarafında yeniden kullanılarak sipariş öncesi kampanya görünürlüğü artırıldı.

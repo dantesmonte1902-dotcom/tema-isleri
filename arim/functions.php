@@ -1018,6 +1018,44 @@ function arim_single_product_campaigns($limit = 3) {
     return array_slice($campaigns, 0, $limit);
 }
 
+/**
+ * Checkout sayfası için teslimat özetini döndürür.
+ *
+ * @return array<string, string|int>
+ */
+function arim_checkout_delivery_details() {
+    $item_count     = 0;
+    $product_count  = 0;
+    $delivery_days  = 2;
+    $delivery_badge = __('Tahmini teslimat', 'arim');
+    $delivery_note  = __('Siparişin onaylandıktan sonra kargo adımları panelinden takip edilir.', 'arim');
+
+    if (function_exists('WC') && WC()->cart) {
+        $product_count = max(0, (int) WC()->cart->get_cart_contents_count());
+        $item_count    = count((array) WC()->cart->get_cart());
+
+        foreach ((array) WC()->cart->get_cart() as $cart_item) {
+            $product = isset($cart_item['data']) ? $cart_item['data'] : null;
+
+            if ($product instanceof WC_Product && !$product->is_in_stock()) {
+                $delivery_days  = 4;
+                $delivery_badge = __('Siparişe göre teslimat', 'arim');
+                $delivery_note  = __('Sepetindeki bazı ürünler siparişe göre hazırlanır; kargo akışı hazır olduğunda bilgilendirme yapılır.', 'arim');
+                break;
+            }
+        }
+    }
+
+    return [
+        'badge'         => $delivery_badge,
+        'date'          => wp_date((string) apply_filters('arim_single_delivery_date_format', 'j F l'), current_time('timestamp') + (DAY_IN_SECONDS * $delivery_days), wp_timezone()),
+        'note'          => $delivery_note,
+        'itemCount'     => $item_count,
+        'productCount'  => $product_count,
+        'supportWindow' => __('7/24 canlı destek', 'arim'),
+    ];
+}
+
 function arim_live_search_min_chars() {
     return max(1, (int) apply_filters('arim_live_search_min_chars', 2));
 }
