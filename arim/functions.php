@@ -1048,7 +1048,7 @@ function arim_public_product_search_ajax() {
         wp_send_json_error([]);
     }
 
-    $query = filter_input(INPUT_POST, 'q', FILTER_UNSAFE_RAW);
+    $query = filter_input(INPUT_POST, 'q', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $query = is_string($query) ? sanitize_text_field(wp_unslash($query)) : '';
     $query = mb_substr($query, 0, arim_live_search_max_query_length());
 
@@ -1101,8 +1101,8 @@ function arim_personalized_recommendations_ajax() {
         wp_send_json_error([]);
     }
 
-    $raw_product_ids = filter_input(INPUT_POST, 'productIds', FILTER_UNSAFE_RAW);
-    $product_ids_json = is_string($raw_product_ids) ? wp_unslash($raw_product_ids) : '[]';
+    $raw_product_ids = filter_input(INPUT_POST, 'productIds', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $product_ids_json = is_string($raw_product_ids) ? html_entity_decode(wp_unslash($raw_product_ids), ENT_QUOTES, 'UTF-8') : '[]';
     $decoded_product_ids = json_decode($product_ids_json, true);
     $product_ids     = wp_parse_id_list(is_array($decoded_product_ids) ? $decoded_product_ids : []);
     $product_ids     = array_slice($product_ids, 0, 24);
