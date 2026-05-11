@@ -133,3 +133,8 @@ Geliştirilen Özellikler
 - Siparişlerim ekranına aktif teslimat, sorunlu sipariş veya sakin akış durumlarına göre değişen ayrı bir sipariş sağlığı paneli eklendi.
 - Sipariş tablosunda durum satırlarına kısa açıklama metinleri eklenerek ödeme, hazırlık, teslimat ve sorunlu akışlar daha anlaşılır hale getirildi.
 - Sipariş toplamı hücreleri ürün adediyle Türkçe biçimde yeniden düzenlenerek tablo okunabilirliği artırıldı.
+
+17. Siparişlerim Sayfası Filtre Geliştirmeleri
+- Sipariş listesine tümü, aktif, tamamlanan ve sorunlu akışları öne çıkaran filtre rozetleri eklendi.
+- Seçilen filtreye göre sipariş tablosu daraltılarak ilgili siparişleri daha hızlı tarama imkanı sağlandı.
+- Sayfalama bağlantıları seçilen filtreyi koruyacak şekilde güncellendi ve boş filtre sonuçları için ayrı yönlendirici durum kartı eklendi.

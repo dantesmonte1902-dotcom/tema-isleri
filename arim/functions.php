@@ -1310,6 +1310,49 @@ function arim_myaccount_dashboard_data() {
 }
 
 /**
+ * Sipariş listesi için geçerli filtre anahtarını döndürür.
+ *
+ * @return string
+ */
+function arim_myaccount_orders_active_filter() {
+    $allowed_filters = ['all', 'active', 'completed', 'issues'];
+    $requested_filter = isset($_GET['order_filter']) ? sanitize_key(wp_unslash($_GET['order_filter'])) : 'all';
+
+    return in_array($requested_filter, $allowed_filters, true) ? $requested_filter : 'all';
+}
+
+/**
+ * Sipariş filtresine göre siparişin görünür olup olmayacağını döndürür.
+ *
+ * @param WC_Order|int $order Sipariş nesnesi veya sipariş ID'si.
+ * @param string       $filter Filtre anahtarı.
+ * @return bool
+ */
+function arim_myaccount_order_matches_filter($order, $filter = 'all') {
+    if (!$order instanceof WC_Order) {
+        $order = function_exists('wc_get_order') ? wc_get_order($order) : false;
+    }
+
+    if (!$order instanceof WC_Order) {
+        return false;
+    }
+
+    if ('active' === $filter) {
+        return $order->has_status(['pending', 'processing', 'on-hold']);
+    }
+
+    if ('completed' === $filter) {
+        return $order->has_status('completed');
+    }
+
+    if ('issues' === $filter) {
+        return $order->has_status(['cancelled', 'failed', 'refunded']);
+    }
+
+    return true;
+}
+
+/**
  * Sipariş durumuna göre kısa rehber metni döndürür.
  *
  * @param WC_Order|int $order Sipariş nesnesi veya sipariş ID'si.
@@ -1350,12 +1393,15 @@ function arim_myaccount_order_status_note($order) {
  */
 function arim_myaccount_orders_page_data() {
     $user_id = get_current_user_id();
+    $active_filter = arim_myaccount_orders_active_filter();
 
     if ($user_id < 1 || !function_exists('wc_get_orders')) {
         return [
             'stats'      => [],
             'spotlight'  => [],
             'guide'      => [],
+            'filters'    => [],
+            'activeFilter' => $active_filter,
             'campaigns'  => arim_single_product_campaigns(2),
             'supportUrl' => arim_account_url(),
         ];
@@ -1454,12 +1500,37 @@ function arim_myaccount_orders_page_data() {
         ];
     }
 
+    $filters = [
+        [
+            'key'   => 'all',
+            'label' => __('Tümü', 'arim'),
+            'count' => $stats['orders'],
+        ],
+        [
+            'key'   => 'active',
+            'label' => __('Aktif', 'arim'),
+            'count' => $stats['active'],
+        ],
+        [
+            'key'   => 'completed',
+            'label' => __('Tamamlanan', 'arim'),
+            'count' => $stats['completed'],
+        ],
+        [
+            'key'   => 'issues',
+            'label' => __('Sorunlu', 'arim'),
+            'count' => $stats['issue'],
+        ],
+    ];
+
     return [
-        'stats'      => $stats,
-        'spotlight'  => $spotlight,
-        'guide'      => $guide,
-        'campaigns'  => arim_single_product_campaigns(2),
-        'supportUrl' => wc_get_account_endpoint_url('edit-account'),
+        'stats'        => $stats,
+        'spotlight'    => $spotlight,
+        'guide'        => $guide,
+        'filters'      => $filters,
+        'activeFilter' => $active_filter,
+        'campaigns'    => arim_single_product_campaigns(2),
+        'supportUrl'   => wc_get_account_endpoint_url('edit-account'),
     ];
 }
 
