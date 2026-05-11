@@ -128,7 +128,8 @@ if (empty($flash_sale_products)) {
     $flash_sale_products = arim_homepage_get_products_by_source('featured', 6);
 }
 
-$flash_sale_deadline = gmdate('c', strtotime('+2 days 21:00:00'));
+$flash_sale_deadline    = strtotime('+2 days 21:00:00');
+$flash_sale_deadline_ts = $flash_sale_deadline ? $flash_sale_deadline * 1000 : 0;
 
 $show_hero       = arim_homepage_option('arim_section_show_hero', '1') === '1';
 $show_coupons    = arim_homepage_option('arim_section_show_coupons', '1') === '1';
@@ -714,12 +715,12 @@ arim_render_homepage_section('slider', [
 arim_render_homepage_section('flash_deals', [
     'order'   => 35,
     'enabled' => !empty($flash_sale_products),
-    'render'  => function() use ($flash_sale_products, $flash_sale_deadline, $shop_url) {
+    'render'  => function() use ($flash_sale_products, $flash_sale_deadline_ts, $shop_url) {
         ?>
         <section class="arim-v6-flash-deals">
             <div class="arim-container">
                 <div class="arim-v6-flash-shell">
-                    <div class="arim-v6-flash-intro" data-countdown="<?php echo esc_attr($flash_sale_deadline); ?>">
+                    <div class="arim-v6-flash-intro" data-countdown-ts="<?php echo esc_attr($flash_sale_deadline_ts); ?>">
                         <span class="arim-v6-flash-badge"><?php esc_html_e('Flaş Fırsatlar', 'arim'); ?></span>
                         <h2><?php esc_html_e('Bugünün en güçlü kampanya vitrini', 'arim'); ?></h2>
                         <p><?php esc_html_e('Trendyol hissini güçlendiren yoğun indirim alanı ile hızlı karar verdiren ürünleri tek blokta öne çıkar.', 'arim'); ?></p>

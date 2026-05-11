@@ -77,14 +77,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    const countdownBlocks = document.querySelectorAll('[data-countdown]');
+    const countdownBlocks = document.querySelectorAll('[data-countdown-ts]');
 
     countdownBlocks.forEach(function (block) {
-        const targetValue = block.getAttribute('data-countdown');
-        if (!targetValue) return;
-
-        const targetTime = new Date(targetValue).getTime();
-        if (Number.isNaN(targetTime)) return;
+        const targetTime = Number(block.getAttribute('data-countdown-ts') || 0);
+        if (!Number.isFinite(targetTime) || targetTime <= 0) return;
 
         const daysEl = block.querySelector('[data-countdown-days]');
         const hoursEl = block.querySelector('[data-countdown-hours]');
