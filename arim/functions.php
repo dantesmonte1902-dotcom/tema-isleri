@@ -964,6 +964,7 @@ function arim_prepare_product_card_payload($product) {
  * Ürün detay sayfası için teslimat vaat bilgisini döndürür.
  *
  * @param WC_Product $product Ürün nesnesi.
+ * @uses arim_single_delivery_date_format Teslimat tarihini biçimlendirmek için PHP tarih formatı bekler. Örn: 'j F l', 'd.m.Y'.
  * @return array<string, string>
  */
 function arim_single_product_delivery_details($product) {
@@ -1047,7 +1048,8 @@ function arim_public_product_search_ajax() {
         wp_send_json_error([]);
     }
 
-    $query = isset($_POST['q']) ? sanitize_text_field(wp_unslash($_POST['q'])) : '';
+    $query = filter_input(INPUT_POST, 'q', FILTER_UNSAFE_RAW);
+    $query = is_string($query) ? sanitize_text_field(wp_unslash($query)) : '';
     $query = mb_substr($query, 0, arim_live_search_max_query_length());
 
     if (mb_strlen($query) < arim_live_search_min_chars()) {
