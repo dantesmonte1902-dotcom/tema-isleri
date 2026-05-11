@@ -126,3 +126,5 @@ Geliştirilen Özellikler
 - WooCommerce sipariş detay, müşteri bilgileri ve indirme tabloları tema geneliyle uyumlu kart ve tablo stiline taşındı.
 - Fatura ve teslimat bilgileri için ayrı iletişim kartları eklenerek adres, telefon ve e-posta takibi daha görünür hale getirildi.
 - Sipariş detay ekranına ödeme, teslimat modeli, destek kanalı ve içerik tipi özetlerini taşıyan ek bilgi kartları yerleştirildi.
+- Sipariş akışını takip etmek için tarih bazlı zaman çizelgesi eklenerek ödeme, hazırlık ve sonuç adımları tek bakışta izlenebilir hale getirildi.
+- Duruma göre değişen rehber paneliyle ödeme bekleyen, tamamlanan veya sorunlu siparişler için referans ve sonraki adım notları görünür kılındı.

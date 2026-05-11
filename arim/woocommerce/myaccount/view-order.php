@@ -15,6 +15,8 @@ $summary    = isset($order_data['summary']) && is_array($order_data['summary']) 
 $status     = isset($order_data['status']) && is_array($order_data['status']) ? $order_data['status'] : [];
 $items      = isset($order_data['items']) && is_array($order_data['items']) ? $order_data['items'] : [];
 $highlights = isset($order_data['highlights']) && is_array($order_data['highlights']) ? $order_data['highlights'] : [];
+$timeline   = isset($order_data['timeline']) && is_array($order_data['timeline']) ? $order_data['timeline'] : [];
+$support    = isset($order_data['support']) && is_array($order_data['support']) ? $order_data['support'] : [];
 $contacts   = isset($order_data['contacts']) && is_array($order_data['contacts']) ? $order_data['contacts'] : [];
 $actions    = isset($order_data['actions']) && is_array($order_data['actions']) ? $order_data['actions'] : [];
 $campaigns  = isset($order_data['campaigns']) && is_array($order_data['campaigns']) ? $order_data['campaigns'] : [];
@@ -142,6 +144,64 @@ $links      = isset($order_data['links']) && is_array($order_data['links']) ? $o
                     <strong><?php echo esc_html($highlight['value'] ?? '—'); ?></strong>
                 </div>
             <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($timeline) || !empty($support)) : ?>
+        <div class="arim-myaccount-view-order-extra-grid">
+            <?php if (!empty($timeline)) : ?>
+                <section class="arim-myaccount-view-order-timeline-card">
+                    <div class="arim-myaccount-panel-head">
+                        <div>
+                            <span class="arim-myaccount-panel-kicker"><?php esc_html_e('Sipariş akışı', 'arim'); ?></span>
+                            <h3><?php esc_html_e('Durum zaman çizelgesi', 'arim'); ?></h3>
+                        </div>
+                    </div>
+
+                    <div class="arim-myaccount-view-order-timeline">
+                        <?php foreach ($timeline as $step) : ?>
+                            <article class="arim-myaccount-view-order-timeline-step is-<?php echo esc_attr($step['state'] ?? 'pending'); ?>">
+                                <span class="arim-myaccount-view-order-timeline-dot" aria-hidden="true"></span>
+                                <div>
+                                    <strong><?php echo esc_html($step['label'] ?? ''); ?></strong>
+                                    <?php if (!empty($step['date'])) : ?>
+                                        <small><?php echo esc_html($step['date']); ?></small>
+                                    <?php else : ?>
+                                        <small><?php esc_html_e('Duruma göre güncellenecek', 'arim'); ?></small>
+                                    <?php endif; ?>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <?php if (!empty($support)) : ?>
+                <aside class="arim-myaccount-view-order-support-card <?php echo esc_attr($support['state'] ?? 'is-neutral'); ?>">
+                    <span class="arim-myaccount-panel-kicker"><?php esc_html_e('Durum rehberi', 'arim'); ?></span>
+                    <h3><?php echo esc_html($support['title'] ?? __('Sipariş rehberi', 'arim')); ?></h3>
+                    <p><?php echo esc_html($support['text'] ?? ''); ?></p>
+
+                    <?php if (!empty($support['tips']) && is_array($support['tips'])) : ?>
+                        <ul>
+                            <?php foreach ($support['tips'] as $tip) : ?>
+                                <li><?php echo esc_html($tip); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+
+                    <?php if (!empty($support['meta']) && is_array($support['meta'])) : ?>
+                        <div class="arim-myaccount-view-order-support-meta">
+                            <?php foreach ($support['meta'] as $meta) : ?>
+                                <div class="arim-myaccount-view-order-support-meta-item">
+                                    <span><?php echo esc_html($meta['label'] ?? ''); ?></span>
+                                    <strong><?php echo esc_html($meta['value'] ?? '—'); ?></strong>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </aside>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 

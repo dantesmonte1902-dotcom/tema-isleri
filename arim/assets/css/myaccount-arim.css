@@ -1360,6 +1360,157 @@
     gap: 18px;
 }
 
+.arim-myaccount-view-order-extra-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.arim-myaccount-view-order-timeline-card,
+.arim-myaccount-view-order-support-card {
+    padding: 20px;
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: #fff;
+}
+
+.arim-myaccount-view-order-timeline {
+    display: grid;
+    gap: 14px;
+}
+
+.arim-myaccount-view-order-timeline-step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+}
+
+.arim-myaccount-view-order-timeline-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 24px;
+    bottom: -16px;
+    width: 2px;
+    background: #ececec;
+}
+
+.arim-myaccount-view-order-timeline-dot {
+    position: relative;
+    z-index: 1;
+    width: 16px;
+    height: 16px;
+    margin-top: 3px;
+    border-radius: 999px;
+    border: 3px solid #d8d8d8;
+    background: #fff;
+}
+
+.arim-myaccount-view-order-timeline-step strong,
+.arim-myaccount-view-order-timeline-step small {
+    display: block;
+}
+
+.arim-myaccount-view-order-timeline-step strong {
+    margin-bottom: 5px;
+    color: #222;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.arim-myaccount-view-order-timeline-step small {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.arim-myaccount-view-order-timeline-step.is-complete .arim-myaccount-view-order-timeline-dot {
+    border-color: #1f8a4c;
+    background: #1f8a4c;
+}
+
+.arim-myaccount-view-order-timeline-step.is-current .arim-myaccount-view-order-timeline-dot {
+    border-color: #f27a1a;
+    background: #fff3e7;
+}
+
+.arim-myaccount-view-order-timeline-step.is-issue .arim-myaccount-view-order-timeline-dot {
+    border-color: #c23955;
+    background: #ffedf0;
+}
+
+.arim-myaccount-view-order-support-card {
+    display: grid;
+    gap: 14px;
+}
+
+.arim-myaccount-view-order-support-card h3,
+.arim-myaccount-view-order-support-card p,
+.arim-myaccount-view-order-support-card ul {
+    margin: 0;
+}
+
+.arim-myaccount-view-order-support-card h3 {
+    color: #222;
+    font-size: 24px;
+}
+
+.arim-myaccount-view-order-support-card p,
+.arim-myaccount-view-order-support-card li {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.arim-myaccount-view-order-support-card ul {
+    padding-left: 18px;
+}
+
+.arim-myaccount-view-order-support-card.is-success {
+    background: linear-gradient(180deg, #f7fcf8 0%, #fff 100%);
+}
+
+.arim-myaccount-view-order-support-card.is-warning {
+    background: linear-gradient(180deg, #fffaf2 0%, #fff 100%);
+}
+
+.arim-myaccount-view-order-support-card.is-issue {
+    background: linear-gradient(180deg, #fff6f7 0%, #fff 100%);
+}
+
+.arim-myaccount-view-order-support-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.arim-myaccount-view-order-support-meta-item {
+    padding: 14px;
+    border-radius: 14px;
+    background: #fafafa;
+}
+
+.arim-myaccount-view-order-support-meta-item span,
+.arim-myaccount-view-order-support-meta-item strong {
+    display: block;
+}
+
+.arim-myaccount-view-order-support-meta-item span {
+    margin-bottom: 6px;
+    color: #666;
+    font-size: 12px;
+}
+
+.arim-myaccount-view-order-support-meta-item strong {
+    color: #222;
+    font-size: 14px;
+    line-height: 1.6;
+    word-break: break-word;
+}
+
 .arim-myaccount-view-order-contact-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1586,6 +1737,7 @@
     .arim-myaccount-account-summary,
     .arim-myaccount-view-order-layout,
     .arim-myaccount-view-order-summary,
+    .arim-myaccount-view-order-extra-grid,
     .arim-myaccount-view-order-contact-grid {
         grid-template-columns: 1fr;
     }
@@ -1609,6 +1761,10 @@
     .arim-myaccount-account-summary,
     .arim-myaccount-view-order-summary {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .arim-myaccount-view-order-support-meta {
+        grid-template-columns: 1fr;
     }
 
     .arim-myaccount-view-order-contact-grid {
@@ -1707,6 +1863,10 @@
 
     .arim-myaccount-view-order-item-total {
         text-align: left;
+    }
+
+    .arim-myaccount-view-order-support-meta {
+        grid-template-columns: 1fr;
     }
 
     .arim-myaccount-view-order-details .shop_table th,

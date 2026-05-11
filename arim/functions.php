@@ -1400,8 +1400,10 @@ function arim_myaccount_view_order_data($order) {
             'summary'   => [],
             'status'    => [],
             'items'     => [],
-            'highlights'=> [],
-            'contacts'  => [],
+            'highlights' => [],
+            'timeline'   => [],
+            'support'    => [],
+            'contacts'   => [],
             'actions'   => [],
             'campaigns' => arim_single_product_campaigns(2),
             'links'     => [
@@ -1416,10 +1418,13 @@ function arim_myaccount_view_order_data($order) {
     $status_label = wc_get_order_status_name($order->get_status());
     $item_count   = max(0, $order->get_item_count() - $order->get_item_count_refunded());
     $needs_payment = $order->needs_payment();
+    $is_paid       = method_exists($order, 'is_paid') ? $order->is_paid() : !$needs_payment;
     $has_shipping  = count($order->get_shipping_methods()) > 0;
     $has_digital   = $order->has_downloadable_item();
     $billing_name  = method_exists($order, 'get_formatted_billing_full_name') ? trim($order->get_formatted_billing_full_name()) : trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
     $shipping_name = method_exists($order, 'get_formatted_shipping_full_name') ? trim($order->get_formatted_shipping_full_name()) : trim($order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name());
+    $customer_note = trim((string) $order->get_customer_note());
+    $transaction_id = trim((string) $order->get_transaction_id());
 
     if ($order->has_status(['pending', 'processing', 'on-hold'])) {
         $hero_text = __('Siparişin hazırlanıyor. Ürün hareketleri, teslimat akışı ve sonraki adımlar bu alanda düzenli şekilde görünür.', 'arim');
@@ -1466,6 +1471,94 @@ function arim_myaccount_view_order_data($order) {
         [
             'label' => __('İçerik tipi', 'arim'),
             'value' => $has_digital ? __('İndirilebilir ürün içeriyor', 'arim') : __('Standart ürün siparişi', 'arim'),
+        ],
+    ];
+
+    $timeline = [
+        [
+            'label' => __('Sipariş alındı', 'arim'),
+            'date'  => $order->get_date_created() ? wc_format_datetime($order->get_date_created()) : '',
+            'state' => 'complete',
+        ],
+        [
+            'label' => $needs_payment ? __('Ödeme bekleniyor', 'arim') : __('Ödeme onayı', 'arim'),
+            'date'  => $order->get_date_paid() ? wc_format_datetime($order->get_date_paid()) : '',
+            'state' => $is_paid ? 'complete' : ($order->has_status(['failed', 'cancelled']) ? 'issue' : 'current'),
+        ],
+        [
+            'label' => __('Hazırlık ve paketleme', 'arim'),
+            'date'  => $order->get_date_modified() ? wc_format_datetime($order->get_date_modified()) : '',
+            'state' => $order->has_status(['processing', 'completed', 'refunded']) ? 'complete' : ($order->has_status(['cancelled', 'failed']) ? 'issue' : 'pending'),
+        ],
+        [
+            'label' => $order->has_status('completed')
+                ? __('Teslimat tamamlandı', 'arim')
+                : ($order->has_status('refunded')
+                    ? __('İade tamamlandı', 'arim')
+                    : ($order->has_status(['cancelled', 'failed'])
+                        ? __('İşlem aksiyonu gerekiyor', 'arim')
+                        : __('Teslimat / sonuç adımı', 'arim'))),
+            'date'  => $order->get_date_completed() ? wc_format_datetime($order->get_date_completed()) : '',
+            'state' => $order->has_status('completed')
+                ? 'complete'
+                : ($order->has_status(['cancelled', 'failed', 'refunded'])
+                    ? 'issue'
+                    : ($order->has_status(['processing', 'on-hold'])
+                        ? 'current'
+                        : 'pending')),
+        ],
+    ];
+
+    if ($order->has_status(['cancelled', 'failed', 'refunded'])) {
+        $support_title = __('Siparişte işlem notu var', 'arim');
+        $support_text  = __('Bu siparişte iptal, başarısız ödeme veya iade akışı bulunuyor. Sipariş referanslarını kontrol ederek bir sonraki adıma hızlıca geçebilirsin.', 'arim');
+        $support_tips  = [
+            __('E-posta gelen kutunda ödeme veya iade bilgilendirmelerini kontrol et.', 'arim'),
+            __('Gerekirse hesap bilgilerini ve adres kayıtlarını güncelleyerek yeni sipariş akışını hızlandır.', 'arim'),
+            __('Sorun yaşayan ürünler için sipariş geçmişinden yeniden işlem başlatabilirsin.', 'arim'),
+        ];
+        $support_state = 'is-issue';
+    } elseif ($needs_payment) {
+        $support_title = __('Ödeme adımı tamamlanmayı bekliyor', 'arim');
+        $support_text  = __('Sipariş oluşturuldu ancak ödeme henüz doğrulanmadı. Sağlanan ödeme aksiyonunu kullanarak işlemi tamamlayabilir veya hesap bilgilerinden iletişim detaylarını güncelleyebilirsin.', 'arim');
+        $support_tips  = [
+            __('Kart veya ödeme yöntemi bilgilerini tekrar kontrol et.', 'arim'),
+            __('Fatura e-postasının doğru olduğundan emin ol; doğrulama bildirimleri bu kanala gönderilir.', 'arim'),
+            __('Siparişi tamamladıktan sonra teslimat akışı bu ekranda görünmeye devam eder.', 'arim'),
+        ];
+        $support_state = 'is-warning';
+    } elseif ($order->has_status('completed')) {
+        $support_title = __('Sipariş tamamlandı', 'arim');
+        $support_text  = __('Teslimat süreci tamamlandı. Aynı ürünlere yeniden dönmek, hesap bilgilerini güncellemek veya geçmiş siparişleri gözden geçirmek için aşağıdaki referans alanını kullanabilirsin.', 'arim');
+        $support_tips  = [
+            __('Beğendiğin ürünleri favorilere ekleyerek yeniden sipariş süresini kısaltabilirsin.', 'arim'),
+            __('Fatura ve teslimat iletişim bilgilerini güncel tutmak sonraki siparişlerde hız kazandırır.', 'arim'),
+            __('Destek veya iade ihtiyacında sipariş numaranı hazır tutman yeterlidir.', 'arim'),
+        ];
+        $support_state = 'is-success';
+    } else {
+        $support_title = __('Sipariş hazırlık aşamasında', 'arim');
+        $support_text  = __('Siparişin işleniyor. Ödeme, hazırlık ve teslimat akışını yukarıdaki zaman çizelgesinden izleyebilir; iletişim bilgilerini bu ekrandan güncel tutabilirsin.', 'arim');
+        $support_tips  = [
+            __('Teslimat adresini ve telefonunu eksiksiz tutman kargo gecikmelerini azaltır.', 'arim'),
+            __('Sipariş durum güncellemeleri e-posta üzerinden de paylaşılır.', 'arim'),
+            __('Hazırlık tamamlandığında teslimat adımı bu ekranda otomatik olarak güncellenir.', 'arim'),
+        ];
+        $support_state = 'is-neutral';
+    }
+
+    $support_meta = [
+        [
+            'label' => __('Sipariş no', 'arim'),
+            'value' => sprintf('#%s', $order->get_order_number()),
+        ],
+        [
+            'label' => __('İşlem referansı', 'arim'),
+            'value' => $transaction_id !== '' ? $transaction_id : __('Ödeme sağlayıcısında görünür', 'arim'),
+        ],
+        [
+            'label' => __('Müşteri notu', 'arim'),
+            'value' => $customer_note !== '' ? wp_strip_all_tags($customer_note) : __('Ek sipariş notu bulunmuyor', 'arim'),
         ],
     ];
 
@@ -1529,6 +1622,14 @@ function arim_myaccount_view_order_data($order) {
         ],
         'items' => $items,
         'highlights' => $highlights,
+        'timeline' => $timeline,
+        'support' => [
+            'title' => $support_title,
+            'text'  => $support_text,
+            'tips'  => $support_tips,
+            'meta'  => $support_meta,
+            'state' => $support_state,
+        ],
         'contacts' => $contacts,
         'actions' => wc_get_account_orders_actions($order),
         'campaigns' => arim_single_product_campaigns(2),
