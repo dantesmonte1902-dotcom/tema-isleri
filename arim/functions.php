@@ -1059,14 +1059,29 @@ function arim_checkout_delivery_details() {
     ];
 }
 
+/**
+ * Canlı arama için minimum karakter sayısını döndürür.
+ *
+ * @return int
+ */
 function arim_live_search_min_chars() {
     return max(1, (int) apply_filters('arim_live_search_min_chars', 2));
 }
 
+/**
+ * Canlı arama istekleri için debounce süresini milisaniye cinsinden döndürür.
+ *
+ * @return int
+ */
 function arim_live_search_debounce_ms() {
     return max(100, (int) apply_filters('arim_live_search_debounce_ms', 220));
 }
 
+/**
+ * Canlı arama sorgusu için izin verilen maksimum karakter uzunluğunu döndürür.
+ *
+ * @return int
+ */
 function arim_live_search_max_query_length() {
     return max(10, (int) apply_filters('arim_live_search_max_query_length', 100));
 }
