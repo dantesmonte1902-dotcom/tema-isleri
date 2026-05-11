@@ -1,0 +1,51 @@
+<?php
+defined('ABSPATH') || exit;
+
+get_header();
+
+$shop_url = function_exists('arim_shop_url') ? arim_shop_url() : home_url('/shop');
+?>
+
+<div class="arim-favorites-page">
+    <div class="arim-container">
+        <header class="arim-favorites-header">
+            <h1><?php esc_html_e('Favorilerim', 'arim'); ?></h1>
+            <p><?php esc_html_e('Beğendiğin ürünleri kaydet, öne çıkan fırsatları tek bakışta karşılaştır ve dilediğin zaman alışverişe geri dön.', 'arim'); ?></p>
+        </header>
+
+        <section class="arim-favorites-hero">
+            <div class="arim-favorites-hero-copy">
+                <span class="arim-favorites-hero-badge"><?php esc_html_e('Senin için hazırlandı', 'arim'); ?></span>
+                <h2><?php esc_html_e('Kişisel vitrinini oluştur', 'arim'); ?></h2>
+                <p><?php esc_html_e('Favorilediğin ürünler burada birikir; indirimdekileri öne çıkarır, avantaj toplamını gösterir ve hızlı geri dönüş sağlar.', 'arim'); ?></p>
+            </div>
+
+            <div class="arim-favorites-summary" data-arim-favorites-summary>
+                <div class="arim-favorites-stat">
+                    <span><?php esc_html_e('Ürün', 'arim'); ?></span>
+                    <strong data-arim-favorites-count>0</strong>
+                </div>
+                <div class="arim-favorites-stat">
+                    <span><?php esc_html_e('İndirimli', 'arim'); ?></span>
+                    <strong data-arim-favorites-sale-count>0</strong>
+                </div>
+                <div class="arim-favorites-stat">
+                    <span><?php esc_html_e('Toplam Avantaj', 'arim'); ?></span>
+                    <strong data-arim-favorites-savings>₺0</strong>
+                </div>
+            </div>
+        </section>
+
+        <div class="arim-favorites-toolbar">
+            <a class="arim-favorites-toolbar-link is-primary" href="<?php echo esc_url($shop_url); ?>">
+                <?php esc_html_e('Yeni ürünler keşfet', 'arim'); ?>
+            </a>
+            <span class="arim-favorites-toolbar-note"><?php esc_html_e('Kalp ikonuyla eklediğin ürünler bu sayfada otomatik olarak görünür.', 'arim'); ?></span>
+        </div>
+
+        <div class="arim-favorites-dynamic" data-arim-favorites-page></div>
+    </div>
+</div>
+
+<?php
+get_footer();

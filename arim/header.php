@@ -11,6 +11,7 @@ $header_categories = get_terms([
 $shop_url    = function_exists('arim_shop_url') ? arim_shop_url() : home_url('/shop');
 $account_url = function_exists('arim_account_url') ? arim_account_url() : wp_login_url();
 $cart_url    = function_exists('arim_cart_url') ? arim_cart_url() : home_url('/cart');
+$favorites_url = function_exists('arim_favorites_url') ? arim_favorites_url() : add_query_arg('arim_favorites', '1', home_url('/'));
 
 $header_campaign_links = [
     [
@@ -98,7 +99,7 @@ $header_campaign_links = [
                         <span class="arim-header-action-text"><?php esc_html_e('Hesabım', 'arim'); ?></span>
                     </a>
 
-                    <a class="arim-header-action" href="<?php echo esc_url(home_url('/favorites')); ?>">
+                    <a class="arim-header-action" href="<?php echo esc_url($favorites_url); ?>">
                         <span class="arim-header-action-icon">♡</span>
                         <span class="arim-header-action-text"><?php esc_html_e('Favoriler', 'arim'); ?></span>
                         <span class="arim-cart-badge arim-favorites-count">0</span>
@@ -203,7 +204,7 @@ $header_campaign_links = [
                 <a href="<?php echo esc_url($shop_url); ?>"><?php esc_html_e('Tüm Ürünler', 'arim'); ?></a>
                 <a href="<?php echo esc_url($account_url); ?>"><?php esc_html_e('Hesabım', 'arim'); ?></a>
                 <a href="<?php echo esc_url($cart_url); ?>"><?php esc_html_e('Sepetim', 'arim'); ?></a>
-                <a href="<?php echo esc_url(home_url('/favorites')); ?>"><?php esc_html_e('Favoriler', 'arim'); ?></a>
+                <a href="<?php echo esc_url($favorites_url); ?>"><?php esc_html_e('Favoriler', 'arim'); ?></a>
 
                 <div class="arim-mobile-menu-divider"></div>
 

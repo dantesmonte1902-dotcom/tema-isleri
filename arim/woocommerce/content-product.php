@@ -13,7 +13,10 @@ $image_url   = $image_id ? wp_get_attachment_image_url($image_id, 'woocommerce_t
 $rating      = $product->get_average_rating();
 $reviews     = $product->get_review_count();
 $price_html  = $product->get_price_html();
+$price_text  = trim(preg_replace('/\s+/', ' ', wp_strip_all_tags($price_html)));
 $product_url = get_permalink($product_id);
+$current_price_value = (float) $product->get_price();
+$regular_price_value = (float) $product->get_regular_price();
 
 $brand = get_post_meta($product_id, 'brand', true);
 
@@ -43,9 +46,14 @@ if ($product->is_on_sale()) {
                     aria-label="<?php esc_attr_e('Favorilere ekle', 'arim'); ?>"
                     data-product-id="<?php echo esc_attr($product_id); ?>"
                     data-product-title="<?php echo esc_attr($product->get_name()); ?>"
-                    data-product-price="<?php echo esc_attr(wp_strip_all_tags($price_html)); ?>"
+                    data-product-price="<?php echo esc_attr($price_text); ?>"
                     data-product-image="<?php echo esc_url($image_url); ?>"
                     data-product-url="<?php echo esc_url($product_url); ?>"
+                    data-product-brand="<?php echo esc_attr($brand ? $brand : __('ARIM', 'arim')); ?>"
+                    data-product-store="<?php echo esc_attr(__('ARIM Store', 'arim')); ?>"
+                    data-product-badge="<?php echo esc_attr($badge_text); ?>"
+                    data-product-current-price="<?php echo esc_attr($current_price_value); ?>"
+                    data-product-regular-price="<?php echo esc_attr($regular_price_value); ?>"
                 >♡</button>
 
                 <?php if ($badge_text) : ?>

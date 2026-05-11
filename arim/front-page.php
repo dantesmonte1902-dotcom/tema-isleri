@@ -353,6 +353,9 @@ function arim_render_home_product_card_v5($product, $badge = '', $context = 'sli
     $reviews       = $product->get_review_count();
     $product_url   = get_permalink($product_id);
     $price_html    = $product->get_price_html();
+    $price_text    = trim(preg_replace('/\s+/', ' ', wp_strip_all_tags($price_html)));
+    $current_price_value = (float) $product->get_price();
+    $regular_price_value = (float) $product->get_regular_price();
     $article_class = 'arim-v5-product-card';
 
     if ($context === 'slider') {
@@ -377,9 +380,14 @@ function arim_render_home_product_card_v5($product, $badge = '', $context = 'sli
                     aria-label="<?php esc_attr_e('Favorilere ekle', 'arim'); ?>"
                     data-product-id="<?php echo esc_attr($product_id); ?>"
                     data-product-title="<?php echo esc_attr($product->get_name()); ?>"
-                    data-product-price="<?php echo esc_attr(wp_strip_all_tags($price_html)); ?>"
+                    data-product-price="<?php echo esc_attr($price_text); ?>"
                     data-product-image="<?php echo esc_url($image_url); ?>"
                     data-product-url="<?php echo esc_url($product_url); ?>"
+                    data-product-brand="<?php echo esc_attr($brand ? $brand : __('ARIM', 'arim')); ?>"
+                    data-product-store="<?php echo esc_attr($store_name); ?>"
+                    data-product-badge="<?php echo esc_attr($badge ? $badge : $micro_badge); ?>"
+                    data-product-current-price="<?php echo esc_attr($current_price_value); ?>"
+                    data-product-regular-price="<?php echo esc_attr($regular_price_value); ?>"
                 >♡</button>
 
                 <?php if ($badge) : ?>

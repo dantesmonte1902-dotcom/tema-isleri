@@ -31,20 +31,42 @@ add_action('after_setup_theme', 'arim_theme_setup');
  * CSS ve JS yükle
  */
 function arim_enqueue_assets() {
+    $theme_style_path = get_stylesheet_directory() . '/style.css';
+    $theme_js_path    = get_template_directory() . '/assets/js/arim-theme.js';
+
     wp_enqueue_style(
         'arim-style',
         get_stylesheet_uri(),
         [],
-        '1.0.0'
+        file_exists($theme_style_path) ? (string) filemtime($theme_style_path) : '1.0.0'
     );
 
     wp_enqueue_script(
         'arim-theme-js',
         get_template_directory_uri() . '/assets/js/arim-theme.js',
         [],
-        '1.0.0',
+        file_exists($theme_js_path) ? (string) filemtime($theme_js_path) : '1.0.0',
         true
     );
+
+    wp_localize_script('arim-theme-js', 'arimTheme', [
+        'favoritesUrl' => arim_favorites_url(),
+        'shopUrl'      => arim_shop_url(),
+        'labels'       => [
+            'favoritesTitle'       => __('Favorilerim', 'arim'),
+            'favoritesDescription' => __('Beğendiğin ürünleri burada sakla, karşılaştır ve alışverişe kaldığın yerden devam et.', 'arim'),
+            'favoritesEmptyTitle'  => __('Favori listen henüz boş', 'arim'),
+            'favoritesEmptyText'   => __('Beğendiğin ürünleri kalp ikonuyla favorilerine ekle, hepsini tek ekranda yeniden keşfet.', 'arim'),
+            'browseProducts'       => __('Ürünleri Keşfet', 'arim'),
+            'viewProduct'          => __('Ürünü İncele', 'arim'),
+            'removeFavorite'       => __('Favorilerden kaldır', 'arim'),
+            'addedToFavorites'     => __('Favorilere eklendi', 'arim'),
+            'addToFavorites'       => __('Favorilere ekle', 'arim'),
+            'itemsLabel'           => __('Ürün', 'arim'),
+            'saleItemsLabel'       => __('İndirimli', 'arim'),
+            'savingsLabel'         => __('Toplam Avantaj', 'arim'),
+        ],
+    ]);
 
     if (is_front_page()) {
         wp_enqueue_style(
@@ -852,6 +874,53 @@ function arim_checkout_url() {
 
     return home_url('/checkout');
 }
+
+function arim_favorites_url() {
+    return add_query_arg('arim_favorites', '1', home_url('/'));
+}
+
+function arim_is_favorites_page() {
+    if (is_admin()) {
+        return false;
+    }
+
+    return isset($_GET['arim_favorites']) && sanitize_text_field(wp_unslash($_GET['arim_favorites'])) === '1';
+}
+
+function arim_favorites_template($template) {
+    if (!arim_is_favorites_page()) {
+        return $template;
+    }
+
+    $favorites_template = get_template_directory() . '/favorites-template.php';
+
+    if (file_exists($favorites_template)) {
+        return $favorites_template;
+    }
+
+    return $template;
+}
+add_filter('template_include', 'arim_favorites_template');
+
+function arim_favorites_document_title_parts($title_parts) {
+    if (!arim_is_favorites_page()) {
+        return $title_parts;
+    }
+
+    $title_parts['title'] = __('Favorilerim', 'arim');
+
+    return $title_parts;
+}
+add_filter('document_title_parts', 'arim_favorites_document_title_parts');
+
+function arim_favorites_body_class($classes) {
+    if (arim_is_favorites_page()) {
+        $classes[] = 'arim-favorites-template';
+    }
+
+    return $classes;
+}
+add_filter('body_class', 'arim_favorites_body_class');
 
 
 /**
