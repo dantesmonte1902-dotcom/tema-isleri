@@ -538,15 +538,17 @@ function arim_render_homepage_section($key, $callback, &$sections) {
     ];
 }
 
+$marketplace_label_limit = 8;
+
 $marketplace_labels = arim_home_collect_brand_names(
     array_merge($featured_products, $showcase_1_products, $showcase_2_products, $showcase_3_products),
-    8
+    $marketplace_label_limit
 );
 
 if (empty($marketplace_labels) && !empty($homepage_categories)) {
     $marketplace_labels = array_values(array_filter(array_map(static function($term) {
         return (is_object($term) && isset($term->name)) ? $term->name : '';
-    }, array_slice($homepage_categories, 0, 8))));
+    }, array_slice($homepage_categories, 0, $marketplace_label_limit))));
 }
 ?>
 

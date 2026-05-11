@@ -882,6 +882,10 @@ function arim_live_search_debounce_ms() {
     return max(100, (int) apply_filters('arim_live_search_debounce_ms', 220));
 }
 
+function arim_live_search_max_query_length() {
+    return max(10, (int) apply_filters('arim_live_search_max_query_length', 100));
+}
+
 function arim_public_product_search_ajax() {
     check_ajax_referer('arim_public_product_search', 'nonce');
 
@@ -890,7 +894,7 @@ function arim_public_product_search_ajax() {
     }
 
     $query = isset($_POST['q']) ? sanitize_text_field(wp_unslash($_POST['q'])) : '';
-    $query = mb_substr($query, 0, 100);
+    $query = mb_substr($query, 0, arim_live_search_max_query_length());
 
     if (mb_strlen($query) < arim_live_search_min_chars()) {
         wp_send_json_success([
