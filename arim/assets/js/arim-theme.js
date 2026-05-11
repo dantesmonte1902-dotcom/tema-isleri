@@ -3,8 +3,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const favoriteStorageKey = 'arimFavorites';
     const favoriteLabels = themeConfig.labels || {};
     const activeIntervals = [];
+    const currencyFormatter = typeof Intl !== 'undefined' && typeof Intl.NumberFormat === 'function'
+        ? new Intl.NumberFormat('tr-TR', {
+            style: 'currency',
+            currency: 'TRY',
+            maximumFractionDigits: 0,
+        })
+        : null;
 
-    function registerInterval(callback, delay) {
+    function trackInterval(callback, delay) {
         const intervalId = window.setInterval(callback, delay);
         activeIntervals.push(intervalId);
         return intervalId;
@@ -82,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
         showSlide(current);
 
         if (slides.length > 1) {
-            registerInterval(nextSlide, 5000);
+            trackInterval(nextSlide, 5000);
         }
     });
 
@@ -216,11 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function formatCurrency(amount) {
         try {
-            return new Intl.NumberFormat('tr-TR', {
-                style: 'currency',
-                currency: 'TRY',
-                maximumFractionDigits: 0,
-            }).format(amount);
+            return currencyFormatter ? currencyFormatter.format(amount) : '₺' + Math.round(amount);
         } catch (error) {
             return '₺' + Math.round(amount);
         }

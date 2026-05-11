@@ -879,12 +879,18 @@ function arim_favorites_url() {
     return add_query_arg('arim_favorites', '1', home_url('/'));
 }
 
+function arim_get_frontend_query_flag($key) {
+    $value = filter_input(INPUT_GET, $key, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+    return is_string($value) ? sanitize_text_field($value) : '';
+}
+
 function arim_is_favorites_page() {
     if (is_admin()) {
         return false;
     }
 
-    return isset($_GET['arim_favorites']) && sanitize_text_field(wp_unslash($_GET['arim_favorites'])) === '1';
+    return arim_get_frontend_query_flag('arim_favorites') === '1';
 }
 
 function arim_favorites_template($template) {

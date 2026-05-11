@@ -538,13 +538,13 @@ function arim_render_homepage_section($key, $callback, &$sections) {
     ];
 }
 
-$marketplace_brands = arim_home_collect_brand_names(
+$marketplace_highlights = arim_home_collect_brand_names(
     array_merge($featured_products, $showcase_1_products, $showcase_2_products, $showcase_3_products),
     8
 );
 
-if (empty($marketplace_brands) && !empty($homepage_categories)) {
-    $marketplace_brands = array_map(static function($term) {
+if (empty($marketplace_highlights) && !empty($homepage_categories)) {
+    $marketplace_highlights = array_map(static function($term) {
         return $term->name;
     }, array_slice($homepage_categories, 0, 8));
 }
@@ -921,7 +921,7 @@ arim_render_homepage_section('showcase_3', [
 arim_render_homepage_section('seo', [
     'order'   => $section_order_seo,
     'enabled' => $show_seo,
-    'render'  => function() use ($homepage_categories, $featured_products, $marketplace_brands, $shop_url, $account_url) {
+    'render'  => function() use ($homepage_categories, $featured_products, $marketplace_highlights, $shop_url, $account_url) {
         ?>
         <section class="arim-v6-marketplace">
             <div class="arim-container">
@@ -942,7 +942,7 @@ arim_render_homepage_section('seo', [
                                 <span><?php esc_html_e('Öne çıkan ürün', 'arim'); ?></span>
                             </div>
                             <div>
-                                <strong><?php echo esc_html(count($marketplace_brands)); ?>+</strong>
+                                <strong><?php echo esc_html(count($marketplace_highlights)); ?>+</strong>
                                 <span><?php esc_html_e('Marka / mağaza teması', 'arim'); ?></span>
                             </div>
                         </div>
@@ -957,7 +957,7 @@ arim_render_homepage_section('seo', [
                         <div class="arim-v6-marketplace-card">
                             <h3><?php esc_html_e('Öne çıkan marka akışı', 'arim'); ?></h3>
                             <div class="arim-v6-brand-cloud">
-                                <?php foreach ($marketplace_brands as $brand_name) : ?>
+                                <?php foreach ($marketplace_highlights as $brand_name) : ?>
                                     <span><?php echo esc_html($brand_name); ?></span>
                                 <?php endforeach; ?>
                             </div>
