@@ -4,6 +4,7 @@ defined('ABSPATH') || exit;
 $orders_page_data = arim_myaccount_orders_page_data();
 $order_stats      = isset($orders_page_data['stats']) && is_array($orders_page_data['stats']) ? $orders_page_data['stats'] : [];
 $spotlight        = isset($orders_page_data['spotlight']) && is_array($orders_page_data['spotlight']) ? $orders_page_data['spotlight'] : [];
+$guide            = isset($orders_page_data['guide']) && is_array($orders_page_data['guide']) ? $orders_page_data['guide'] : [];
 $campaigns        = isset($orders_page_data['campaigns']) && is_array($orders_page_data['campaigns']) ? $orders_page_data['campaigns'] : [];
 $support_url      = !empty($orders_page_data['supportUrl']) ? $orders_page_data['supportUrl'] : wc_get_account_endpoint_url('edit-account');
 
@@ -51,6 +52,22 @@ if ($has_orders) : ?>
                 </div>
             </div>
 
+            <?php if (!empty($guide)) : ?>
+                <div class="arim-myaccount-orders-guide <?php echo esc_attr($guide['state'] ?? 'is-success'); ?>">
+                    <span class="arim-myaccount-panel-kicker"><?php echo esc_html($guide['badge'] ?? __('Sipariş sağlığı', 'arim')); ?></span>
+                    <h3><?php echo esc_html($guide['title'] ?? __('Sipariş rehberi', 'arim')); ?></h3>
+                    <p><?php echo esc_html($guide['text'] ?? ''); ?></p>
+
+                    <?php if (!empty($guide['items']) && is_array($guide['items'])) : ?>
+                        <ul>
+                            <?php foreach ($guide['items'] as $guide_item) : ?>
+                                <li><?php echo esc_html($guide_item); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
             <?php if (!empty($campaigns)) : ?>
                 <div class="arim-myaccount-orders-campaigns">
                     <span class="arim-myaccount-panel-kicker"><?php esc_html_e('Sipariş öncesi fırsatlar', 'arim'); ?></span>
@@ -81,6 +98,7 @@ if ($has_orders) : ?>
                     foreach ($customer_orders->orders as $customer_order) {
                         $order = wc_get_order($customer_order);
                         $item_count = $order->get_item_count() - $order->get_item_count_refunded();
+                        $status_note = arim_myaccount_order_status_note($order);
                         ?>
                         <tr class="woocommerce-orders-table__row woocommerce-orders-table__row--status-<?php echo esc_attr($order->get_status()); ?> order">
                             <?php foreach (wc_get_account_orders_columns() as $column_id => $column_name) : ?>
@@ -99,20 +117,24 @@ if ($has_orders) : ?>
                                         </time>
 
                                      <?php elseif ('order-status' === $column_id) : ?>
-                                         <span class="arim-order-status-pill is-<?php echo esc_attr(sanitize_html_class($order->get_status())); ?>">
-                                             <?php echo esc_html(wc_get_order_status_name($order->get_status())); ?>
-                                         </span>
-
-                                     <?php elseif ('order-total' === $column_id) : ?>
-                                         <?php
-                                         printf(
-                                            _n('%1$s for %2$s item', '%1$s for %2$s items', $item_count, 'woocommerce'),
-                                            $order->get_formatted_order_total(),
-                                            $item_count
-                                        );
-                                        ?>
-
-                                    <?php elseif ('order-actions' === $column_id) : ?>
+                                          <span class="arim-order-status-pill is-<?php echo esc_attr(sanitize_html_class($order->get_status())); ?>">
+                                              <?php echo esc_html(wc_get_order_status_name($order->get_status())); ?>
+                                          </span>
+                                          <?php if ($status_note !== '') : ?>
+                                              <small class="arim-orders-table-note"><?php echo esc_html($status_note); ?></small>
+                                          <?php endif; ?>
+ 
+                                      <?php elseif ('order-total' === $column_id) : ?>
+                                          <?php
+                                          printf(
+                                              /* translators: 1: formatted total, 2: item count */
+                                              _n('%1$s · %2$s ürün', '%1$s · %2$s ürün', $item_count, 'arim'),
+                                              wp_kses_post($order->get_formatted_order_total()),
+                                              number_format_i18n($item_count)
+                                          );
+                                         ?>
+ 
+                                     <?php elseif ('order-actions' === $column_id) : ?>
                                         <?php
                                         $actions = wc_get_account_orders_actions($order);
 

@@ -128,3 +128,8 @@ Geliştirilen Özellikler
 - Sipariş detay ekranına ödeme, teslimat modeli, destek kanalı ve içerik tipi özetlerini taşıyan ek bilgi kartları yerleştirildi.
 - Sipariş akışını takip etmek için tarih bazlı zaman çizelgesi eklenerek ödeme, hazırlık ve sonuç adımları tek bakışta izlenebilir hale getirildi.
 - Duruma göre değişen rehber paneliyle ödeme bekleyen, tamamlanan veya sorunlu siparişler için referans ve sonraki adım notları görünür kılındı.
+
+16. Siparişlerim Sayfası Ek Rehber Geliştirmeleri
+- Siparişlerim ekranına aktif teslimat, sorunlu sipariş veya sakin akış durumlarına göre değişen ayrı bir sipariş sağlığı paneli eklendi.
+- Sipariş tablosunda durum satırlarına kısa açıklama metinleri eklenerek ödeme, hazırlık, teslimat ve sorunlu akışlar daha anlaşılır hale getirildi.
+- Sipariş toplamı hücreleri ürün adediyle Türkçe biçimde yeniden düzenlenerek tablo okunabilirliği artırıldı.

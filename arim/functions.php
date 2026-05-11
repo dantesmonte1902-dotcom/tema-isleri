@@ -1310,6 +1310,40 @@ function arim_myaccount_dashboard_data() {
 }
 
 /**
+ * Sipariş durumuna göre kısa rehber metni döndürür.
+ *
+ * @param WC_Order|int $order Sipariş nesnesi veya sipariş ID'si.
+ * @return string
+ */
+function arim_myaccount_order_status_note($order) {
+    if (!$order instanceof WC_Order) {
+        $order = function_exists('wc_get_order') ? wc_get_order($order) : false;
+    }
+
+    if (!$order instanceof WC_Order) {
+        return '';
+    }
+
+    if ($order->has_status('completed')) {
+        return __('Teslimat tamamlandı; gerekirse sipariş detayından ürün ve fatura bilgilerini tekrar görüntüleyebilirsin.', 'arim');
+    }
+
+    if ($order->has_status(['cancelled', 'failed', 'refunded'])) {
+        return __('Bu siparişte işlem notu bulunuyor; detay ekranından durum ve sonraki adımları kontrol etmen önerilir.', 'arim');
+    }
+
+    if ($order->needs_payment()) {
+        return __('Ödeme tamamlandığında teslimat ve hazırlık akışı otomatik olarak güncellenir.', 'arim');
+    }
+
+    if ($order->has_status(['processing', 'on-hold'])) {
+        return __('Siparişin hazırlanıyor; adres ve iletişim bilgilerini güncel tutarak teslimat sürecini hızlandırabilirsin.', 'arim');
+    }
+
+    return __('Sipariş detay ekranından ödeme, teslimat ve destek adımlarını tek yerden takip edebilirsin.', 'arim');
+}
+
+/**
  * Siparişlerim sayfası için özet verileri döndürür.
  *
  * @return array<string, mixed>
@@ -1321,6 +1355,7 @@ function arim_myaccount_orders_page_data() {
         return [
             'stats'      => [],
             'spotlight'  => [],
+            'guide'      => [],
             'campaigns'  => arim_single_product_campaigns(2),
             'supportUrl' => arim_account_url(),
         ];
@@ -1375,9 +1410,54 @@ function arim_myaccount_orders_page_data() {
             : __('Sipariş verdiğinde teslimat, destek ve sipariş özeti alanları bu ekranda görünür olur. İstersen favorilere dönerek alışverişe kaldığın yerden devam edebilirsin.', 'arim'),
     ];
 
+    if ($stats['issue'] > 0) {
+        $guide = [
+            'badge' => __('Dikkat gereken siparişler', 'arim'),
+            'title' => __('Bazı siparişlerinde işlem takibi gerekebilir', 'arim'),
+            'text'  => __('İptal, iade veya başarısız ödeme durumları bulunan siparişleri önce detay ekranından kontrol ederek sonraki adımı belirlemen önerilir.', 'arim'),
+            'items' => [
+                sprintf(
+                    _n('%s siparişte işlem notu bulunuyor', '%s siparişte işlem notu bulunuyor', $stats['issue'], 'arim'),
+                    number_format_i18n($stats['issue'])
+                ),
+                __('Sorunlu siparişlerde ödeme, iade veya destek notları detay ekranında görünür.', 'arim'),
+                __('İletişim ve adres bilgilerini güncel tutmak yeni sipariş akışında tekrar sorun yaşanmasını azaltır.', 'arim'),
+            ],
+            'state' => 'is-issue',
+        ];
+    } elseif ($stats['active'] > 0) {
+        $guide = [
+            'badge' => __('Aktif teslimat ritmi', 'arim'),
+            'title' => __('Hazırlık ve teslimat sürecin devam ediyor', 'arim'),
+            'text'  => __('Aktif siparişlerin için ödeme, hazırlık ve sonuç adımları hesap alanındaki sipariş detaylarında görünür. Güncel iletişim bilgileri teslimat sürecini daha akıcı hale getirir.', 'arim'),
+            'items' => [
+                sprintf(
+                    _n('%s aktif sipariş izleniyor', '%s aktif sipariş izleniyor', $stats['active'], 'arim'),
+                    number_format_i18n($stats['active'])
+                ),
+                __('Sipariş durum değişimleri tamamlandıkça detay sayfasındaki zaman çizelgesi güncellenir.', 'arim'),
+                __('Adres ve telefon bilgisini kontrol etmek kargo gecikmelerini azaltır.', 'arim'),
+            ],
+            'state' => 'is-warning',
+        ];
+    } else {
+        $guide = [
+            'badge' => __('Sipariş akışın sakin', 'arim'),
+            'title' => __('Yeni siparişler için panelin hazır', 'arim'),
+            'text'  => __('Tamamlanan siparişlerini geçmiş olarak saklayabilir, yeni alışverişler başladığında aynı ekrandan durum takibini sürdürebilirsin.', 'arim'),
+            'items' => [
+                __('Tamamlanan siparişleri detay ekranından yeniden inceleyebilir ve fatura/teslimat özetini görebilirsin.', 'arim'),
+                __('Favoriler ve mağaza bağlantıları yeni sipariş akışını başlatmak için hazır tutulur.', 'arim'),
+                __('Hesap alanındaki iletişim bilgileri, sonraki siparişlerde daha hızlı teslimat koordinasyonu sağlar.', 'arim'),
+            ],
+            'state' => 'is-success',
+        ];
+    }
+
     return [
         'stats'      => $stats,
         'spotlight'  => $spotlight,
+        'guide'      => $guide,
         'campaigns'  => arim_single_product_campaigns(2),
         'supportUrl' => wc_get_account_endpoint_url('edit-account'),
     ];

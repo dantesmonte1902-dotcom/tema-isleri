@@ -623,12 +623,13 @@
 
 .arim-myaccount-orders-panels {
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+    grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.95fr) minmax(240px, 0.9fr);
     gap: 16px;
     margin-bottom: 18px;
 }
 
 .arim-myaccount-orders-spotlight,
+.arim-myaccount-orders-guide,
 .arim-myaccount-orders-campaigns,
 .arim-myaccount-empty-campaigns {
     padding: 20px;
@@ -647,6 +648,46 @@
     margin: 0;
     color: #666;
     line-height: 1.8;
+}
+
+.arim-myaccount-orders-guide {
+    display: grid;
+    gap: 12px;
+    background: #fff;
+}
+
+.arim-myaccount-orders-guide h3,
+.arim-myaccount-orders-guide p,
+.arim-myaccount-orders-guide ul {
+    margin: 0;
+}
+
+.arim-myaccount-orders-guide h3 {
+    color: #222;
+    font-size: 24px;
+}
+
+.arim-myaccount-orders-guide p,
+.arim-myaccount-orders-guide li {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.arim-myaccount-orders-guide ul {
+    padding-left: 18px;
+}
+
+.arim-myaccount-orders-guide.is-success {
+    background: linear-gradient(180deg, #f7fcf8 0%, #fff 100%);
+}
+
+.arim-myaccount-orders-guide.is-warning {
+    background: linear-gradient(180deg, #fffaf2 0%, #fff 100%);
+}
+
+.arim-myaccount-orders-guide.is-issue {
+    background: linear-gradient(180deg, #fff6f7 0%, #fff 100%);
 }
 
 .arim-myaccount-orders-actions,
@@ -1111,6 +1152,14 @@
     color: #f27a1a;
     text-decoration: none;
     font-weight: 600;
+}
+
+.arim-orders-table-note {
+    display: block;
+    margin-top: 8px;
+    color: #666;
+    font-size: 12px;
+    line-height: 1.7;
 }
 
 .arim-order-status-pill {
@@ -1820,6 +1869,7 @@
     .arim-myaccount-panel,
     .arim-myaccount-order-card,
     .arim-myaccount-orders-spotlight,
+    .arim-myaccount-orders-guide,
     .arim-myaccount-orders-campaigns,
     .arim-myaccount-empty-campaigns,
     .arim-myaccount-address-card,
