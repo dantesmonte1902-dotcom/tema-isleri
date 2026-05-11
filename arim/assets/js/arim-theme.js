@@ -5,8 +5,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const favoriteStorageKey = 'arimFavorites';
     const favoriteLabels = themeConfig.labels || {};
     const activeIntervals = [];
-    const searchDebounceDelay = Number(themeConfig.searchDebounce) || DEFAULT_SEARCH_DEBOUNCE;
-    const liveSearchMinChars = Math.max(1, Number(themeConfig.searchMinChars) || DEFAULT_SEARCH_MIN_CHARS);
+    const parsedSearchDebounce = Number(themeConfig.searchDebounce);
+    const parsedSearchMinChars = Number(themeConfig.searchMinChars);
+    const searchDebounceDelay = Number.isFinite(parsedSearchDebounce) ? parsedSearchDebounce : DEFAULT_SEARCH_DEBOUNCE;
+    const liveSearchMinChars = Math.max(1, Number.isFinite(parsedSearchMinChars) ? parsedSearchMinChars : DEFAULT_SEARCH_MIN_CHARS);
     const currencyFormatter = typeof Intl !== 'undefined' && typeof Intl.NumberFormat === 'function'
         ? new Intl.NumberFormat('tr-TR', {
             style: 'currency',
@@ -14,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
             maximumFractionDigits: 0,
         })
         : null;
+    let storageSyncTimeout = null;
 
     function trackInterval(callback, delay) {
         const intervalId = window.setInterval(callback, delay);
@@ -658,9 +661,16 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        updateFavoriteButtons();
-        updateFavoriteCounters();
-        renderFavoritesPage();
+        if (storageSyncTimeout) {
+            window.clearTimeout(storageSyncTimeout);
+        }
+
+        storageSyncTimeout = window.setTimeout(function () {
+            updateFavoriteButtons();
+            updateFavoriteCounters();
+            renderFavoritesPage();
+            storageSyncTimeout = null;
+        }, 80);
     });
 
     updateFavoriteButtons();
