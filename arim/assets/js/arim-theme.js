@@ -1086,10 +1086,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const body = new URLSearchParams({
             action: 'arim_personalized_recommendations',
             nonce: themeConfig.recommendationsNonce,
-        });
-
-        sourceIds.forEach(function (productId) {
-            body.append('productIds[]', productId);
+            productIds: JSON.stringify(sourceIds),
         });
 
         fetch(themeConfig.ajaxUrl, {

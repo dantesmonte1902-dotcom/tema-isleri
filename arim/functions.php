@@ -1037,8 +1037,9 @@ function arim_personalized_recommendations_ajax() {
         wp_send_json_error([]);
     }
 
-    $raw_product_ids = isset($_POST['productIds']) ? wp_unslash($_POST['productIds']) : [];
-    $product_ids     = wp_parse_id_list(is_array($raw_product_ids) ? $raw_product_ids : [$raw_product_ids]);
+    $raw_product_ids = filter_input(INPUT_POST, 'productIds', FILTER_UNSAFE_RAW);
+    $decoded_product_ids = json_decode(is_string($raw_product_ids) ? wp_unslash($raw_product_ids) : '[]', true);
+    $product_ids     = wp_parse_id_list(is_array($decoded_product_ids) ? $decoded_product_ids : []);
     $product_ids     = array_slice($product_ids, 0, 24);
 
     if (empty($product_ids)) {
