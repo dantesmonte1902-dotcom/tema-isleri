@@ -353,7 +353,7 @@ function arim_render_home_product_card_v5($product, $badge = '', $context = 'sli
     $reviews       = $product->get_review_count();
     $product_url   = get_permalink($product_id);
     $price_html    = $product->get_price_html();
-    $price_text    = function_exists('arim_product_price_text') ? arim_product_price_text($product) : trim(preg_replace('/\s+/', ' ', wp_strip_all_tags($price_html)));
+    $price_text    = arim_product_price_text($product);
     $current_price_value = (float) $product->get_price();
     $regular_price_value = (float) $product->get_regular_price();
     $article_class = 'arim-v5-product-card';

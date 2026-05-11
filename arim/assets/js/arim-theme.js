@@ -6,12 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const recentlyViewedStorageKey = 'arimRecentlyViewed';
     const favoriteLabels = themeConfig.labels || {};
     const activeIntervals = [];
-    const parsedSearchDebounce = Number(themeConfig.searchDebounce);
-    const parsedSearchMinChars = Number(themeConfig.searchMinChars);
-    const parsedRecentlyViewedLimit = Number(themeConfig.recentlyViewedLimit);
-    const searchDebounceDelay = Number.isFinite(parsedSearchDebounce) ? parsedSearchDebounce : DEFAULT_SEARCH_DEBOUNCE;
-    const liveSearchMinChars = Math.max(1, Number.isFinite(parsedSearchMinChars) ? parsedSearchMinChars : DEFAULT_SEARCH_MIN_CHARS);
-    const recentlyViewedLimit = Math.max(1, Number.isFinite(parsedRecentlyViewedLimit) ? parsedRecentlyViewedLimit : 6);
     const currencyFormatter = typeof Intl !== 'undefined' && typeof Intl.NumberFormat === 'function'
         ? new Intl.NumberFormat('tr-TR', {
             style: 'currency',
@@ -20,6 +14,17 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         : null;
     let crossTabSyncDebounceTimer = null;
+
+    function getFiniteConfigValue(value, fallback, minValue) {
+        const parsedValue = Number(value);
+        const normalizedValue = Number.isFinite(parsedValue) ? parsedValue : fallback;
+
+        return typeof minValue === 'number' ? Math.max(minValue, normalizedValue) : normalizedValue;
+    }
+
+    const searchDebounceDelay = getFiniteConfigValue(themeConfig.searchDebounce, DEFAULT_SEARCH_DEBOUNCE);
+    const liveSearchMinChars = getFiniteConfigValue(themeConfig.searchMinChars, DEFAULT_SEARCH_MIN_CHARS, 1);
+    const recentlyViewedLimit = getFiniteConfigValue(themeConfig.recentlyViewedLimit, 6, 1);
 
     function trackInterval(callback, delay) {
         const intervalId = window.setInterval(callback, delay);
