@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
             maximumFractionDigits: 0,
         })
         : null;
-    let storageSyncTimeout = null;
+    let crossTabSyncDebounceTimer = null;
 
     function trackInterval(callback, delay) {
         const intervalId = window.setInterval(callback, delay);
@@ -661,15 +661,15 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        if (storageSyncTimeout) {
-            window.clearTimeout(storageSyncTimeout);
+        if (crossTabSyncDebounceTimer) {
+            window.clearTimeout(crossTabSyncDebounceTimer);
         }
 
-        storageSyncTimeout = window.setTimeout(function () {
+        crossTabSyncDebounceTimer = window.setTimeout(function () {
             updateFavoriteButtons();
             updateFavoriteCounters();
             renderFavoritesPage();
-            storageSyncTimeout = null;
+            crossTabSyncDebounceTimer = null;
         }, 80);
     });
 

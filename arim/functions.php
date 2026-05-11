@@ -887,6 +887,10 @@ function arim_live_search_max_query_length() {
 }
 
 function arim_public_product_search_ajax() {
+    if (strtoupper((string) wp_unslash($_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST') {
+        wp_send_json_error([], 405);
+    }
+
     check_ajax_referer('arim_public_product_search', 'nonce');
 
     if (!function_exists('wc_get_products')) {
