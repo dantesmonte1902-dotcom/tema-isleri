@@ -1444,6 +1444,64 @@ function arim_myaccount_address_page_data() {
 }
 
 /**
+ * Hesap bilgileri sayfası için özet verileri döndürür.
+ *
+ * @return array<string, mixed>
+ */
+function arim_myaccount_account_page_data() {
+    $user_id = get_current_user_id();
+    $user    = $user_id > 0 ? get_userdata($user_id) : false;
+
+    if (!$user instanceof WP_User) {
+        return [
+            'stats'       => [],
+            'identity'    => [],
+            'security'    => [],
+            'campaigns'   => arim_single_product_campaigns(2),
+            'ordersUrl'   => wc_get_account_endpoint_url('orders'),
+            'addressUrl'  => wc_get_account_endpoint_url('edit-address'),
+            'dashboardUrl'=> arim_account_url(),
+        ];
+    }
+
+    $address_data = arim_myaccount_address_page_data();
+    $saved_count  = isset($address_data['stats']['savedCount']) ? (int) $address_data['stats']['savedCount'] : 0;
+    $phone        = trim((string) get_user_meta($user_id, 'billing_phone', true));
+    $has_password = !empty($user->user_pass);
+
+    $completed_fields = 0;
+
+    foreach ([$user->first_name, $user->last_name, $user->display_name, $user->user_email, $phone] as $profile_value) {
+        if (trim((string) $profile_value) !== '') {
+            $completed_fields++;
+        }
+    }
+
+    return [
+        'stats' => [
+            'profileCompletion' => (int) round(($completed_fields / 5) * 100),
+            'savedAddresses'    => $saved_count,
+            'securityReady'     => $has_password ? __('Aktif', 'arim') : __('Kontrol et', 'arim'),
+            'contactChannel'    => $phone !== '' ? $phone : __('Telefon ekle', 'arim'),
+        ],
+        'identity' => [
+            'fullName'    => trim($user->first_name . ' ' . $user->last_name),
+            'displayName' => $user->display_name,
+            'email'       => $user->user_email,
+            'phone'       => $phone,
+        ],
+        'security' => [
+            'title' => __('Şifre ve iletişim bilgilerini güncel tut', 'arim'),
+            'text'  => __('Giriş güvenliği, sipariş bildirimleri ve teslimat iletişimi için profil alanlarının dolu olması önemlidir.', 'arim'),
+        ],
+        'campaigns'    => arim_single_product_campaigns(2),
+        'ordersUrl'    => wc_get_account_endpoint_url('orders'),
+        'addressUrl'   => wc_get_account_endpoint_url('edit-address'),
+        'dashboardUrl' => arim_account_url(),
+    ];
+}
+
+/**
  * Geçerli shop archive URL'sini döndürür.
  *
  * @return string

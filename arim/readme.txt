@@ -109,3 +109,8 @@ Geliştirilen Özellikler
 - Adreslerim ekranına kayıtlı adres sayısı, hazırlık oranı, e-posta ve telefon özet kartları eklendi.
 - Fatura ve teslimat adresleri kart bazlı yapıya taşınarak hazır/eksik rozetleri ve hızlı düzenleme aksiyonları görünür hale getirildi.
 - Adres düzenleme formu için ayrı hero alanı, yardımcı notlar ve kampanya kutularıyla daha güçlü bir hesap yönetimi deneyimi sağlandı.
+
+13. Hesap Bilgileri Sayfası Geliştirmeleri
+- Hesap bilgileri ekranına profil doluluk, kayıtlı adres, güvenlik durumu ve iletişim hattı özet kartları eklendi.
+- Hesap formu özel hero alanı, profil görünümü kartı ve daha net bölümlenmiş form düzeniyle güçlendirildi.
+- Şifre yenileme, sipariş/adres kısayolları ve kampanya alanlarıyla hesap yönetimi akışı daha yönlendirici hale getirildi.
