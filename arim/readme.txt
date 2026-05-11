@@ -69,3 +69,8 @@ Geliştirilen Özellikler
 - Ürün kartlarına ve ürün detay sayfasına karşılaştırma butonları eklenerek 4 ürüne kadar hızlı kıyas deneyimi sağlandı.
 - Header alanına canlı karşılaştırma sayacı ve favoriler sayfasına detaylı karşılaştırma bölümü eklendi.
 - Karşılaştırma bölümünde en iyi fiyat vurgusu, indirim farkı rozetleri ve özet tablo ile karar verme akışı güçlendirildi.
+
+5. Kişiselleştirilmiş Öneriler
+- Favoriler, karşılaştırmalar ve son görüntülenen ürünler temel alınarak AJAX destekli kişisel öneri akışı eklendi.
+- Favoriler sayfasına önerileri yenileyebilen ayrı bir öneri vitrini ve hızlı aksiyon butonları yerleştirildi.
+- Öneri kartlarında favoriye ekleme, karşılaştırma ve ürün inceleme adımları tek alanda birleştirildi.

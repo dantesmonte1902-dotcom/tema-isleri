@@ -1255,6 +1255,26 @@ textarea {
     border-color: #f3e2d2;
 }
 
+.arim-recommendations-refresh {
+    border: 0;
+    background: #fff5eb;
+    color: #f27a1a;
+    cursor: pointer;
+}
+
+.arim-recommendations-refresh:hover {
+    background: #f27a1a;
+    color: #fff;
+}
+
+.arim-recommendations-grid .arim-product-badge {
+    background: linear-gradient(135deg, #4f6bff 0%, #7f56d9 100%);
+}
+
+.arim-recommendations-loading {
+    background: linear-gradient(135deg, #f7f9ff 0%, #fff 100%);
+}
+
 /* FOOTER */
 .arim-footer {
     margin-top: 44px;

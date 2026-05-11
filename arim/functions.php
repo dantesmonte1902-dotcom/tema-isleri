@@ -55,6 +55,7 @@ function arim_enqueue_assets() {
         'shopUrl'      => arim_shop_url(),
         'ajaxUrl'      => admin_url('admin-ajax.php'),
         'searchNonce'  => wp_create_nonce('arim_public_product_search'),
+        'recommendationsNonce' => wp_create_nonce('arim_personalized_recommendations'),
         'currencyCode' => function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : 'TRY',
         'searchMinChars' => arim_live_search_min_chars(),
         'searchDebounce' => arim_live_search_debounce_ms(),
@@ -100,6 +101,13 @@ function arim_enqueue_assets() {
             'recentlyViewedText'   => __('İncelediğin ürünleri burada tut, dilediğin zaman hızlıca geri dön.', 'arim'),
             'recentlyViewedEmpty'  => __('Bir ürün detay sayfasını ziyaret ettiğinde burada görünür.', 'arim'),
             'viewAgain'            => __('Tekrar İncele', 'arim'),
+            'recommendationsTitle' => __('Sana Özel Öneriler', 'arim'),
+            'recommendationsText'  => __('Favorilerin, karşılaştırmaların ve son ziyaretlerine göre seçilmiş ürünlerle vitrini genişlet.', 'arim'),
+            'recommendationsLoading' => __('Senin için öneriler hazırlanıyor...', 'arim'),
+            'recommendationsEmptyTitle' => __('Öneri alanı seni bekliyor', 'arim'),
+            'recommendationsEmptyText'  => __('Favori ekledikçe veya ürün inceledikçe burada sana daha uygun öneriler gösterilir.', 'arim'),
+            'recommendationsRefresh'    => __('Önerileri yenile', 'arim'),
+            'recommendationsBadge'      => __('Sana Özel', 'arim'),
         ],
     ]);
 
@@ -917,6 +925,41 @@ function arim_product_price_text($product) {
     return trim(preg_replace('/\s+/', ' ', wp_strip_all_tags($product->get_price_html())));
 }
 
+/**
+ * Ürün kartı için standart veri yapısı üretir.
+ *
+ * @param WC_Product $product Ürün nesnesi.
+ * @return array<string, mixed>
+ */
+function arim_prepare_product_card_payload($product) {
+    if (!$product instanceof WC_Product) {
+        return [];
+    }
+
+    $product_id = $product->get_id();
+    $image_id   = $product->get_image_id();
+    $badge      = '';
+
+    if ($product->is_on_sale()) {
+        $badge = __('Fırsat', 'arim');
+    } elseif ($product->is_featured()) {
+        $badge = __('Öne Çıkan', 'arim');
+    }
+
+    return [
+        'id'           => $product_id,
+        'title'        => $product->get_name(),
+        'url'          => get_permalink($product_id),
+        'image'        => $image_id ? wp_get_attachment_image_url($image_id, 'woocommerce_thumbnail') : wc_placeholder_img_src(),
+        'price'        => arim_product_price_text($product),
+        'brand'        => arim_product_brand_name($product_id),
+        'store'        => arim_product_store_name($product_id),
+        'badge'        => $badge,
+        'currentPrice' => (float) $product->get_price(),
+        'regularPrice' => (float) $product->get_regular_price(),
+    ];
+}
+
 function arim_live_search_min_chars() {
     return max(1, (int) apply_filters('arim_live_search_min_chars', 2));
 }
@@ -966,18 +1009,7 @@ function arim_public_product_search_ajax() {
             continue;
         }
 
-        $product_id = $product->get_id();
-        $image_id   = $product->get_image_id();
-
-        $results[] = [
-            'id'    => $product_id,
-            'title' => $product->get_name(),
-            'url'   => get_permalink($product_id),
-            'image' => $image_id ? wp_get_attachment_image_url($image_id, 'woocommerce_thumbnail') : wc_placeholder_img_src(),
-            'price' => arim_product_price_text($product),
-            'brand' => arim_product_brand_name($product_id),
-            'store' => arim_product_store_name($product_id),
-        ];
+        $results[] = arim_prepare_product_card_payload($product);
     }
 
     wp_send_json_success([
@@ -990,6 +1022,157 @@ function arim_public_product_search_ajax() {
 }
 add_action('wp_ajax_arim_public_product_search', 'arim_public_product_search_ajax');
 add_action('wp_ajax_nopriv_arim_public_product_search', 'arim_public_product_search_ajax');
+
+/**
+ * Kişiselleştirilmiş öneriler için ürünleri döndürür.
+ */
+function arim_personalized_recommendations_ajax() {
+    if (strtoupper((string) wp_unslash($_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST') {
+        wp_send_json_error([], 405);
+    }
+
+    check_ajax_referer('arim_personalized_recommendations', 'nonce');
+
+    if (!function_exists('wc_get_product')) {
+        wp_send_json_error([]);
+    }
+
+    $raw_product_ids = isset($_POST['productIds']) ? wp_unslash($_POST['productIds']) : [];
+    $product_ids     = wp_parse_id_list(is_array($raw_product_ids) ? $raw_product_ids : [$raw_product_ids]);
+    $product_ids     = array_slice($product_ids, 0, 24);
+
+    if (empty($product_ids)) {
+        wp_send_json_success([
+            'items' => [],
+        ]);
+    }
+
+    $category_ids   = [];
+    $brand_term_ids = [];
+    $brand_names    = [];
+
+    foreach ($product_ids as $product_id) {
+        $category_ids = array_merge($category_ids, wp_get_post_terms($product_id, 'product_cat', ['fields' => 'ids']));
+        $brand_term_ids = array_merge($brand_term_ids, wp_get_post_terms($product_id, 'product_brand', ['fields' => 'ids']));
+
+        $brand_name = arim_product_brand_name($product_id);
+        if ($brand_name !== '') {
+            $brand_names[] = $brand_name;
+        }
+    }
+
+    $category_ids   = array_values(array_unique(array_filter(array_map('absint', $category_ids))));
+    $brand_term_ids = array_values(array_unique(array_filter(array_map('absint', $brand_term_ids))));
+    $brand_names    = array_values(array_unique(array_filter(array_map('sanitize_text_field', $brand_names))));
+    $recommended_ids = [];
+
+    $tax_query = [];
+
+    if (!empty($category_ids) || !empty($brand_term_ids)) {
+        $tax_query['relation'] = 'OR';
+
+        if (!empty($category_ids)) {
+            $tax_query[] = [
+                'taxonomy' => 'product_cat',
+                'field'    => 'term_id',
+                'terms'    => $category_ids,
+            ];
+        }
+
+        if (!empty($brand_term_ids)) {
+            $tax_query[] = [
+                'taxonomy' => 'product_brand',
+                'field'    => 'term_id',
+                'terms'    => $brand_term_ids,
+            ];
+        }
+    }
+
+    $primary_query_args = [
+        'post_type'           => 'product',
+        'post_status'         => 'publish',
+        'posts_per_page'      => 6,
+        'post__not_in'        => $product_ids,
+        'ignore_sticky_posts' => true,
+        'fields'              => 'ids',
+        'orderby'             => 'date',
+        'order'               => 'DESC',
+    ];
+
+    if (!empty($tax_query)) {
+        $primary_query_args['tax_query'] = $tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+    } elseif (!empty($brand_names)) {
+        $primary_query_args['meta_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+            [
+                'key'     => 'brand',
+                'value'   => $brand_names,
+                'compare' => 'IN',
+            ],
+        ];
+    }
+
+    $recommended_ids = get_posts($primary_query_args);
+
+    if (count($recommended_ids) < 6 && !empty($brand_names)) {
+        $brand_query_args = [
+            'post_type'           => 'product',
+            'post_status'         => 'publish',
+            'posts_per_page'      => 6 - count($recommended_ids),
+            'post__not_in'        => array_merge($product_ids, $recommended_ids),
+            'ignore_sticky_posts' => true,
+            'fields'              => 'ids',
+            'meta_query'          => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+                [
+                    'key'     => 'brand',
+                    'value'   => $brand_names,
+                    'compare' => 'IN',
+                ],
+            ],
+            'orderby'             => 'date',
+            'order'               => 'DESC',
+        ];
+
+        $recommended_ids = array_merge($recommended_ids, get_posts($brand_query_args));
+    }
+
+    if (count($recommended_ids) < 6) {
+        $fallback_query_args = [
+            'post_type'           => 'product',
+            'post_status'         => 'publish',
+            'posts_per_page'      => 6 - count($recommended_ids),
+            'post__not_in'        => array_merge($product_ids, $recommended_ids),
+            'ignore_sticky_posts' => true,
+            'fields'              => 'ids',
+            'meta_key'            => '_featured',
+            'orderby'             => [
+                'meta_value' => 'DESC',
+                'date'       => 'DESC',
+            ],
+        ];
+
+        $recommended_ids = array_merge($recommended_ids, get_posts($fallback_query_args));
+    }
+
+    $items = [];
+
+    foreach (array_slice(array_values(array_unique(array_map('absint', $recommended_ids))), 0, 6) as $recommended_id) {
+        $product = wc_get_product($recommended_id);
+        if (!$product instanceof WC_Product) {
+            continue;
+        }
+
+        $payload = arim_prepare_product_card_payload($product);
+        if (!empty($payload)) {
+            $items[] = $payload;
+        }
+    }
+
+    wp_send_json_success([
+        'items' => $items,
+    ]);
+}
+add_action('wp_ajax_arim_personalized_recommendations', 'arim_personalized_recommendations_ajax');
+add_action('wp_ajax_nopriv_arim_personalized_recommendations', 'arim_personalized_recommendations_ajax');
 
 
 /**

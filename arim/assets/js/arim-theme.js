@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         : null;
     let crossTabSyncDebounceTimer = null;
+    let recommendationRequestController = null;
+    let recommendationRequestSignature = '';
 
     /**
      * Numeric config değerini güvenli şekilde normalize eder.
@@ -272,6 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updateFavoriteButtons();
         updateFavoriteCounters();
         renderFavoritesPage();
+        requestRecommendations();
     }
 
     function getFavoriteProductMap() {
@@ -383,7 +386,36 @@ document.addEventListener('DOMContentLoaded', function () {
         updateCompareButtons();
         updateCompareCounters();
         renderCompareSection();
+        requestRecommendations();
         return true;
+    }
+
+    function createProductActionButton(type, item) {
+        const button = document.createElement('button');
+        button.type = 'button';
+
+        if (type === 'compare') {
+            button.className = 'arim-compare-btn';
+            button.setAttribute('aria-label', favoriteLabels.addToCompare || 'Karşılaştırmaya ekle');
+            button.textContent = '⇄';
+        } else {
+            button.className = 'arim-favorite-btn';
+            button.setAttribute('aria-label', favoriteLabels.addToFavorites || 'Favorilere ekle');
+            button.textContent = '♡';
+        }
+
+        button.setAttribute('data-product-id', item.id || '');
+        button.setAttribute('data-product-title', item.title || '');
+        button.setAttribute('data-product-price', item.price || '');
+        button.setAttribute('data-product-image', item.image || '');
+        button.setAttribute('data-product-url', item.url || '');
+        button.setAttribute('data-product-brand', item.brand || '');
+        button.setAttribute('data-product-store', item.store || '');
+        button.setAttribute('data-product-badge', item.badge || '');
+        button.setAttribute('data-product-current-price', toNumber(item.currentPrice));
+        button.setAttribute('data-product-regular-price', toNumber(item.regularPrice));
+
+        return button;
     }
 
     function createFavoriteCard(item, options) {
@@ -424,6 +456,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             imageWrap.appendChild(badge);
+        }
+
+        if (cardOptions.quickActions) {
+            imageWrap.appendChild(createProductActionButton('favorite', item));
+            imageWrap.appendChild(createProductActionButton('compare', item));
         }
 
         if (cardOptions.removable !== false) {
@@ -836,6 +873,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         renderRecentlyViewedSection();
+        requestRecommendations();
     }
 
     function trackRecentlyViewedProduct() {
@@ -900,6 +938,180 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         recentlyViewedPage.appendChild(grid);
+    }
+
+    function createRecommendationState(titleText, descriptionText, extraClassName) {
+        const state = document.createElement('div');
+        state.className = 'arim-favorites-empty arim-favorites-empty-secondary';
+
+        if (extraClassName) {
+            state.classList.add(extraClassName);
+        }
+
+        const title = document.createElement('h2');
+        title.textContent = titleText;
+        state.appendChild(title);
+
+        const description = document.createElement('p');
+        description.textContent = descriptionText;
+        state.appendChild(description);
+
+        return state;
+    }
+
+    function getRecommendationSourceIds() {
+        const sourceItems = []
+            .concat(safeParseFavorites(), safeParseCompare(), safeParseRecentlyViewed());
+        const uniqueIds = [];
+
+        sourceItems.forEach(function (item) {
+            const productId = String(item && item.id ? item.id : '').trim();
+
+            if (!productId || uniqueIds.indexOf(productId) >= 0) {
+                return;
+            }
+
+            uniqueIds.push(productId);
+        });
+
+        return uniqueIds.slice(0, 24);
+    }
+
+    function renderRecommendationsSection(items) {
+        const recommendationsPage = document.querySelector('[data-arim-recommendations-page]');
+        if (!recommendationsPage) {
+            return;
+        }
+
+        recommendationsPage.innerHTML = '';
+
+        if (!Array.isArray(items) || !items.length) {
+            recommendationsPage.appendChild(createRecommendationState(
+                favoriteLabels.recommendationsEmptyTitle || 'Öneri alanı seni bekliyor',
+                favoriteLabels.recommendationsEmptyText || 'Favori ekledikçe veya ürün inceledikçe burada sana daha uygun öneriler gösterilir.'
+            ));
+            return;
+        }
+
+        const intro = document.createElement('p');
+        intro.className = 'arim-favorites-secondary-note';
+        intro.textContent = favoriteLabels.recommendationsText || 'Favorilerin, karşılaştırmaların ve son ziyaretlerine göre seçilmiş ürünlerle vitrini genişlet.';
+        recommendationsPage.appendChild(intro);
+
+        const grid = document.createElement('div');
+        grid.className = 'arim-favorites-grid arim-favorites-grid-secondary arim-recommendations-grid';
+
+        items.forEach(function (item) {
+            const recommendationItem = {
+                id: String(item.id || ''),
+                title: String(item.title || ''),
+                price: String(item.price || ''),
+                image: String(item.image || ''),
+                url: String(item.url || ''),
+                brand: String(item.brand || ''),
+                store: String(item.store || ''),
+                badge: String(item.badge || favoriteLabels.recommendationsBadge || ''),
+                currentPrice: toNumber(item.currentPrice),
+                regularPrice: toNumber(item.regularPrice),
+            };
+
+            grid.appendChild(createFavoriteCard(recommendationItem, {
+                removable: false,
+                quickActions: true,
+                viewLabel: favoriteLabels.viewProduct || 'Ürünü İncele',
+            }));
+        });
+
+        recommendationsPage.appendChild(grid);
+        updateFavoriteButtons();
+        updateCompareButtons();
+    }
+
+    function requestRecommendations(forceRefresh) {
+        const recommendationsPage = document.querySelector('[data-arim-recommendations-page]');
+        if (!recommendationsPage || !themeConfig.ajaxUrl || !themeConfig.recommendationsNonce) {
+            return;
+        }
+
+        const sourceIds = getRecommendationSourceIds();
+        const signature = sourceIds.join(',');
+
+        if (!sourceIds.length) {
+            recommendationRequestSignature = '';
+            if (recommendationRequestController) {
+                recommendationRequestController.abort();
+                recommendationRequestController = null;
+            }
+
+            recommendationsPage.innerHTML = '';
+            recommendationsPage.appendChild(createRecommendationState(
+                favoriteLabels.recommendationsEmptyTitle || 'Öneri alanı seni bekliyor',
+                favoriteLabels.recommendationsEmptyText || 'Favori ekledikçe veya ürün inceledikçe burada sana daha uygun öneriler gösterilir.'
+            ));
+            return;
+        }
+
+        if (!forceRefresh && signature === recommendationRequestSignature) {
+            return;
+        }
+
+        recommendationRequestSignature = signature;
+
+        if (recommendationRequestController) {
+            recommendationRequestController.abort();
+        }
+
+        recommendationRequestController = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        recommendationsPage.innerHTML = '';
+        recommendationsPage.appendChild(createRecommendationState(
+            favoriteLabels.recommendationsTitle || 'Sana Özel Öneriler',
+            favoriteLabels.recommendationsLoading || 'Senin için öneriler hazırlanıyor...',
+            'arim-recommendations-loading'
+        ));
+
+        const body = new URLSearchParams({
+            action: 'arim_personalized_recommendations',
+            nonce: themeConfig.recommendationsNonce,
+        });
+
+        sourceIds.forEach(function (productId) {
+            body.append('productIds[]', productId);
+        });
+
+        fetch(themeConfig.ajaxUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            },
+            body: body.toString(),
+            signal: recommendationRequestController ? recommendationRequestController.signal : undefined,
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (response) {
+                if (signature !== recommendationRequestSignature) {
+                    return;
+                }
+
+                if (!response || !response.success) {
+                    renderRecommendationsSection([]);
+                    return;
+                }
+
+                renderRecommendationsSection(response.data && Array.isArray(response.data.items) ? response.data.items : []);
+            })
+            .catch(function (error) {
+                if (error && error.name === 'AbortError') {
+                    return;
+                }
+
+                renderRecommendationsSection([]);
+            })
+            .finally(function () {
+                recommendationRequestController = null;
+            });
     }
 
     function initLiveSearch() {
@@ -1169,6 +1381,17 @@ document.addEventListener('DOMContentLoaded', function () {
         saveCompare(compareItems.slice(0, compareLimit));
     });
 
+    document.addEventListener('click', function (event) {
+        const refreshButton = event.target.closest('[data-arim-refresh-recommendations]');
+
+        if (!refreshButton) {
+            return;
+        }
+
+        event.preventDefault();
+        requestRecommendations(true);
+    });
+
     window.addEventListener('storage', function (event) {
         if (event.key !== favoriteStorageKey && event.key !== compareStorageKey && event.key !== recentlyViewedStorageKey) {
             return;
@@ -1186,6 +1409,7 @@ document.addEventListener('DOMContentLoaded', function () {
             renderFavoritesPage();
             renderCompareSection();
             renderRecentlyViewedSection();
+            requestRecommendations(true);
             crossTabSyncDebounceTimer = null;
         }, CROSS_TAB_SYNC_DEBOUNCE);
     });
@@ -1198,5 +1422,6 @@ document.addEventListener('DOMContentLoaded', function () {
     renderFavoritesPage();
     renderCompareSection();
     renderRecentlyViewedSection();
+    requestRecommendations();
     initLiveSearch();
 });
