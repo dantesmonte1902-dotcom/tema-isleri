@@ -871,6 +871,12 @@ function arim_product_store_name($product_id) {
     return is_string($store) ? $store : __('ARIM Store', 'arim');
 }
 
+/**
+ * WooCommerce fiyat HTML çıktısını sade metne dönüştürür.
+ *
+ * @param WC_Product $product Ürün nesnesi.
+ * @return string
+ */
 function arim_product_price_text($product) {
     if (!$product instanceof WC_Product) {
         return '';

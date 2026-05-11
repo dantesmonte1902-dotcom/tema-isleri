@@ -15,6 +15,13 @@ document.addEventListener('DOMContentLoaded', function () {
         : null;
     let crossTabSyncDebounceTimer = null;
 
+    /**
+     * Numeric config değerini güvenli şekilde normalize eder.
+     * @param {*} value
+     * @param {number} fallback
+     * @param {number=} minValue
+     * @returns {number}
+     */
     function getFiniteConfigValue(value, fallback, minValue) {
         const parsedValue = Number(value);
         const normalizedValue = Number.isFinite(parsedValue) ? parsedValue : fallback;
