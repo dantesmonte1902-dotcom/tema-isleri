@@ -27,8 +27,7 @@ $price_html = $product->get_price_html();
 $price_text = arim_product_price_text($product);
 $current_price_value = (float) $product->get_price();
 $regular_price_value = (float) $product->get_regular_price();
-$store_name = get_post_meta($product_id, 'store_name', true);
-$store_name = $store_name ? $store_name : __('ARIM Store', 'arim');
+$store_name = get_post_meta($product_id, 'store_name', true) ?: __('ARIM Store', 'arim');
 
 $product_badge = '';
 if ($product->is_on_sale()) {

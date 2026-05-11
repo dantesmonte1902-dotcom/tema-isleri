@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const CROSS_TAB_SYNC_DEBOUNCE = 80;
+    const DEFAULT_COMPARE_LIMIT = 4;
     const DEFAULT_SLIDER_INTERVAL = 5000;
     const DEFAULT_SEARCH_DEBOUNCE = 220;
     const DEFAULT_SEARCH_MIN_CHARS = 2;
@@ -33,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const searchDebounceDelay = getFiniteConfigValue(themeConfig.searchDebounce, DEFAULT_SEARCH_DEBOUNCE);
     const liveSearchMinChars = getFiniteConfigValue(themeConfig.searchMinChars, DEFAULT_SEARCH_MIN_CHARS, 1);
-    const compareLimit = getFiniteConfigValue(themeConfig.compareLimit, 4, 2);
+    const compareLimit = getFiniteConfigValue(themeConfig.compareLimit, DEFAULT_COMPARE_LIMIT, 2);
     const recentlyViewedLimit = getFiniteConfigValue(themeConfig.recentlyViewedLimit, 6, 1);
 
     function trackInterval(callback, delay) {
@@ -1185,7 +1187,7 @@ document.addEventListener('DOMContentLoaded', function () {
             renderCompareSection();
             renderRecentlyViewedSection();
             crossTabSyncDebounceTimer = null;
-        }, 80);
+        }, CROSS_TAB_SYNC_DEBOUNCE);
     });
 
     trackRecentlyViewedProduct();
