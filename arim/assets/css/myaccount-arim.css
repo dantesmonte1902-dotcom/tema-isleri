@@ -79,6 +79,17 @@
     margin-bottom: 22px;
 }
 
+.arim-myaccount-hero {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 22px;
+}
+
+.arim-myaccount-hero-content {
+    max-width: 620px;
+}
+
 .arim-myaccount-badge {
     display: inline-flex;
     padding: 7px 12px;
@@ -102,9 +113,73 @@
     font-size: 15px;
 }
 
+.arim-myaccount-hero-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    min-width: min(360px, 100%);
+}
+
+.arim-myaccount-hero-stat {
+    padding: 14px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.16);
+    backdrop-filter: blur(6px);
+}
+
+.arim-myaccount-hero-stat strong,
+.arim-myaccount-hero-stat span {
+    display: block;
+}
+
+.arim-myaccount-hero-stat strong {
+    margin-bottom: 6px;
+    font-size: 24px;
+    line-height: 1.1;
+}
+
+.arim-myaccount-hero-stat span {
+    color: rgba(255,255,255,0.88);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+}
+
+.arim-myaccount-status-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.arim-myaccount-status-card {
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 1px solid #ececec;
+    background: #fff;
+}
+
+.arim-myaccount-status-card span,
+.arim-myaccount-status-card strong {
+    display: block;
+}
+
+.arim-myaccount-status-card span {
+    margin-bottom: 6px;
+    color: #666;
+    font-size: 12px;
+}
+
+.arim-myaccount-status-card strong {
+    color: #222;
+    font-size: 24px;
+    line-height: 1.2;
+}
+
 .arim-myaccount-cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 18px;
     margin-bottom: 22px;
 }
@@ -123,6 +198,19 @@
     transform: translateY(-3px);
     box-shadow: 0 10px 22px rgba(0,0,0,0.06);
     border-color: #f27a1a;
+}
+
+.arim-myaccount-card-meta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    margin-bottom: 12px;
+    border-radius: 999px;
+    background: #fff3e7;
+    color: #f27a1a;
+    font-size: 12px;
+    font-weight: 800;
 }
 
 .arim-myaccount-card h3 {
@@ -146,6 +234,227 @@
     color: #555;
     line-height: 1.8;
     font-size: 14px;
+}
+
+.arim-myaccount-dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.arim-myaccount-panel {
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: #fff;
+    padding: 20px;
+}
+
+.arim-myaccount-panel-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.arim-myaccount-panel-head a {
+    color: #f27a1a;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.arim-myaccount-panel-kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    margin-bottom: 10px;
+    border-radius: 999px;
+    background: #fff3e7;
+    color: #f27a1a;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.arim-myaccount-panel-head h3 {
+    margin: 0;
+    color: #222;
+    font-size: 24px;
+}
+
+.arim-myaccount-order-list,
+.arim-myaccount-campaign-list {
+    display: grid;
+    gap: 12px;
+}
+
+.arim-myaccount-order-card {
+    padding: 16px;
+    border-radius: 14px;
+    background: #fafafa;
+    border: 1px solid #f0f0f0;
+}
+
+.arim-myaccount-order-top,
+.arim-myaccount-order-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.arim-myaccount-order-top {
+    margin-bottom: 14px;
+}
+
+.arim-myaccount-order-top strong,
+.arim-myaccount-order-top span,
+.arim-myaccount-order-metric span,
+.arim-myaccount-order-metric strong {
+    display: block;
+}
+
+.arim-myaccount-order-top strong {
+    color: #222;
+    font-size: 17px;
+}
+
+.arim-myaccount-order-top span,
+.arim-myaccount-order-metric span {
+    color: #777;
+    font-size: 12px;
+}
+
+.arim-myaccount-order-metric strong {
+    color: #222;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.arim-myaccount-order-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    background: #eef3ff;
+    color: #3454d1;
+}
+
+.arim-myaccount-order-status.is-completed {
+    background: #e8f7ee;
+    color: #1f8a4c;
+}
+
+.arim-myaccount-order-status.is-processing {
+    background: #fff2e8;
+    color: #f27a1a;
+}
+
+.arim-myaccount-order-status.is-pending,
+.arim-myaccount-order-status.is-on-hold {
+    background: #fff7dc;
+    color: #8f6a00;
+}
+
+.arim-myaccount-order-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid #f27a1a;
+    color: #f27a1a;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.arim-myaccount-order-link:hover {
+    background: #f27a1a;
+    color: #fff;
+}
+
+.arim-myaccount-campaign-item {
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f8fbff 0%, #fff 100%);
+    border: 1px solid #e1e9ff;
+}
+
+.arim-myaccount-campaign-item strong,
+.arim-myaccount-campaign-item span {
+    display: block;
+}
+
+.arim-myaccount-campaign-item strong {
+    margin-bottom: 6px;
+    color: #3454d1;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.arim-myaccount-campaign-item span {
+    color: #555;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.arim-myaccount-support-box {
+    margin-top: 16px;
+    padding: 18px;
+    border-radius: 16px;
+    background: #fafafa;
+    border: 1px solid #f0f0f0;
+}
+
+.arim-myaccount-support-box h4 {
+    margin: 0 0 12px;
+    color: #222;
+    font-size: 18px;
+}
+
+.arim-myaccount-support-box ul {
+    margin: 0;
+    padding-left: 18px;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.arim-myaccount-inline-empty {
+    padding: 20px;
+    border-radius: 14px;
+    background: #fafafa;
+    border: 1px solid #f0f0f0;
+}
+
+.arim-myaccount-inline-empty h3 {
+    margin: 0 0 10px;
+    color: #222;
+    font-size: 22px;
+}
+
+.arim-myaccount-inline-empty p {
+    margin: 0 0 16px;
+    color: #666;
+    line-height: 1.8;
+}
+
+.arim-myaccount-inline-empty .button {
+    min-height: 42px;
+    border-radius: 10px !important;
+    border: 1px solid #f27a1a !important;
+    background: #f27a1a !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+    box-shadow: none !important;
 }
 
 .arim-myaccount-section-head {
@@ -287,11 +596,25 @@
     .arim-myaccount-cards {
         grid-template-columns: 1fr;
     }
+
+    .arim-myaccount-hero {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .arim-myaccount-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 992px) {
     .woocommerce-account .woocommerce {
         grid-template-columns: 1fr;
+    }
+
+    .arim-myaccount-status-strip,
+    .arim-myaccount-cards {
+        grid-template-columns: 1fr 1fr;
     }
 }
 
@@ -308,6 +631,24 @@
 
     .arim-myaccount-hero h2 {
         font-size: 24px;
+    }
+
+    .arim-myaccount-hero-stats,
+    .arim-myaccount-status-strip,
+    .arim-myaccount-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .arim-myaccount-panel,
+    .arim-myaccount-order-card {
+        padding: 16px;
+    }
+
+    .arim-myaccount-panel-head,
+    .arim-myaccount-order-top,
+    .arim-myaccount-order-bottom {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .arim-myaccount-section-head h2,

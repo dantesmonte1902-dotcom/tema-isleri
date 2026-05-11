@@ -1201,6 +1201,115 @@ function arim_cart_recommended_products($limit = 4) {
 }
 
 /**
+ * Hesabım dashboard alanı için özet verileri döndürür.
+ *
+ * @return array<string, mixed>
+ */
+function arim_myaccount_dashboard_data() {
+    $user_id = get_current_user_id();
+
+    if ($user_id < 1 || !function_exists('wc_get_orders')) {
+        return [
+            'stats'        => [],
+            'recentOrders' => [],
+            'campaigns'    => arim_single_product_campaigns(3),
+        ];
+    }
+
+    $all_orders = wc_get_orders([
+        'customer_id' => $user_id,
+        'limit'       => -1,
+        'orderby'     => 'date',
+        'order'       => 'DESC',
+        'return'      => 'objects',
+    ]);
+
+    $recent_orders = wc_get_orders([
+        'customer_id' => $user_id,
+        'limit'       => 3,
+        'orderby'     => 'date',
+        'order'       => 'DESC',
+        'return'      => 'objects',
+    ]);
+
+    $totals = [
+        'orders'     => 0,
+        'active'     => 0,
+        'completed'  => 0,
+        'processing' => 0,
+    ];
+
+    foreach ($all_orders as $order) {
+        if (!$order instanceof WC_Order) {
+            continue;
+        }
+
+        $totals['orders']++;
+
+        if (in_array($order->get_status(), ['pending', 'processing', 'on-hold'], true)) {
+            $totals['active']++;
+        }
+
+        if ($order->has_status('completed')) {
+            $totals['completed']++;
+        }
+
+        if ($order->has_status('processing')) {
+            $totals['processing']++;
+        }
+    }
+
+    $address_count = 0;
+
+    foreach (['billing', 'shipping'] as $address_type) {
+        $address_1 = trim((string) get_user_meta($user_id, "{$address_type}_address_1", true));
+        $city      = trim((string) get_user_meta($user_id, "{$address_type}_city", true));
+        $postcode  = trim((string) get_user_meta($user_id, "{$address_type}_postcode", true));
+
+        if ($address_1 !== '' || $city !== '' || $postcode !== '') {
+            $address_count++;
+        }
+    }
+
+    $recent_order_items = [];
+
+    foreach ($recent_orders as $order) {
+        if (!$order instanceof WC_Order) {
+            continue;
+        }
+
+        $item_count = max(0, $order->get_item_count() - $order->get_item_count_refunded());
+
+        $recent_order_items[] = [
+            'id'         => $order->get_order_number(),
+            'url'        => $order->get_view_order_url(),
+            'date'       => $order->get_date_created() ? wc_format_datetime($order->get_date_created()) : '',
+            'status'     => wc_get_order_status_name($order->get_status()),
+            'statusKey'  => sanitize_html_class($order->get_status()),
+            'total'      => wp_strip_all_tags($order->get_formatted_order_total()),
+            'itemCount'  => $item_count,
+            'itemLabel'  => sprintf(
+                _n('%s ürün', '%s ürün', $item_count, 'arim'),
+                number_format_i18n($item_count)
+            ),
+        ];
+    }
+
+    return [
+        'stats' => [
+            'orders'        => $totals['orders'],
+            'active'        => $totals['active'],
+            'completed'     => $totals['completed'],
+            'processing'    => $totals['processing'],
+            'addressCount'  => $address_count,
+            'campaignCount' => count(arim_single_product_campaigns(3)),
+        ],
+        'recentOrders' => $recent_order_items,
+        'campaigns'    => arim_single_product_campaigns(3),
+    ];
+}
+
+/**
  * Geçerli shop archive URL'sini döndürür.
  *
  * @return string

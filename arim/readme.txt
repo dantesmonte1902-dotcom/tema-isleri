@@ -94,3 +94,8 @@ Geliştirilen Özellikler
 - Sepet ekranına adım göstergesi, teslimat/avantaj/güven odaklı bilgi stripi ve ürün-sipariş özeti sayaçları eklendi.
 - Sağ kolona teslimat vurgulu özet kutusu ile kampanya fırsatları alanı taşınarak checkout öncesi karar desteği güçlendirildi.
 - Sepetteki ürün kategorilerine göre tamamlayıcı ürün önerileri üretilip kart düzeniyle alt alanda sunuldu.
+
+10. Hesabım Dashboard Geliştirmeleri
+- Hesabım ana paneline sipariş, aktif akış, adres ve kampanya sayılarını gösteren özet istatistik alanı eklendi.
+- Hızlı aksiyon kartları siparişler, adresler, hesap bilgileri ve favoriler sayfasına bağlanacak şekilde genişletildi.
+- Son sipariş kartları, kampanya kutuları ve destek aksiyon alanı ile kullanıcı panelinin karar ve takip deneyimi güçlendirildi.
