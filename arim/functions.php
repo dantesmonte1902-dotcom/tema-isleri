@@ -31,8 +31,8 @@ add_action('after_setup_theme', 'arim_theme_setup');
  * CSS ve JS yükle
  */
 function arim_enqueue_assets() {
-    $theme_style_path = get_stylesheet_directory() . '/style.css';
-    $theme_js_path    = get_template_directory() . '/assets/js/arim-theme.js';
+    $theme_style_path = trailingslashit(get_stylesheet_directory()) . 'style.css';
+    $theme_js_path    = trailingslashit(get_template_directory()) . 'assets/js/arim-theme.js';
 
     wp_enqueue_style(
         'arim-style',
@@ -1093,6 +1093,10 @@ function arim_shop_archive_query_args() {
     $query_args = [];
 
     foreach ($_GET as $key => $value) {
+        if (!is_string($key) && !is_int($key)) {
+            continue;
+        }
+
         $sanitized_key = sanitize_key(wp_unslash((string) $key));
         if ($sanitized_key === '') {
             continue;
