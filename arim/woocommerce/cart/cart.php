@@ -1,6 +1,30 @@
 <?php
 defined('ABSPATH') || exit;
 
+$cart_insights        = arim_cart_page_insights();
+$cart_campaigns       = arim_single_product_campaigns(2);
+$cart_recommendations = arim_cart_recommended_products(4);
+$cart_steps           = [
+    [
+        'label'   => __('Sepet', 'arim'),
+        'state'   => 'active',
+        'url'     => '',
+        'counter' => '01',
+    ],
+    [
+        'label'   => __('Bilgiler', 'arim'),
+        'state'   => 'upcoming',
+        'url'     => wc_get_checkout_url(),
+        'counter' => '02',
+    ],
+    [
+        'label'   => __('Ödeme', 'arim'),
+        'state'   => 'upcoming',
+        'url'     => wc_get_checkout_url(),
+        'counter' => '03',
+    ],
+];
+
 do_action('woocommerce_before_cart'); ?>
 
 <div class="arim-cart-page">
@@ -10,11 +34,61 @@ do_action('woocommerce_before_cart'); ?>
             <p><?php esc_html_e('Sepetindeki ürünleri kontrol et, adetleri güncelle ve siparişini tamamlamaya devam et.', 'arim'); ?></p>
         </div>
 
+        <div class="arim-cart-steps" aria-label="<?php esc_attr_e('Sepet adımları', 'arim'); ?>">
+            <?php foreach ($cart_steps as $step) : ?>
+                <div class="arim-cart-step is-<?php echo esc_attr($step['state']); ?>">
+                    <span class="arim-cart-step-counter"><?php echo esc_html($step['counter']); ?></span>
+                    <?php if (!empty($step['url']) && $step['state'] !== 'active') : ?>
+                        <a href="<?php echo esc_url($step['url']); ?>"><?php echo esc_html($step['label']); ?></a>
+                    <?php else : ?>
+                        <strong><?php echo esc_html($step['label']); ?></strong>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <div class="arim-cart-trust-strip">
+            <div class="arim-cart-trust-item">
+                <strong><?php echo esc_html($cart_insights['deliveryBadge']); ?></strong>
+                <span><?php echo esc_html($cart_insights['deliveryDate']); ?></span>
+            </div>
+            <div class="arim-cart-trust-item">
+                <strong><?php esc_html_e('Toplam avantaj', 'arim'); ?></strong>
+                <span><?php echo wp_kses_post($cart_insights['savingsText']); ?></span>
+            </div>
+            <div class="arim-cart-trust-item">
+                <strong><?php echo esc_html($cart_insights['supportWindow']); ?></strong>
+                <span><?php esc_html_e('Sipariş öncesi ve sonrası destek alanı hazır.', 'arim'); ?></span>
+            </div>
+        </div>
+
         <form class="woocommerce-cart-form arim-cart-form" action="<?php echo esc_url(wc_get_cart_url()); ?>" method="post">
             <?php do_action('woocommerce_before_cart_table'); ?>
 
             <div class="arim-cart-layout">
                 <div class="arim-cart-products">
+                    <div class="arim-cart-box-head">
+                        <div>
+                            <span class="arim-cart-box-kicker"><?php esc_html_e('Sepet özeti', 'arim'); ?></span>
+                            <h2><?php esc_html_e('Siparişini tek bakışta yönet', 'arim'); ?></h2>
+                        </div>
+
+                        <div class="arim-cart-summary-stats">
+                            <div class="arim-cart-summary-stat">
+                                <strong><?php echo esc_html(number_format_i18n((int) $cart_insights['itemCount'])); ?></strong>
+                                <span><?php esc_html_e('paket', 'arim'); ?></span>
+                            </div>
+                            <div class="arim-cart-summary-stat">
+                                <strong><?php echo esc_html(number_format_i18n((int) $cart_insights['productCount'])); ?></strong>
+                                <span><?php esc_html_e('ürün', 'arim'); ?></span>
+                            </div>
+                            <div class="arim-cart-summary-stat">
+                                <strong><?php echo wp_kses_post($cart_insights['savingsText']); ?></strong>
+                                <span><?php esc_html_e('anlık avantaj', 'arim'); ?></span>
+                            </div>
+                        </div>
+                    </div>
+
                     <?php foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) :
                         $_product   = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
                         $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
@@ -141,9 +215,84 @@ do_action('woocommerce_before_cart'); ?>
                         <?php do_action('woocommerce_cart_actions'); ?>
                         <?php wp_nonce_field('woocommerce-cart', 'woocommerce-cart-nonce'); ?>
                     </div>
+
+                    <?php if (!empty($cart_recommendations)) : ?>
+                        <section class="arim-cart-recommendations">
+                            <div class="arim-cart-box-head">
+                                <div>
+                                    <span class="arim-cart-box-kicker"><?php esc_html_e('Sepetine uygun', 'arim'); ?></span>
+                                    <h2><?php esc_html_e('Tamamlayıcı öneriler', 'arim'); ?></h2>
+                                </div>
+                                <a href="<?php echo esc_url(arim_shop_url()); ?>" class="arim-cart-inline-link">
+                                    <?php esc_html_e('Yeni ürünlere bak', 'arim'); ?>
+                                </a>
+                            </div>
+
+                            <div class="arim-cart-recommendation-grid">
+                                <?php foreach ($cart_recommendations as $recommendation) : ?>
+                                    <article class="arim-cart-recommendation-card">
+                                        <a href="<?php echo esc_url($recommendation['url']); ?>" class="arim-cart-recommendation-image">
+                                            <img src="<?php echo esc_url($recommendation['image']); ?>" alt="<?php echo esc_attr($recommendation['title']); ?>">
+                                            <?php if (!empty($recommendation['badge'])) : ?>
+                                                <span class="arim-cart-recommendation-badge"><?php echo esc_html($recommendation['badge']); ?></span>
+                                            <?php endif; ?>
+                                        </a>
+
+                                        <div class="arim-cart-recommendation-content">
+                                            <span class="arim-cart-recommendation-brand"><?php echo esc_html($recommendation['brand']); ?></span>
+                                            <h3>
+                                                <a href="<?php echo esc_url($recommendation['url']); ?>"><?php echo esc_html($recommendation['title']); ?></a>
+                                            </h3>
+                                            <div class="arim-cart-recommendation-price"><?php echo esc_html($recommendation['price']); ?></div>
+                                            <a href="<?php echo esc_url($recommendation['url']); ?>" class="arim-cart-recommendation-link">
+                                                <?php esc_html_e('Ürünü incele', 'arim'); ?>
+                                            </a>
+                                        </div>
+                                    </article>
+                                <?php endforeach; ?>
+                            </div>
+                        </section>
+                    <?php endif; ?>
                 </div>
 
                 <aside class="arim-cart-summary">
+                    <div class="arim-cart-highlight-box">
+                        <span class="arim-cart-highlight-kicker"><?php echo esc_html($cart_insights['deliveryBadge']); ?></span>
+                        <h2><?php echo esc_html($cart_insights['deliveryDate']); ?></h2>
+                        <p><?php echo esc_html($cart_insights['deliveryNote']); ?></p>
+
+                        <div class="arim-cart-highlight-stats">
+                            <div class="arim-cart-highlight-stat">
+                                <strong><?php esc_html_e('Kampanya', 'arim'); ?></strong>
+                                <span><?php echo esc_html(number_format_i18n((int) $cart_insights['campaignCount'])); ?></span>
+                            </div>
+                            <div class="arim-cart-highlight-stat">
+                                <strong><?php esc_html_e('Avantaj', 'arim'); ?></strong>
+                                <span><?php echo wp_kses_post($cart_insights['savingsText']); ?></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php if (!empty($cart_campaigns)) : ?>
+                        <div class="arim-cart-campaign-box">
+                            <div class="arim-cart-box-head">
+                                <div>
+                                    <span class="arim-cart-box-kicker"><?php esc_html_e('Sepette geçerli', 'arim'); ?></span>
+                                    <h2><?php esc_html_e('Kampanya fırsatları', 'arim'); ?></h2>
+                                </div>
+                            </div>
+
+                            <div class="arim-cart-campaign-grid">
+                                <?php foreach ($cart_campaigns as $campaign) : ?>
+                                    <div class="arim-cart-campaign-item">
+                                        <strong><?php echo esc_html($campaign['value']); ?></strong>
+                                        <span><?php echo esc_html($campaign['text']); ?></span>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
                     <?php do_action('woocommerce_before_cart_collaterals'); ?>
 
                     <div class="cart-collaterals">

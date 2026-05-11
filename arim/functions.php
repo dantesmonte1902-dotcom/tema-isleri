@@ -1060,6 +1060,147 @@ function arim_checkout_delivery_details() {
 }
 
 /**
+ * Sepet sayfası özet verilerini döndürür.
+ *
+ * @return array<string, string|int|float>
+ */
+function arim_cart_page_insights() {
+    $delivery_details = arim_checkout_delivery_details();
+    $item_count       = 0;
+    $product_count    = 0;
+    $total_savings    = 0.0;
+
+    if (function_exists('WC') && WC()->cart) {
+        foreach ((array) WC()->cart->get_cart() as $cart_item) {
+            $product = isset($cart_item['data']) ? $cart_item['data'] : null;
+            $quantity = isset($cart_item['quantity']) ? (int) $cart_item['quantity'] : 0;
+
+            if (!$product instanceof WC_Product || $quantity < 1) {
+                continue;
+            }
+
+            $product_count += $quantity;
+            $item_count++;
+
+            $regular_price = (float) $product->get_regular_price();
+            $sale_price    = (float) $product->get_price();
+
+            if ($regular_price > $sale_price) {
+                $total_savings += ($regular_price - $sale_price) * $quantity;
+            }
+        }
+    }
+
+    return [
+        'itemCount'      => $item_count,
+        'productCount'   => $product_count,
+        'savingsValue'   => $total_savings,
+        'savingsText'    => wc_price($total_savings),
+        'deliveryBadge'  => (string) $delivery_details['badge'],
+        'deliveryDate'   => (string) $delivery_details['date'],
+        'deliveryNote'   => (string) $delivery_details['note'],
+        'supportWindow'  => (string) $delivery_details['supportWindow'],
+        'campaignCount'  => count(arim_single_product_campaigns(4)),
+    ];
+}
+
+/**
+ * Sepetteki ürünlere göre önerilen ürün kartlarını döndürür.
+ *
+ * @param int $limit Maksimum öneri sayısı.
+ * @return array<int, array<string, mixed>>
+ */
+function arim_cart_recommended_products($limit = 4) {
+    if (!function_exists('WC') || !WC()->cart || !function_exists('wc_get_product')) {
+        return [];
+    }
+
+    $limit              = max(1, (int) $limit);
+    $cart_product_ids   = [];
+    $cart_category_ids  = [];
+
+    foreach ((array) WC()->cart->get_cart() as $cart_item) {
+        $product_id = isset($cart_item['product_id']) ? (int) $cart_item['product_id'] : 0;
+        if ($product_id < 1) {
+            continue;
+        }
+
+        $cart_product_ids[] = $product_id;
+        $cart_category_ids = array_merge(
+            $cart_category_ids,
+            wp_get_post_terms($product_id, 'product_cat', ['fields' => 'ids'])
+        );
+    }
+
+    $cart_product_ids  = array_values(array_unique(array_filter(array_map('absint', $cart_product_ids))));
+    $cart_category_ids = array_values(array_unique(array_filter(array_map('absint', $cart_category_ids))));
+
+    if (empty($cart_product_ids)) {
+        return [];
+    }
+
+    $recommended_ids = [];
+
+    if (!empty($cart_category_ids)) {
+        $recommended_ids = get_posts([
+            'post_type'           => 'product',
+            'post_status'         => 'publish',
+            'posts_per_page'      => $limit,
+            'post__not_in'        => $cart_product_ids,
+            'ignore_sticky_posts' => true,
+            'fields'              => 'ids',
+            'orderby'             => 'date',
+            'order'               => 'DESC',
+            'tax_query'           => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+                [
+                    'taxonomy' => 'product_cat',
+                    'field'    => 'term_id',
+                    'terms'    => $cart_category_ids,
+                ],
+            ],
+        ]);
+    }
+
+    if (count($recommended_ids) < $limit) {
+        $fallback_ids = get_posts([
+            'post_type'           => 'product',
+            'post_status'         => 'publish',
+            'posts_per_page'      => $limit - count($recommended_ids),
+            'post__not_in'        => array_merge($cart_product_ids, $recommended_ids),
+            'ignore_sticky_posts' => true,
+            'fields'              => 'ids',
+            'orderby'             => 'date',
+            'order'               => 'DESC',
+            'tax_query'           => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+                [
+                    'taxonomy' => 'product_visibility',
+                    'field'    => 'name',
+                    'terms'    => ['featured'],
+                ],
+            ],
+        ]);
+
+        $recommended_ids = array_merge($recommended_ids, $fallback_ids);
+    }
+
+    $items = [];
+
+    foreach (array_slice(array_values(array_unique(array_map('absint', $recommended_ids))), 0, $limit) as $recommended_id) {
+        $product = wc_get_product($recommended_id);
+        if (!$product instanceof WC_Product) {
+            continue;
+        }
+
+        $payload = arim_prepare_product_card_payload($product);
+        if (!empty($payload)) {
+            $items[] = $payload;
+        }
+    }
+
+    return $items;
+}
+
+/**
  * Geçerli shop archive URL'sini döndürür.
  *
  * @return string

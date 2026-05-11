@@ -89,3 +89,8 @@ Geliştirilen Özellikler
 - Shop/category sayfalarına aktif vitrin sayısı, kategori adedi ve öne çıkan ürün toplamını gösteren özet kartları eklendi.
 - Listeleme üstünde kampanya stripi ve aktif filtre çipleri yerleştirilerek filtre temizleme/geri alma akışı hızlandırıldı.
 - Sidebar tarafına keşif rehberi kartı eklenerek katalog büyüklüğü, öne çıkan ürün miktarı ve teslimat destek mesajı görünür hale getirildi.
+
+9. Sepet Dönüşüm ve Keşif Alanları
+- Sepet ekranına adım göstergesi, teslimat/avantaj/güven odaklı bilgi stripi ve ürün-sipariş özeti sayaçları eklendi.
+- Sağ kolona teslimat vurgulu özet kutusu ile kampanya fırsatları alanı taşınarak checkout öncesi karar desteği güçlendirildi.
+- Sepetteki ürün kategorilerine göre tamamlayıcı ürün önerileri üretilip kart düzeniyle alt alanda sunuldu.
