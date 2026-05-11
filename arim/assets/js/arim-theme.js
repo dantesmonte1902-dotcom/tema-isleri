@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const DEFAULT_SLIDER_INTERVAL = 5000;
     const DEFAULT_SEARCH_DEBOUNCE = 220;
     const DEFAULT_SEARCH_MIN_CHARS = 2;
     const themeConfig = window.arimTheme || {};
@@ -113,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
         showSlide(current);
 
         if (slides.length > 1) {
-            trackInterval(nextSlide, 5000);
+            trackInterval(nextSlide, DEFAULT_SLIDER_INTERVAL);
         }
     });
 
