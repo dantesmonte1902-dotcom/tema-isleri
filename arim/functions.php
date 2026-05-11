@@ -1502,6 +1502,84 @@ function arim_myaccount_account_page_data() {
 }
 
 /**
+ * Hesabım menüsü için özet verileri döndürür.
+ *
+ * @return array<string, mixed>
+ */
+function arim_myaccount_navigation_data() {
+    $user           = wp_get_current_user();
+    $dashboard_data = arim_myaccount_dashboard_data();
+    $address_data   = arim_myaccount_address_page_data();
+    $account_data   = arim_myaccount_account_page_data();
+    $menu_items     = wc_get_account_menu_items();
+
+    $menu_meta = [
+        'dashboard'      => [
+            'badge'       => 'AR',
+            'description' => __('Panel özeti ve hızlı aksiyonlar', 'arim'),
+            'meta'        => sprintf(
+                _n('%s aktif akış', '%s aktif akış', (int) ($dashboard_data['stats']['active'] ?? 0), 'arim'),
+                number_format_i18n((int) ($dashboard_data['stats']['active'] ?? 0))
+            ),
+        ],
+        'orders'         => [
+            'badge'       => 'SP',
+            'description' => __('Sipariş geçmişi ve teslimat takibi', 'arim'),
+            'meta'        => sprintf(
+                _n('%s sipariş', '%s sipariş', (int) ($dashboard_data['stats']['orders'] ?? 0), 'arim'),
+                number_format_i18n((int) ($dashboard_data['stats']['orders'] ?? 0))
+            ),
+        ],
+        'edit-address'   => [
+            'badge'       => 'AD',
+            'description' => __('Fatura ve teslimat adreslerini yönet', 'arim'),
+            'meta'        => sprintf(
+                _n('%s kayıtlı adres', '%s kayıtlı adres', (int) ($address_data['stats']['savedCount'] ?? 0), 'arim'),
+                number_format_i18n((int) ($address_data['stats']['savedCount'] ?? 0))
+            ),
+        ],
+        'edit-account'   => [
+            'badge'       => 'PR',
+            'description' => __('Profil, e-posta ve şifre ayarları', 'arim'),
+            'meta'        => sprintf(
+                __('%s%% profil doluluk', 'arim'),
+                number_format_i18n((int) ($account_data['stats']['profileCompletion'] ?? 0))
+            ),
+        ],
+        'customer-logout'=> [
+            'badge'       => 'ÇK',
+            'description' => __('Oturumu güvenli şekilde kapat', 'arim'),
+            'meta'        => __('Güvenli çıkış', 'arim'),
+        ],
+    ];
+
+    $items = [];
+
+    foreach ($menu_items as $endpoint => $label) {
+        $items[$endpoint] = [
+            'label'       => $label,
+            'url'         => wc_get_account_endpoint_url($endpoint),
+            'badge'       => $menu_meta[$endpoint]['badge'] ?? 'AR',
+            'description' => $menu_meta[$endpoint]['description'] ?? __('Hesap alanını yönet', 'arim'),
+            'meta'        => $menu_meta[$endpoint]['meta'] ?? '',
+            'classes'     => wc_get_account_menu_item_classes($endpoint),
+        ];
+    }
+
+    return [
+        'user' => [
+            'name'  => $user->display_name,
+            'email' => $user->user_email,
+        ],
+        'summary' => [
+            'orders'    => (int) ($dashboard_data['stats']['orders'] ?? 0),
+            'addresses' => (int) ($address_data['stats']['savedCount'] ?? 0),
+        ],
+        'items' => $items,
+    ];
+}
+
+/**
  * Geçerli shop archive URL'sini döndürür.
  *
  * @return string

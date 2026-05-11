@@ -114,3 +114,8 @@ Geliştirilen Özellikler
 - Hesap bilgileri ekranına profil doluluk, kayıtlı adres, güvenlik durumu ve iletişim hattı özet kartları eklendi.
 - Hesap formu özel hero alanı, profil görünümü kartı ve daha net bölümlenmiş form düzeniyle güçlendirildi.
 - Şifre yenileme, sipariş/adres kısayolları ve kampanya alanlarıyla hesap yönetimi akışı daha yönlendirici hale getirildi.
+
+14. Hesabım Navigasyon Geliştirmeleri
+- Sol navigasyon alanı kullanıcı özeti, e-posta görünümü ve sipariş/adres sayaçlarıyla zenginleştirildi.
+- Menü bağlantılarına kısa rozetler, açıklama metinleri ve bağlama uygun meta etiketleri eklenerek taranabilirlik artırıldı.
+- Aktif bağlantı, mobil görünüm ve sidebar kart yapısı tema geneliyle daha uyumlu hale getirildi.

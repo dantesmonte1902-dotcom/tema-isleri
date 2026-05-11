@@ -14,12 +14,58 @@
     overflow: hidden;
 }
 
+.arim-myaccount-nav-head {
+    padding: 20px;
+    border-bottom: 1px solid #f2f2f2;
+    background: linear-gradient(135deg, rgba(242, 122, 26, 0.95), rgba(255, 157, 0, 0.86));
+    color: #fff;
+}
+
 .arim-myaccount-nav-title {
     margin: 0;
-    padding: 20px 20px 16px;
     font-size: 22px;
-    color: #222;
-    border-bottom: 1px solid #f2f2f2;
+    color: #fff;
+}
+
+.arim-myaccount-nav-copy {
+    margin: 8px 0 0;
+    color: rgba(255,255,255,0.9);
+    font-size: 14px;
+    line-height: 1.6;
+    word-break: break-word;
+}
+
+.arim-myaccount-nav-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.arim-myaccount-nav-summary-item {
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.16);
+    backdrop-filter: blur(6px);
+}
+
+.arim-myaccount-nav-summary-item strong,
+.arim-myaccount-nav-summary-item span {
+    display: block;
+}
+
+.arim-myaccount-nav-summary-item strong {
+    margin-bottom: 4px;
+    font-size: 20px;
+    line-height: 1.2;
+}
+
+.arim-myaccount-nav-summary-item span {
+    color: rgba(255,255,255,0.88);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .03em;
 }
 
 .arim-myaccount-nav ul {
@@ -35,13 +81,67 @@
 .arim-myaccount-nav ul li a {
     display: flex;
     align-items: center;
-    min-height: 46px;
-    padding: 0 14px;
-    border-radius: 10px;
+    gap: 12px;
+    min-height: 68px;
+    padding: 12px 14px;
+    border-radius: 14px;
     color: #444;
     font-weight: 600;
     text-decoration: none;
     transition: .25s ease;
+}
+
+.arim-myaccount-nav-item-badge {
+    flex: 0 0 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #fff3e7;
+    color: #f27a1a;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.arim-myaccount-nav-item-content {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.arim-myaccount-nav-item-content strong,
+.arim-myaccount-nav-item-content small {
+    display: block;
+}
+
+.arim-myaccount-nav-item-content strong {
+    color: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.arim-myaccount-nav-item-content small {
+    margin-top: 2px;
+    color: #777;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.arim-myaccount-nav-item-meta {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: #f8f8f8;
+    color: #666;
+    font-size: 11px;
+    font-weight: 800;
+    text-align: right;
 }
 
 .arim-myaccount-nav ul li a:hover {
@@ -49,9 +149,23 @@
     color: #f27a1a;
 }
 
+.arim-myaccount-nav ul li a:hover .arim-myaccount-nav-item-content small {
+    color: #c86215;
+}
+
 .arim-myaccount-nav ul li.is-active a {
     background: #f27a1a;
     color: #fff;
+}
+
+.arim-myaccount-nav ul li.is-active .arim-myaccount-nav-item-badge,
+.arim-myaccount-nav ul li.is-active .arim-myaccount-nav-item-meta {
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+}
+
+.arim-myaccount-nav ul li.is-active .arim-myaccount-nav-item-content small {
+    color: rgba(255,255,255,0.86);
 }
 
 .woocommerce-MyAccount-content {
@@ -1167,6 +1281,11 @@
     .arim-myaccount-account-grid {
         grid-template-columns: 1fr;
     }
+
+    .arim-myaccount-nav-item-meta {
+        align-self: flex-start;
+        text-align: left;
+    }
 }
 
 @media (max-width: 768px) {
@@ -1211,7 +1330,8 @@
     .arim-myaccount-account-form,
     .arim-myaccount-account-security,
     .arim-myaccount-account-hero-card,
-    .arim-myaccount-account-stat {
+    .arim-myaccount-account-stat,
+    .arim-myaccount-nav-head {
         padding: 16px;
     }
 
@@ -1225,6 +1345,10 @@
     .arim-myaccount-account-hero {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .arim-myaccount-nav-summary {
+        grid-template-columns: 1fr;
     }
 
     .arim-myaccount-section-head h2,
