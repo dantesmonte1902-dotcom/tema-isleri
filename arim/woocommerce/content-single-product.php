@@ -12,14 +12,7 @@ $gallery_ids = $product->get_gallery_image_ids();
 $main_image_id = $product->get_image_id();
 $main_image_url = $main_image_id ? wp_get_attachment_image_url($main_image_id, 'large') : wc_placeholder_img_src();
 
-$brand = get_post_meta($product_id, 'brand', true);
-if (!$brand) {
-    $terms = get_the_terms($product_id, 'product_brand');
-    if (!empty($terms) && !is_wp_error($terms)) {
-        $brand = $terms[0]->name;
-    }
-}
-
+$brand = arim_product_brand_name($product_id);
 $rating = $product->get_average_rating();
 $review_count = $product->get_review_count();
 $short_description = $product->get_short_description();
@@ -27,7 +20,12 @@ $price_html = $product->get_price_html();
 $price_text = arim_product_price_text($product);
 $current_price_value = (float) $product->get_price();
 $regular_price_value = (float) $product->get_regular_price();
-$store_name = get_post_meta($product_id, 'store_name', true) ?: __('ARIM Store', 'arim');
+$store_name = arim_product_store_name($product_id);
+$delivery_details = arim_single_product_delivery_details($product);
+$campaigns = arim_single_product_campaigns(3);
+$store_rating = $rating > 0 ? sprintf(__('%s / 5 mağaza puanı', 'arim'), number_format((float) $rating, 1)) : __('4.8 / 5 mağaza puanı', 'arim');
+$store_review_text = sprintf(_n('%s değerlendirme', '%s değerlendirme', max(1, $review_count), 'arim'), number_format_i18n(max(1, $review_count)));
+$store_shipping_text = $product->is_in_stock() ? __('Bugün kargoda fırsatı', 'arim') : __('Siparişe göre hazırlanır', 'arim');
 
 $product_badge = '';
 if ($product->is_on_sale()) {
@@ -129,6 +127,61 @@ if ($product->is_on_sale()) {
                 <div class="arim-single-short-description">
                     <?php echo wp_kses_post(wpautop($short_description)); ?>
                 </div>
+            <?php endif; ?>
+
+            <div class="arim-single-confidence-grid">
+                <section class="arim-single-highlight-card arim-single-delivery-card">
+                    <span class="arim-single-highlight-kicker"><?php echo esc_html($delivery_details['badge']); ?></span>
+                    <h2><?php echo esc_html($delivery_details['date']); ?></h2>
+                    <p><?php echo esc_html($delivery_details['note']); ?></p>
+
+                    <div class="arim-single-highlight-points">
+                        <span><?php esc_html_e('Kargo hareketleri canlı takip edilir', 'arim'); ?></span>
+                        <span><?php esc_html_e('Kolay iade süreciyle desteklenir', 'arim'); ?></span>
+                    </div>
+                </section>
+
+                <section class="arim-single-highlight-card arim-single-store-card">
+                    <span class="arim-single-highlight-kicker"><?php esc_html_e('Satıcı bilgisi', 'arim'); ?></span>
+                    <h2><?php echo esc_html($store_name); ?></h2>
+                    <p><?php echo esc_html($store_rating); ?></p>
+
+                    <div class="arim-single-store-metrics">
+                        <div class="arim-single-store-metric">
+                            <strong><?php esc_html_e('Yorum', 'arim'); ?></strong>
+                            <span><?php echo esc_html($store_review_text); ?></span>
+                        </div>
+                        <div class="arim-single-store-metric">
+                            <strong><?php esc_html_e('Hazırlık', 'arim'); ?></strong>
+                            <span><?php echo esc_html($store_shipping_text); ?></span>
+                        </div>
+                    </div>
+
+                    <a class="arim-single-store-link" href="<?php echo esc_url(arim_shop_url()); ?>">
+                        <?php esc_html_e('Mağazadaki diğer ürünleri incele', 'arim'); ?>
+                    </a>
+                </section>
+            </div>
+
+            <?php if (!empty($campaigns)) : ?>
+                <section class="arim-single-coupon-box">
+                    <div class="arim-single-coupon-head">
+                        <div>
+                            <span class="arim-single-highlight-kicker"><?php esc_html_e('Sepette avantaj', 'arim'); ?></span>
+                            <h2><?php esc_html_e('Kampanya ve kupon fırsatları', 'arim'); ?></h2>
+                        </div>
+                        <span class="arim-single-coupon-note"><?php esc_html_e('Aynı siparişte ek avantajları yakala', 'arim'); ?></span>
+                    </div>
+
+                    <div class="arim-single-coupon-grid">
+                        <?php foreach ($campaigns as $campaign) : ?>
+                            <div class="arim-single-coupon-item">
+                                <strong><?php echo esc_html($campaign['value']); ?></strong>
+                                <span><?php echo esc_html($campaign['text']); ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
             <?php endif; ?>
 
             <div class="arim-single-cart-box">

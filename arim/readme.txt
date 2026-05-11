@@ -74,3 +74,8 @@ Geliştirilen Özellikler
 - Favoriler, karşılaştırmalar ve son görüntülenen ürünler temel alınarak AJAX destekli kişisel öneri akışı eklendi.
 - Favoriler sayfasına önerileri yenileyebilen ayrı bir öneri vitrini ve hızlı aksiyon butonları yerleştirildi.
 - Öneri kartlarında favoriye ekleme, karşılaştırma ve ürün inceleme adımları tek alanda birleştirildi.
+
+6. Ürün Detay Dönüşüm Alanları
+- Ürün detay sayfasına tahmini teslimat ve sipariş sonrası takip bilgisini öne çıkaran ayrı bir teslimat kartı eklendi.
+- Satıcı adı, mağaza puanı, değerlendirme sayısı ve hazırlık bilgisi tek blokta toplanarak güven alanı güçlendirildi.
+- Homepage manager kupon alanları ürün detayda yeniden kullanılarak kampanya ve sepet avantajları görünür hale getirildi.

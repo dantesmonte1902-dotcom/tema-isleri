@@ -960,6 +960,61 @@ function arim_prepare_product_card_payload($product) {
     ];
 }
 
+/**
+ * Ürün detay sayfası için teslimat vaat bilgisini döndürür.
+ *
+ * @param WC_Product $product Ürün nesnesi.
+ * @return array<string, string>
+ */
+function arim_single_product_delivery_details($product) {
+    if (!$product instanceof WC_Product) {
+        return [
+            'badge' => __('Standart teslimat', 'arim'),
+            'date'  => '',
+            'note'  => __('Siparişin onaylandıktan sonra en kısa sürede hazırlanır.', 'arim'),
+        ];
+    }
+
+    $is_in_stock        = $product->is_in_stock();
+    $delivery_offset    = $is_in_stock ? 2 : 5;
+    $delivery_timestamp = current_time('timestamp') + (DAY_IN_SECONDS * $delivery_offset);
+
+    return [
+        'badge' => $is_in_stock ? __('Tahmini teslimat', 'arim') : __('Siparişe özel tedarik', 'arim'),
+        'date'  => wp_date('j F l', $delivery_timestamp, wp_timezone()),
+        'note'  => $is_in_stock
+            ? __('Hızlı kargo ağıyla teslim edilir, sipariş durumun panelden takip edilebilir.', 'arim')
+            : __('Ürün hazırlanır hazırlanmaz öncelikli gönderim planına alınır.', 'arim'),
+    ];
+}
+
+/**
+ * Ürün detay sayfasında gösterilecek kampanya kartlarını döndürür.
+ *
+ * @param int $limit Maksimum kampanya sayısı.
+ * @return array<int, array<string, string>>
+ */
+function arim_single_product_campaigns($limit = 3) {
+    $campaigns = [];
+    $limit     = max(1, (int) $limit);
+
+    for ($i = 1; $i <= 4; $i++) {
+        $value = sanitize_text_field((string) arim_homepage_option("arim_coupon_{$i}_value", ''));
+        $text  = sanitize_text_field((string) arim_homepage_option("arim_coupon_{$i}_text", ''));
+
+        if ($value === '' && $text === '') {
+            continue;
+        }
+
+        $campaigns[] = [
+            'value' => $value,
+            'text'  => $text,
+        ];
+    }
+
+    return array_slice($campaigns, 0, $limit);
+}
+
 function arim_live_search_min_chars() {
     return max(1, (int) apply_filters('arim_live_search_min_chars', 2));
 }

@@ -110,6 +110,186 @@
     margin-bottom: 22px;
 }
 
+.arim-single-confidence-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.arim-single-highlight-card,
+.arim-single-coupon-box {
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+}
+
+.arim-single-highlight-card {
+    padding: 18px;
+}
+
+.arim-single-highlight-kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #fff2e8;
+    color: #f27a1a;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .02em;
+    margin-bottom: 12px;
+}
+
+.arim-single-highlight-card h2,
+.arim-single-coupon-head h2 {
+    margin: 0 0 10px;
+    font-size: 22px;
+    line-height: 1.3;
+    color: #222;
+}
+
+.arim-single-highlight-card p {
+    margin: 0;
+    color: #5f5f5f;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.arim-single-highlight-points {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.arim-single-highlight-points span {
+    position: relative;
+    padding-left: 18px;
+    color: #444;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.arim-single-highlight-points span::before {
+    content: '';
+    position: absolute;
+    top: 7px;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #f27a1a;
+}
+
+.arim-single-delivery-card {
+    background: linear-gradient(135deg, #fff8f1 0%, #fff 100%);
+}
+
+.arim-single-store-card {
+    background: linear-gradient(135deg, #f6f9ff 0%, #fff 100%);
+}
+
+.arim-single-store-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.arim-single-store-metric {
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid #e8eefc;
+}
+
+.arim-single-store-metric strong,
+.arim-single-store-metric span {
+    display: block;
+}
+
+.arim-single-store-metric strong {
+    margin-bottom: 6px;
+    color: #3454d1;
+    font-size: 12px;
+}
+
+.arim-single-store-metric span {
+    color: #333;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.arim-single-store-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    margin-top: 14px;
+    padding: 0 16px;
+    border-radius: 999px;
+    background: #3454d1;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.arim-single-coupon-box {
+    padding: 20px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #fff5eb 0%, #fff 100%);
+}
+
+.arim-single-coupon-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.arim-single-coupon-note {
+    color: #666;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.6;
+}
+
+.arim-single-coupon-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.arim-single-coupon-item {
+    padding: 16px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid #f3dfcc;
+}
+
+.arim-single-coupon-item strong,
+.arim-single-coupon-item span {
+    display: block;
+}
+
+.arim-single-coupon-item strong {
+    margin-bottom: 8px;
+    color: #f27a1a;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.arim-single-coupon-item span {
+    color: #555;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
 .arim-single-cart-box {
     padding: 18px;
     border: 1px solid #f0f0f0;
@@ -253,6 +433,11 @@
         grid-template-columns: 1fr;
     }
 
+    .arim-single-confidence-grid,
+    .arim-single-coupon-grid {
+        grid-template-columns: 1fr;
+    }
+
     .related ul.products {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -269,6 +454,23 @@
 
     .arim-single-price {
         font-size: 24px;
+    }
+
+    .arim-single-highlight-card h2,
+    .arim-single-coupon-head h2 {
+        font-size: 20px;
+    }
+
+    .arim-single-store-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .arim-single-coupon-box {
+        padding: 18px;
+    }
+
+    .arim-single-coupon-head {
+        flex-direction: column;
     }
 
     .arim-single-cart-box form.cart {
