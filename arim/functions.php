@@ -1384,6 +1384,114 @@ function arim_myaccount_orders_page_data() {
 }
 
 /**
+ * Sipariş detay sayfası için özet verileri döndürür.
+ *
+ * @param WC_Order|int $order Sipariş nesnesi veya sipariş ID'si.
+ * @return array<string, mixed>
+ */
+function arim_myaccount_view_order_data($order) {
+    if (!$order instanceof WC_Order) {
+        $order = function_exists('wc_get_order') ? wc_get_order($order) : false;
+    }
+
+    if (!$order instanceof WC_Order) {
+        return [
+            'hero'      => [],
+            'summary'   => [],
+            'status'    => [],
+            'items'     => [],
+            'actions'   => [],
+            'campaigns' => arim_single_product_campaigns(2),
+            'links'     => [
+                'orders'  => function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('orders') : arim_account_url(),
+                'account' => function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('edit-account') : arim_account_url(),
+                'shop'    => arim_shop_url(),
+            ],
+        ];
+    }
+
+    $status_key   = sanitize_html_class($order->get_status());
+    $status_label = wc_get_order_status_name($order->get_status());
+    $item_count   = max(0, $order->get_item_count() - $order->get_item_count_refunded());
+
+    if ($order->has_status(['pending', 'processing', 'on-hold'])) {
+        $hero_text = __('Siparişin hazırlanıyor. Ürün hareketleri, teslimat akışı ve sonraki adımlar bu alanda düzenli şekilde görünür.', 'arim');
+    } elseif ($order->has_status('completed')) {
+        $hero_text = __('Siparişin tamamlandı. Ürün detaylarını, teslimat özetini ve gerekirse yeniden sipariş aksiyonlarını buradan yönetebilirsin.', 'arim');
+    } elseif ($order->has_status(['cancelled', 'failed', 'refunded'])) {
+        $hero_text = __('Bu siparişte işlem veya iade durumu bulunuyor. Sipariş özeti ve hesap alanı bağlantılarıyla sonraki adımlara hızlıca dönebilirsin.', 'arim');
+    } else {
+        $hero_text = __('Sipariş özetini, ürünlerini ve teslimat bilgilerini tek ekrandan takip et.', 'arim');
+    }
+
+    $summary = [
+        [
+            'label' => __('Sipariş tarihi', 'arim'),
+            'value' => $order->get_date_created() ? wc_format_datetime($order->get_date_created()) : '—',
+        ],
+        [
+            'label' => __('Ödeme yöntemi', 'arim'),
+            'value' => $order->get_payment_method_title() ? wp_strip_all_tags($order->get_payment_method_title()) : __('Ödeme adımında belirlendi', 'arim'),
+        ],
+        [
+            'label' => __('Teslimat tipi', 'arim'),
+            'value' => $order->get_shipping_method() ? wp_strip_all_tags($order->get_shipping_method()) : __('Teslimat bilgisi siparişte yer alıyor', 'arim'),
+        ],
+        [
+            'label' => __('Toplam tutar', 'arim'),
+            'value' => wp_strip_all_tags($order->get_formatted_order_total()),
+        ],
+    ];
+
+    $items = [];
+
+    foreach ($order->get_items('line_item') as $item) {
+        if (!$item instanceof WC_Order_Item_Product) {
+            continue;
+        }
+
+        $product = $item->get_product();
+        $items[] = [
+            'name'      => $item->get_name(),
+            'quantity'  => sprintf(
+                _n('%s adet', '%s adet', (int) $item->get_quantity(), 'arim'),
+                number_format_i18n((int) $item->get_quantity())
+            ),
+            'total'     => wp_strip_all_tags($order->get_formatted_line_subtotal($item)),
+            'url'       => ($product instanceof WC_Product && $product->is_visible()) ? $product->get_permalink() : '',
+            'thumbnail' => $product instanceof WC_Product ? $product->get_image('woocommerce_thumbnail') : wc_placeholder_img('woocommerce_thumbnail'),
+        ];
+    }
+
+    return [
+        'hero' => [
+            'title' => sprintf(__('Sipariş #%s', 'arim'), $order->get_order_number()),
+            'text'  => $hero_text,
+        ],
+        'summary' => $summary,
+        'status' => [
+            'label' => $status_label,
+            'key'   => $status_key,
+        ],
+        'items' => $items,
+        'actions' => wc_get_account_orders_actions($order),
+        'campaigns' => arim_single_product_campaigns(2),
+        'metrics' => [
+            'itemCount' => sprintf(
+                _n('%s ürün', '%s ürün', $item_count, 'arim'),
+                number_format_i18n($item_count)
+            ),
+            'orderTotal' => wp_strip_all_tags($order->get_formatted_order_total()),
+        ],
+        'links' => [
+            'orders'  => wc_get_account_endpoint_url('orders'),
+            'account' => wc_get_account_endpoint_url('edit-account'),
+            'shop'    => arim_shop_url(),
+        ],
+    ];
+}
+
+/**
  * Adres yönetimi sayfası için özet verileri döndürür.
  *
  * @return array<string, mixed>

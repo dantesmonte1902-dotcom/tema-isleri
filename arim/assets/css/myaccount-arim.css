@@ -1185,6 +1185,289 @@
     box-shadow: none !important;
 }
 
+.arim-myaccount-view-order {
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: #fff;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+}
+
+.arim-myaccount-view-order-hero {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 24px;
+    margin-bottom: 18px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(104, 61, 230, 0.96), rgba(147, 97, 255, 0.86));
+    color: #fff;
+}
+
+.arim-myaccount-view-order-hero h2 {
+    margin: 0 0 10px;
+    font-size: 30px;
+}
+
+.arim-myaccount-view-order-hero p {
+    margin: 0;
+    color: rgba(255,255,255,0.92);
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+.arim-myaccount-view-order-hero-card,
+.arim-myaccount-view-order-stat,
+.arim-myaccount-view-order-panel,
+.arim-myaccount-view-order-details .woocommerce-order-details,
+.arim-myaccount-view-order-details .woocommerce-customer-details,
+.arim-myaccount-view-order-details .woocommerce-order-downloads {
+    border: 1px solid #ececec;
+    border-radius: 16px;
+}
+
+.arim-myaccount-view-order-hero-card {
+    min-width: min(280px, 100%);
+    padding: 20px;
+    background: rgba(255,255,255,0.16);
+    border-color: rgba(255,255,255,0.22);
+    backdrop-filter: blur(6px);
+}
+
+.arim-myaccount-view-order-hero-card span,
+.arim-myaccount-view-order-hero-card strong,
+.arim-myaccount-view-order-hero-card small {
+    display: block;
+}
+
+.arim-myaccount-view-order-hero-card span,
+.arim-myaccount-view-order-hero-card small {
+    color: rgba(255,255,255,0.86);
+}
+
+.arim-myaccount-view-order-hero-card strong {
+    margin: 8px 0 10px;
+    max-width: max-content;
+}
+
+.arim-myaccount-view-order-hero-card small + small {
+    margin-top: 4px;
+}
+
+.arim-myaccount-view-order-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.arim-myaccount-view-order-stat {
+    padding: 16px 18px;
+    background: #fafafa;
+}
+
+.arim-myaccount-view-order-stat span,
+.arim-myaccount-view-order-stat strong {
+    display: block;
+}
+
+.arim-myaccount-view-order-stat span {
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 12px;
+}
+
+.arim-myaccount-view-order-stat strong {
+    color: #222;
+    font-size: 20px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.arim-myaccount-view-order-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.arim-myaccount-view-order-panel {
+    padding: 20px;
+    background: #fff;
+}
+
+.arim-myaccount-view-order-items {
+    display: grid;
+    gap: 14px;
+}
+
+.arim-myaccount-view-order-item {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    padding: 14px;
+    border-radius: 16px;
+    border: 1px solid #ececec;
+    background: #fafafa;
+}
+
+.arim-myaccount-view-order-item-media img {
+    display: block;
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.arim-myaccount-view-order-item-content {
+    min-width: 0;
+}
+
+.arim-myaccount-view-order-item-content h4 {
+    margin: 0 0 6px;
+    color: #222;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.arim-myaccount-view-order-item-content h4 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.arim-myaccount-view-order-item-content span {
+    color: #666;
+    font-size: 13px;
+}
+
+.arim-myaccount-view-order-item-total {
+    color: #222;
+    font-size: 16px;
+    line-height: 1.4;
+    text-align: right;
+}
+
+.arim-myaccount-view-order-side,
+.arim-myaccount-view-order-details {
+    display: grid;
+    gap: 18px;
+}
+
+.arim-myaccount-view-order-details .woocommerce-order-details,
+.arim-myaccount-view-order-details .woocommerce-customer-details,
+.arim-myaccount-view-order-details .woocommerce-order-downloads {
+    margin: 0;
+    padding: 20px;
+    background: #fff;
+}
+
+.arim-myaccount-view-order-details .woocommerce-order-details__title,
+.arim-myaccount-view-order-details .woocommerce-column__title,
+.arim-myaccount-view-order-details .woocommerce-order-downloads__title {
+    margin: 0 0 16px;
+    color: #222;
+    font-size: 24px;
+}
+
+.arim-myaccount-view-order-details .shop_table,
+.arim-myaccount-view-order-details .woocommerce-table--order-downloads {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border: 1px solid #ececec;
+    border-radius: 14px;
+}
+
+.arim-myaccount-view-order-details .shop_table th,
+.arim-myaccount-view-order-details .shop_table td,
+.arim-myaccount-view-order-details .woocommerce-table--order-downloads th,
+.arim-myaccount-view-order-details .woocommerce-table--order-downloads td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.arim-myaccount-view-order-details .shop_table th,
+.arim-myaccount-view-order-details .woocommerce-table--order-downloads th {
+    background: #fafafa;
+    color: #222;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.arim-myaccount-view-order-details .shop_table tr:last-child th,
+.arim-myaccount-view-order-details .shop_table tr:last-child td,
+.arim-myaccount-view-order-details .woocommerce-table--order-downloads tr:last-child th,
+.arim-myaccount-view-order-details .woocommerce-table--order-downloads tr:last-child td {
+    border-bottom: 0;
+}
+
+.arim-myaccount-view-order-details .product-name a,
+.arim-myaccount-view-order-details .download-file a,
+.arim-myaccount-view-order-details .woocommerce-customer-details a {
+    color: #f27a1a;
+    text-decoration: none;
+}
+
+.arim-myaccount-view-order-details .product-name a:hover,
+.arim-myaccount-view-order-details .download-file a:hover,
+.arim-myaccount-view-order-details .woocommerce-customer-details a:hover {
+    text-decoration: underline;
+}
+
+.arim-myaccount-view-order-details .woocommerce-table--order-details tfoot th,
+.arim-myaccount-view-order-details .woocommerce-table--order-details tfoot td {
+    background: #fcfcfc;
+}
+
+.arim-myaccount-view-order-details .woocommerce-table--order-details tfoot tr:last-child th,
+.arim-myaccount-view-order-details .woocommerce-table--order-details tfoot tr:last-child td {
+    color: #222;
+    font-size: 16px;
+}
+
+.arim-myaccount-view-order-details .woocommerce-order-downloads .button {
+    min-height: 40px;
+    border-radius: 10px !important;
+    border: 1px solid #f27a1a !important;
+    background: #f27a1a !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+}
+
+.arim-myaccount-view-order-details .woocommerce-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.arim-myaccount-view-order-details address {
+    margin: 0;
+    color: #555;
+    font-style: normal;
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+.arim-myaccount-view-order-details .woocommerce-order-details .order-again {
+    padding-top: 16px;
+}
+
+.arim-myaccount-view-order-details .woocommerce-order-details .button {
+    min-height: 42px;
+    border-radius: 10px !important;
+    border: 1px solid #f27a1a !important;
+    background: #fff !important;
+    color: #f27a1a !important;
+    font-weight: 700 !important;
+}
+
 .arim-myaccount-empty h2 {
     margin: 0 0 10px;
     font-size: 28px;
@@ -1254,12 +1537,15 @@
     .arim-myaccount-address-edit-layout,
     .arim-myaccount-address-summary,
     .arim-myaccount-account-layout,
-    .arim-myaccount-account-summary {
+    .arim-myaccount-account-summary,
+    .arim-myaccount-view-order-layout,
+    .arim-myaccount-view-order-summary {
         grid-template-columns: 1fr;
     }
 
     .arim-myaccount-address-edit-hero,
-    .arim-myaccount-account-hero {
+    .arim-myaccount-account-hero,
+    .arim-myaccount-view-order-hero {
         flex-direction: column;
     }
 }
@@ -1273,12 +1559,17 @@
     .arim-myaccount-cards,
     .arim-myaccount-orders-summary,
     .arim-myaccount-address-summary,
-    .arim-myaccount-account-summary {
+    .arim-myaccount-account-summary,
+    .arim-myaccount-view-order-summary {
         grid-template-columns: 1fr 1fr;
     }
 
     .arim-myaccount-orders-panels,
     .arim-myaccount-account-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .arim-myaccount-view-order-details .woocommerce-columns {
         grid-template-columns: 1fr;
     }
 
@@ -1294,6 +1585,7 @@
     .arim-myaccount-addresses,
     .arim-myaccount-address-edit,
     .arim-myaccount-account,
+    .arim-myaccount-view-order,
     .arim-myaccount-empty {
         padding: 16px;
     }
@@ -1312,6 +1604,7 @@
     .arim-myaccount-orders-summary,
     .arim-myaccount-address-summary,
     .arim-myaccount-account-summary,
+    .arim-myaccount-view-order-summary,
     .arim-myaccount-account-grid,
     .arim-myaccount-address-form .woocommerce-address-fields__field-wrapper {
         grid-template-columns: 1fr;
@@ -1331,6 +1624,10 @@
     .arim-myaccount-account-security,
     .arim-myaccount-account-hero-card,
     .arim-myaccount-account-stat,
+    .arim-myaccount-view-order-panel,
+    .arim-myaccount-view-order-details .woocommerce-order-details,
+    .arim-myaccount-view-order-details .woocommerce-customer-details,
+    .arim-myaccount-view-order-details .woocommerce-order-downloads,
     .arim-myaccount-nav-head {
         padding: 16px;
     }
@@ -1342,7 +1639,8 @@
     .arim-myaccount-empty-actions,
     .arim-myaccount-address-card-top,
     .arim-myaccount-address-help-actions,
-    .arim-myaccount-account-hero {
+    .arim-myaccount-account-hero,
+    .arim-myaccount-view-order-hero {
         flex-direction: column;
         align-items: flex-start;
     }
@@ -1351,10 +1649,26 @@
         grid-template-columns: 1fr;
     }
 
+    .arim-myaccount-view-order-item {
+        grid-template-columns: 1fr;
+    }
+
+    .arim-myaccount-view-order-item-total {
+        text-align: left;
+    }
+
+    .arim-myaccount-view-order-details .shop_table th,
+    .arim-myaccount-view-order-details .shop_table td,
+    .arim-myaccount-view-order-details .woocommerce-table--order-downloads th,
+    .arim-myaccount-view-order-details .woocommerce-table--order-downloads td {
+        padding: 12px;
+    }
+
     .arim-myaccount-section-head h2,
     .arim-myaccount-empty h2,
     .arim-myaccount-address-edit-hero h2,
-    .arim-myaccount-account-hero h2 {
+    .arim-myaccount-account-hero h2,
+    .arim-myaccount-view-order-hero h2 {
         font-size: 22px;
     }
 }

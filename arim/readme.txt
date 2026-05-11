@@ -119,3 +119,8 @@ Geliştirilen Özellikler
 - Sol navigasyon alanı kullanıcı özeti, e-posta görünümü ve sipariş/adres sayaçlarıyla zenginleştirildi.
 - Menü bağlantılarına kısa rozetler, açıklama metinleri ve bağlama uygun meta etiketleri eklenerek taranabilirlik artırıldı.
 - Aktif bağlantı, mobil görünüm ve sidebar kart yapısı tema geneliyle daha uyumlu hale getirildi.
+
+15. Sipariş Detay Sayfası Geliştirmeleri
+- Sipariş detay ekranına durum odaklı hero alanı, ödeme/teslimat/tutar özet kartları ve sipariş içeriği ön izlemesi eklendi.
+- Sipariş aksiyonları, hesap düzenleme ve alışverişe dönüş bağlantıları ayrı destek panelinde toplanarak sonraki adımlar belirginleştirildi.
+- WooCommerce sipariş detay, müşteri bilgileri ve indirme tabloları tema geneliyle uyumlu kart ve tablo stiline taşındı.
