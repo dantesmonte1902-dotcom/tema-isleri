@@ -64,3 +64,8 @@ Geliştirilen Özellikler
 - Ürün detay sayfalarında ziyaret edilen ürünler otomatik olarak son görüntülenenler listesine eklenir hale getirildi.
 - Favoriler sayfasına alışverişe geri dönüşü hızlandıran ayrı bir son görüntülenen ürünler alanı eklendi.
 - Bu alanda ürün görseli, mağaza, marka ve fiyat bilgileri kart yapısıyla yeniden sunuldu.
+
+4. Ürün Karşılaştırma Deneyimi
+- Ürün kartlarına ve ürün detay sayfasına karşılaştırma butonları eklenerek 4 ürüne kadar hızlı kıyas deneyimi sağlandı.
+- Header alanına canlı karşılaştırma sayacı ve favoriler sayfasına detaylı karşılaştırma bölümü eklendi.
+- Karşılaştırma bölümünde en iyi fiyat vurgusu, indirim farkı rozetleri ve özet tablo ile karar verme akışı güçlendirildi.

@@ -56,6 +56,22 @@ if ($product->is_on_sale()) {
                     data-product-regular-price="<?php echo esc_attr($regular_price_value); ?>"
                 >♡</button>
 
+                <button
+                    class="arim-compare-btn"
+                    type="button"
+                    aria-label="<?php esc_attr_e('Karşılaştırmaya ekle', 'arim'); ?>"
+                    data-product-id="<?php echo esc_attr($product_id); ?>"
+                    data-product-title="<?php echo esc_attr($product->get_name()); ?>"
+                    data-product-price="<?php echo esc_attr($price_text); ?>"
+                    data-product-image="<?php echo esc_url($image_url); ?>"
+                    data-product-url="<?php echo esc_url($product_url); ?>"
+                    data-product-brand="<?php echo esc_attr($brand ? $brand : __('ARIM', 'arim')); ?>"
+                    data-product-store="<?php echo esc_attr(__('ARIM Store', 'arim')); ?>"
+                    data-product-badge="<?php echo esc_attr($badge_text); ?>"
+                    data-product-current-price="<?php echo esc_attr($current_price_value); ?>"
+                    data-product-regular-price="<?php echo esc_attr($regular_price_value); ?>"
+                >⇄</button>
+
                 <?php if ($badge_text) : ?>
                     <span class="arim-product-badge <?php echo $product->is_on_sale() ? 'sale' : ''; ?>">
                         <?php echo esc_html($badge_text); ?>

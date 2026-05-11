@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const DEFAULT_SEARCH_MIN_CHARS = 2;
     const themeConfig = window.arimTheme || {};
     const favoriteStorageKey = 'arimFavorites';
+    const compareStorageKey = 'arimCompare';
     const recentlyViewedStorageKey = 'arimRecentlyViewed';
     const favoriteLabels = themeConfig.labels || {};
     const activeIntervals = [];
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const searchDebounceDelay = getFiniteConfigValue(themeConfig.searchDebounce, DEFAULT_SEARCH_DEBOUNCE);
     const liveSearchMinChars = getFiniteConfigValue(themeConfig.searchMinChars, DEFAULT_SEARCH_MIN_CHARS, 1);
+    const compareLimit = getFiniteConfigValue(themeConfig.compareLimit, 4, 2);
     const recentlyViewedLimit = getFiniteConfigValue(themeConfig.recentlyViewedLimit, 6, 1);
 
     function trackInterval(callback, delay) {
@@ -179,6 +181,45 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function safeParseCompare() {
+        try {
+            const storedProducts = window.localStorage.getItem(compareStorageKey);
+            const parsedProducts = storedProducts ? JSON.parse(storedProducts) : [];
+
+            if (!Array.isArray(parsedProducts)) {
+                return [];
+            }
+
+            return parsedProducts
+                .map(function (item) {
+                    if (!item || typeof item !== 'object') {
+                        return null;
+                    }
+
+                    const id = String(item.id || '').trim();
+                    if (!id) {
+                        return null;
+                    }
+
+                    return {
+                        id: id,
+                        title: String(item.title || ''),
+                        price: String(item.price || ''),
+                        image: String(item.image || ''),
+                        url: String(item.url || ''),
+                        brand: String(item.brand || ''),
+                        store: String(item.store || ''),
+                        badge: String(item.badge || ''),
+                        currentPrice: Number.isFinite(Number(item.currentPrice)) ? Number(item.currentPrice) : 0,
+                        regularPrice: Number.isFinite(Number(item.regularPrice)) ? Number(item.regularPrice) : 0,
+                    };
+                })
+                .filter(Boolean);
+        } catch (error) {
+            return [];
+        }
+    }
+
     function safeParseRecentlyViewed() {
         try {
             const storedProducts = window.localStorage.getItem(recentlyViewedStorageKey);
@@ -237,6 +278,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }, {});
     }
 
+    function getCompareProductMap() {
+        return safeParseCompare().reduce(function (accumulator, item) {
+            accumulator[item.id] = item;
+            return accumulator;
+        }, {});
+    }
+
     function toNumber(value) {
         const numericValue = Number(value);
         return Number.isFinite(numericValue) ? numericValue : 0;
@@ -273,12 +321,28 @@ document.addEventListener('DOMContentLoaded', function () {
         button.textContent = isFavorited ? '♥' : '♡';
     }
 
+    function setCompareButtonState(button, isCompared) {
+        button.classList.toggle('is-compared', isCompared);
+        button.setAttribute('aria-pressed', isCompared ? 'true' : 'false');
+        button.setAttribute('aria-label', isCompared ? (favoriteLabels.removeFromCompare || 'Karşılaştırmadan kaldır') : (favoriteLabels.addToCompare || 'Karşılaştırmaya ekle'));
+        button.textContent = '⇄';
+    }
+
     function updateFavoriteButtons() {
         const favorites = getFavoriteProductMap();
 
         document.querySelectorAll('.arim-favorite-btn[data-product-id]').forEach(function (button) {
             const productId = String(button.getAttribute('data-product-id') || '').trim();
             setFavoriteButtonState(button, Boolean(productId && favorites[productId]));
+        });
+    }
+
+    function updateCompareButtons() {
+        const compareItems = getCompareProductMap();
+
+        document.querySelectorAll('.arim-compare-btn[data-product-id]').forEach(function (button) {
+            const productId = String(button.getAttribute('data-product-id') || '').trim();
+            setCompareButtonState(button, Boolean(productId && compareItems[productId]));
         });
     }
 
@@ -296,6 +360,27 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.arim-favorites-count').forEach(function (counter) {
             counter.textContent = String(favorites.length);
         });
+    }
+
+    function updateCompareCounters() {
+        const compareItems = safeParseCompare();
+
+        document.querySelectorAll('.arim-compare-count').forEach(function (counter) {
+            counter.textContent = String(compareItems.length);
+        });
+    }
+
+    function saveCompare(items) {
+        try {
+            window.localStorage.setItem(compareStorageKey, JSON.stringify(items));
+        } catch (error) {
+            return false;
+        }
+
+        updateCompareButtons();
+        updateCompareCounters();
+        renderCompareSection();
+        return true;
     }
 
     function createFavoriteCard(item, options) {
@@ -405,6 +490,270 @@ document.addEventListener('DOMContentLoaded', function () {
         card.appendChild(content);
 
         return card;
+    }
+
+    function getProductSavings(item) {
+        if (item.currentPrice > 0 && item.regularPrice > item.currentPrice) {
+            return item.regularPrice - item.currentPrice;
+        }
+
+        return 0;
+    }
+
+    function getLowestComparePrice(items) {
+        const pricedItems = items.filter(function (item) {
+            return item.currentPrice > 0;
+        });
+
+        if (!pricedItems.length) {
+            return 0;
+        }
+
+        return pricedItems.reduce(function (lowest, item) {
+            return item.currentPrice < lowest ? item.currentPrice : lowest;
+        }, pricedItems[0].currentPrice);
+    }
+
+    function createCompareCard(item, lowestPrice) {
+        const card = document.createElement('article');
+        card.className = 'arim-compare-card';
+
+        const top = document.createElement('div');
+        top.className = 'arim-compare-card-top';
+
+        const imageLink = document.createElement('a');
+        imageLink.className = 'arim-compare-card-image';
+        imageLink.href = item.url || themeConfig.shopUrl || '#';
+
+        if (item.image) {
+            const image = document.createElement('img');
+            image.src = item.image;
+            image.alt = item.title || '';
+            image.loading = 'lazy';
+            imageLink.appendChild(image);
+        } else {
+            imageLink.textContent = (item.brand || 'AR').slice(0, 2).toUpperCase();
+        }
+
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'arim-compare-btn is-compared arim-compare-remove-btn';
+        removeButton.setAttribute('aria-label', favoriteLabels.removeFromCompare || 'Karşılaştırmadan kaldır');
+        removeButton.setAttribute('data-product-id', item.id);
+        removeButton.textContent = '⇄';
+
+        top.appendChild(imageLink);
+        top.appendChild(removeButton);
+        card.appendChild(top);
+
+        const body = document.createElement('div');
+        body.className = 'arim-compare-card-body';
+
+        const meta = document.createElement('div');
+        meta.className = 'arim-favorites-card-meta';
+
+        if (item.store) {
+            const store = document.createElement('span');
+            store.className = 'arim-favorites-card-store';
+            store.textContent = item.store;
+            meta.appendChild(store);
+        }
+
+        if (item.brand) {
+            const brand = document.createElement('span');
+            brand.className = 'arim-favorites-card-brand';
+            brand.textContent = item.brand;
+            meta.appendChild(brand);
+        }
+
+        body.appendChild(meta);
+
+        const title = document.createElement('a');
+        title.className = 'arim-favorites-card-title';
+        title.href = item.url || themeConfig.shopUrl || '#';
+        title.textContent = item.title || '';
+        body.appendChild(title);
+
+        const price = document.createElement('div');
+        price.className = 'arim-favorites-card-price';
+        price.textContent = item.price || formatCurrency(item.currentPrice || 0);
+        body.appendChild(price);
+
+        const badges = document.createElement('div');
+        badges.className = 'arim-compare-card-badges';
+
+        if (lowestPrice > 0 && item.currentPrice === lowestPrice) {
+            const bestPrice = document.createElement('span');
+            bestPrice.className = 'arim-compare-pill is-best';
+            bestPrice.textContent = favoriteLabels.compareBestPrice || 'En iyi fiyat';
+            badges.appendChild(bestPrice);
+        }
+
+        if (getProductSavings(item) > 0) {
+            const savings = document.createElement('span');
+            savings.className = 'arim-compare-pill';
+            savings.textContent = (favoriteLabels.compareSavings || 'İndirim farkı') + ': ' + formatCurrency(getProductSavings(item));
+            badges.appendChild(savings);
+        }
+
+        if (item.badge) {
+            const badge = document.createElement('span');
+            badge.className = 'arim-compare-pill';
+            badge.textContent = item.badge;
+            badges.appendChild(badge);
+        }
+
+        if (badges.childNodes.length) {
+            body.appendChild(badges);
+        }
+
+        const link = document.createElement('a');
+        link.className = 'arim-favorites-card-link';
+        link.href = item.url || themeConfig.shopUrl || '#';
+        link.textContent = favoriteLabels.compareActionLabel || favoriteLabels.viewProduct || 'İncele';
+        body.appendChild(link);
+
+        card.appendChild(body);
+
+        return card;
+    }
+
+    function createCompareTable(items, lowestPrice) {
+        const tableWrap = document.createElement('div');
+        tableWrap.className = 'arim-compare-table-wrap';
+
+        const table = document.createElement('table');
+        table.className = 'arim-compare-table';
+
+        const headerRow = document.createElement('tr');
+        const headerLabel = document.createElement('th');
+        headerLabel.textContent = favoriteLabels.compareCountLabel || 'Karşılaştırma';
+        headerRow.appendChild(headerLabel);
+
+        items.forEach(function (item) {
+            const headerCell = document.createElement('th');
+            headerCell.textContent = item.title || '';
+
+            if (lowestPrice > 0 && item.currentPrice === lowestPrice) {
+                headerCell.classList.add('is-best');
+            }
+
+            headerRow.appendChild(headerCell);
+        });
+
+        const rows = [
+            {
+                label: favoriteLabels.compareBrandLabel || 'Marka',
+                getValue: function (item) {
+                    return item.brand || '—';
+                },
+            },
+            {
+                label: favoriteLabels.compareStoreLabel || 'Mağaza',
+                getValue: function (item) {
+                    return item.store || '—';
+                },
+            },
+            {
+                label: favoriteLabels.comparePriceLabel || 'Fiyat',
+                getValue: function (item) {
+                    return item.price || formatCurrency(item.currentPrice || 0);
+                },
+                highlightBest: true,
+            },
+            {
+                label: favoriteLabels.compareDiscountLabel || 'İndirim',
+                getValue: function (item) {
+                    const savings = getProductSavings(item);
+                    return savings > 0 ? formatCurrency(savings) : (favoriteLabels.compareNoDifference || 'Fiyat farkı bulunmuyor');
+                },
+            },
+            {
+                label: favoriteLabels.compareBadgeLabel || 'Öne çıkan',
+                getValue: function (item) {
+                    return item.badge || '—';
+                },
+            },
+        ];
+
+        const tbody = document.createElement('tbody');
+        tbody.appendChild(headerRow);
+
+        rows.forEach(function (rowConfig) {
+            const row = document.createElement('tr');
+            const label = document.createElement('td');
+            label.textContent = rowConfig.label;
+            row.appendChild(label);
+
+            items.forEach(function (item) {
+                const valueCell = document.createElement('td');
+                valueCell.textContent = rowConfig.getValue(item);
+
+                if (rowConfig.highlightBest && lowestPrice > 0 && item.currentPrice === lowestPrice) {
+                    valueCell.classList.add('is-best');
+                }
+
+                row.appendChild(valueCell);
+            });
+
+            tbody.appendChild(row);
+        });
+
+        table.appendChild(tbody);
+        tableWrap.appendChild(table);
+        return tableWrap;
+    }
+
+    function renderCompareSection() {
+        const comparePage = document.querySelector('[data-arim-compare-page]');
+        if (!comparePage) {
+            return;
+        }
+
+        const items = safeParseCompare();
+        comparePage.innerHTML = '';
+
+        if (!items.length) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'arim-favorites-empty arim-favorites-empty-secondary';
+
+            const title = document.createElement('h2');
+            title.textContent = favoriteLabels.compareEmptyTitle || 'Karşılaştırma listen hazır değil';
+            emptyState.appendChild(title);
+
+            const description = document.createElement('p');
+            description.textContent = favoriteLabels.compareEmptyText || 'Ürün kartlarındaki karşılaştır butonuyla en fazla 4 ürünü yan yana inceleyebilirsin.';
+            emptyState.appendChild(description);
+
+            comparePage.appendChild(emptyState);
+            return;
+        }
+
+        const intro = document.createElement('div');
+        intro.className = 'arim-compare-intro';
+
+        const introText = document.createElement('p');
+        introText.className = 'arim-favorites-secondary-note';
+        introText.textContent = favoriteLabels.compareDescription || 'Seçtiğin ürünleri aynı tabloda kıyasla, en iyi fiyatı yakala ve kararını hızlandır.';
+        intro.appendChild(introText);
+
+        const counter = document.createElement('span');
+        counter.className = 'arim-compare-limit-note';
+        counter.textContent = String(items.length) + '/' + String(compareLimit) + ' • ' + (favoriteLabels.compareMaxNotice || 'Karşılaştırma listesinde en fazla 4 ürün tutulur.');
+        intro.appendChild(counter);
+        comparePage.appendChild(intro);
+
+        const lowestPrice = getLowestComparePrice(items);
+
+        const grid = document.createElement('div');
+        grid.className = 'arim-compare-grid';
+
+        items.forEach(function (item) {
+            grid.appendChild(createCompareCard(item, lowestPrice));
+        });
+
+        comparePage.appendChild(grid);
+        comparePage.appendChild(createCompareTable(items, lowestPrice));
     }
 
     function renderFavoritesPage() {
@@ -787,8 +1136,38 @@ document.addEventListener('DOMContentLoaded', function () {
         saveFavorites(favorites);
     });
 
+    document.addEventListener('click', function (event) {
+        const compareButton = event.target.closest('.arim-compare-btn[data-product-id]');
+
+        if (!compareButton) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const product = collectProductData(compareButton);
+        if (!product) {
+            return;
+        }
+
+        const compareItems = safeParseCompare();
+        const existingIndex = compareItems.findIndex(function (item) {
+            return item.id === product.id;
+        });
+
+        if (existingIndex >= 0) {
+            compareItems.splice(existingIndex, 1);
+            saveCompare(compareItems);
+            return;
+        }
+
+        compareItems.unshift(product);
+        saveCompare(compareItems.slice(0, compareLimit));
+    });
+
     window.addEventListener('storage', function (event) {
-        if (event.key !== favoriteStorageKey && event.key !== recentlyViewedStorageKey) {
+        if (event.key !== favoriteStorageKey && event.key !== compareStorageKey && event.key !== recentlyViewedStorageKey) {
             return;
         }
 
@@ -799,7 +1178,10 @@ document.addEventListener('DOMContentLoaded', function () {
         crossTabSyncDebounceTimer = window.setTimeout(function () {
             updateFavoriteButtons();
             updateFavoriteCounters();
+            updateCompareButtons();
+            updateCompareCounters();
             renderFavoritesPage();
+            renderCompareSection();
             renderRecentlyViewedSection();
             crossTabSyncDebounceTimer = null;
         }, 80);
@@ -808,7 +1190,10 @@ document.addEventListener('DOMContentLoaded', function () {
     trackRecentlyViewedProduct();
     updateFavoriteButtons();
     updateFavoriteCounters();
+    updateCompareButtons();
+    updateCompareCounters();
     renderFavoritesPage();
+    renderCompareSection();
     renderRecentlyViewedSection();
     initLiveSearch();
 });
