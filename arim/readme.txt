@@ -47,3 +47,15 @@ Geliştirilebilecek Özellikler
 Önerilen Sonraki Adım
 
 İlk öncelik olarak ürün listeleme, ürün detay ve checkout sayfalarını Trendyol hissine daha da yaklaştırmak en yüksek etkiyi sağlayacaktır.
+
+Geliştirilen Özellikler
+
+1. Favoriler Deneyimi
+- Ürün kartları ve ürün detay sayfasındaki kalp butonları kalıcı favori sistemine bağlandı.
+- Favoriler için özel sayfa, canlı header sayacı ve avantaj özet alanı eklendi.
+- Favori ürünler tarayıcıda saklanarak kullanıcıya hızlı geri dönüş deneyimi sağlandı.
+
+2. Canlı Arama Önerileri
+- Header arama alanı için AJAX destekli canlı ürün öneri deneyimi eklendi.
+- Arama sonuçlarında görsel, mağaza, marka ve fiyat bilgisi gösterilir hale getirildi.
+- Sonuç bulunamadığında ve tüm sonuçlara gitmek istendiğinde özel yönlendirme yüzeyi tasarlandı.

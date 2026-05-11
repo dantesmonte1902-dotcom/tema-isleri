@@ -52,6 +52,8 @@ function arim_enqueue_assets() {
     wp_localize_script('arim-theme-js', 'arimTheme', [
         'favoritesUrl' => arim_favorites_url(),
         'shopUrl'      => arim_shop_url(),
+        'ajaxUrl'      => admin_url('admin-ajax.php'),
+        'searchNonce'  => wp_create_nonce('arim_public_product_search'),
         'labels'       => [
             'favoritesTitle'       => __('Favorilerim', 'arim'),
             'favoritesDescription' => __('Beğendiğin ürünleri burada sakla, karşılaştır ve alışverişe kaldığın yerden devam et.', 'arim'),
@@ -65,6 +67,11 @@ function arim_enqueue_assets() {
             'itemsLabel'           => __('Ürün', 'arim'),
             'saleItemsLabel'       => __('İndirimli', 'arim'),
             'savingsLabel'         => __('Toplam Avantaj', 'arim'),
+            'searchPlaceholder'    => __('Ürün, kategori veya marka ara', 'arim'),
+            'searchLoading'        => __('Ürünler yükleniyor...', 'arim'),
+            'searchNoResults'      => __('Aramana uygun ürün bulunamadı.', 'arim'),
+            'searchViewAll'        => __('Tüm sonuçları gör', 'arim'),
+            'searchPopular'        => __('Hızlı arama', 'arim'),
         ],
     ]);
 
@@ -831,6 +838,87 @@ function arim_homepage_product_search_ajax() {
     wp_send_json_success($results);
 }
 add_action('wp_ajax_arim_homepage_product_search', 'arim_homepage_product_search_ajax');
+
+function arim_product_brand_name($product_id) {
+    $brand = get_post_meta($product_id, 'brand', true);
+
+    if (!$brand) {
+        $terms = get_the_terms($product_id, 'product_brand');
+
+        if (!empty($terms) && !is_wp_error($terms)) {
+            $brand = $terms[0]->name;
+        }
+    }
+
+    return is_string($brand) ? $brand : '';
+}
+
+function arim_product_store_name($product_id) {
+    $store = get_post_meta($product_id, 'store_name', true);
+
+    if (!$store) {
+        $store = __('ARIM Store', 'arim');
+    }
+
+    return is_string($store) ? $store : __('ARIM Store', 'arim');
+}
+
+function arim_public_product_search_ajax() {
+    check_ajax_referer('arim_public_product_search', 'nonce');
+
+    if (!function_exists('wc_get_products')) {
+        wp_send_json_error([]);
+    }
+
+    $query = isset($_POST['q']) ? sanitize_text_field(wp_unslash($_POST['q'])) : '';
+
+    if (mb_strlen($query) < 2) {
+        wp_send_json_success([
+            'items'      => [],
+            'resultsUrl' => add_query_arg([
+                's'         => $query,
+                'post_type' => 'product',
+            ], home_url('/')),
+        ]);
+    }
+
+    $products = wc_get_products([
+        'status' => 'publish',
+        'limit'  => 6,
+        'search' => $query,
+    ]);
+
+    $results = [];
+
+    foreach ((array) $products as $product) {
+        if (!$product instanceof WC_Product) {
+            continue;
+        }
+
+        $product_id = $product->get_id();
+        $image_id   = $product->get_image_id();
+
+        $results[] = [
+            'id'    => $product_id,
+            'title' => $product->get_name(),
+            'url'   => get_permalink($product_id),
+            'image' => $image_id ? wp_get_attachment_image_url($image_id, 'woocommerce_thumbnail') : wc_placeholder_img_src(),
+            'price' => trim(preg_replace('/\s+/', ' ', wp_strip_all_tags($product->get_price_html()))),
+            'brand' => arim_product_brand_name($product_id),
+            'store' => arim_product_store_name($product_id),
+        ];
+    }
+
+    wp_send_json_success([
+        'items'      => $results,
+        'resultsUrl' => add_query_arg([
+            's'         => $query,
+            'post_type' => 'product',
+        ], home_url('/')),
+    ]);
+}
+add_action('wp_ajax_arim_public_product_search', 'arim_public_product_search_ajax');
+add_action('wp_ajax_nopriv_arim_public_product_search', 'arim_public_product_search_ajax');
 
 
 /**

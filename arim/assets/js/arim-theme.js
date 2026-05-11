@@ -412,6 +412,214 @@ document.addEventListener('DOMContentLoaded', function () {
         favoritesPage.appendChild(grid);
     }
 
+    function initLiveSearch() {
+        const searchForms = document.querySelectorAll('[data-arim-live-search]');
+
+        if (!searchForms.length || !themeConfig.ajaxUrl || !themeConfig.searchNonce) {
+            return;
+        }
+
+        function hideSuggestions(panel) {
+            panel.hidden = true;
+            panel.classList.remove('is-active');
+        }
+
+        function showSuggestions(panel) {
+            panel.hidden = false;
+            panel.classList.add('is-active');
+        }
+
+        function createSearchState(text) {
+            const state = document.createElement('div');
+            state.className = 'arim-search-suggestion-state';
+            state.textContent = text;
+            return state;
+        }
+
+        function createSearchResultItem(item) {
+            const link = document.createElement('a');
+            link.className = 'arim-search-suggestion-item';
+            link.href = item.url || themeConfig.shopUrl || '#';
+
+            const imageWrap = document.createElement('span');
+            imageWrap.className = 'arim-search-suggestion-image';
+
+            if (item.image) {
+                const image = document.createElement('img');
+                image.src = item.image;
+                image.alt = item.title || '';
+                image.loading = 'lazy';
+                imageWrap.appendChild(image);
+            } else {
+                imageWrap.textContent = (item.brand || 'AR').slice(0, 2).toUpperCase();
+            }
+
+            const content = document.createElement('span');
+            content.className = 'arim-search-suggestion-content';
+
+            const meta = document.createElement('span');
+            meta.className = 'arim-search-suggestion-meta';
+            meta.textContent = [item.store, item.brand].filter(Boolean).join(' • ');
+            content.appendChild(meta);
+
+            const title = document.createElement('strong');
+            title.className = 'arim-search-suggestion-title';
+            title.textContent = item.title || '';
+            content.appendChild(title);
+
+            const price = document.createElement('span');
+            price.className = 'arim-search-suggestion-price';
+            price.textContent = item.price || '';
+            content.appendChild(price);
+
+            link.appendChild(imageWrap);
+            link.appendChild(content);
+
+            return link;
+        }
+
+        function renderSearchResults(resultsWrap, panel, payload) {
+            resultsWrap.innerHTML = '';
+
+            const items = payload && Array.isArray(payload.items) ? payload.items : [];
+
+            if (!items.length) {
+                resultsWrap.appendChild(createSearchState(favoriteLabels.searchNoResults || 'Aramana uygun ürün bulunamadı.'));
+                showSuggestions(panel);
+                return;
+            }
+
+            const list = document.createElement('div');
+            list.className = 'arim-search-suggestion-list';
+
+            items.forEach(function (item) {
+                list.appendChild(createSearchResultItem(item));
+            });
+
+            resultsWrap.appendChild(list);
+
+            if (payload.resultsUrl) {
+                const footer = document.createElement('div');
+                footer.className = 'arim-search-suggestions-footer';
+
+                const footerLink = document.createElement('a');
+                footerLink.className = 'arim-search-suggestions-link';
+                footerLink.href = payload.resultsUrl;
+                footerLink.textContent = favoriteLabels.searchViewAll || 'Tüm sonuçları gör';
+                footer.appendChild(footerLink);
+
+                resultsWrap.appendChild(footer);
+            }
+
+            showSuggestions(panel);
+        }
+
+        searchForms.forEach(function (form) {
+            const input = form.querySelector('[data-arim-search-input]');
+            const panel = form.querySelector('[data-arim-search-suggestions]');
+            const resultsWrap = form.querySelector('[data-arim-search-results]');
+            let debounceTimer = null;
+            let activeController = null;
+
+            if (!input || !panel || !resultsWrap) {
+                return;
+            }
+
+            function requestSearch(query) {
+                if (activeController) {
+                    activeController.abort();
+                }
+
+                activeController = typeof AbortController !== 'undefined' ? new AbortController() : null;
+                resultsWrap.innerHTML = '';
+                resultsWrap.appendChild(createSearchState(favoriteLabels.searchLoading || 'Ürünler yükleniyor...'));
+                showSuggestions(panel);
+
+                const body = new URLSearchParams({
+                    action: 'arim_public_product_search',
+                    nonce: themeConfig.searchNonce,
+                    q: query,
+                });
+
+                fetch(themeConfig.ajaxUrl, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    },
+                    body: body.toString(),
+                    signal: activeController ? activeController.signal : undefined,
+                })
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (response) {
+                        if (input.value.trim() !== query) {
+                            return;
+                        }
+
+                        if (!response || !response.success) {
+                            resultsWrap.innerHTML = '';
+                            resultsWrap.appendChild(createSearchState(favoriteLabels.searchNoResults || 'Aramana uygun ürün bulunamadı.'));
+                            showSuggestions(panel);
+                            return;
+                        }
+
+                        renderSearchResults(resultsWrap, panel, response.data || {});
+                    })
+                    .catch(function (error) {
+                        if (error && error.name === 'AbortError') {
+                            return;
+                        }
+
+                        resultsWrap.innerHTML = '';
+                        resultsWrap.appendChild(createSearchState(favoriteLabels.searchNoResults || 'Aramana uygun ürün bulunamadı.'));
+                        showSuggestions(panel);
+                    });
+            }
+
+            input.addEventListener('input', function () {
+                const query = input.value.trim();
+
+                if (debounceTimer) {
+                    window.clearTimeout(debounceTimer);
+                }
+
+                if (query.length < 2) {
+                    if (activeController) {
+                        activeController.abort();
+                    }
+
+                    hideSuggestions(panel);
+                    resultsWrap.innerHTML = '';
+                    return;
+                }
+
+                debounceTimer = window.setTimeout(function () {
+                    requestSearch(query);
+                }, 220);
+            });
+
+            input.addEventListener('focus', function () {
+                if (input.value.trim().length >= 2 && resultsWrap.childNodes.length) {
+                    showSuggestions(panel);
+                }
+            });
+
+            input.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    hideSuggestions(panel);
+                }
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!form.contains(event.target)) {
+                    hideSuggestions(panel);
+                }
+            });
+        });
+    }
+
     document.addEventListener('click', function (event) {
         const favoriteButton = event.target.closest('.arim-favorite-btn[data-product-id]');
 
@@ -454,4 +662,5 @@ document.addEventListener('DOMContentLoaded', function () {
     updateFavoriteButtons();
     updateFavoriteCounters();
     renderFavoritesPage();
+    initLiveSearch();
 });
