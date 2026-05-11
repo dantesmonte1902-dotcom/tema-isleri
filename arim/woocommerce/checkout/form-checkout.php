@@ -25,7 +25,7 @@ $checkout_steps = [
     ],
     [
         'label'   => __('Ödeme', 'arim'),
-        'state'   => 'active',
+        'state'   => 'pending',
         'url'     => '',
         'counter' => '03',
     ],

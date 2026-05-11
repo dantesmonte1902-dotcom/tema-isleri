@@ -1046,9 +1046,12 @@ function arim_checkout_delivery_details() {
         }
     }
 
+    $date_format        = (string) apply_filters('arim_single_delivery_date_format', 'j F l');
+    $delivery_timestamp = current_time('timestamp') + (DAY_IN_SECONDS * $delivery_days);
+
     return [
         'badge'         => $delivery_badge,
-        'date'          => wp_date((string) apply_filters('arim_single_delivery_date_format', 'j F l'), current_time('timestamp') + (DAY_IN_SECONDS * $delivery_days), wp_timezone()),
+        'date'          => wp_date($date_format, $delivery_timestamp, wp_timezone()),
         'note'          => $delivery_note,
         'itemCount'     => $item_count,
         'productCount'  => $product_count,
