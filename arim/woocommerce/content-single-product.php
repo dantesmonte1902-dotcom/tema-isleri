@@ -30,11 +30,11 @@ $regular_price_value = (float) $product->get_regular_price();
 $store_name = get_post_meta($product_id, 'store_name', true);
 $store_name = $store_name ? $store_name : __('ARIM Store', 'arim');
 
-$favorite_badge = '';
+$product_badge = '';
 if ($product->is_on_sale()) {
-    $favorite_badge = __('Fırsat', 'arim');
+    $product_badge = __('Fırsat', 'arim');
 } elseif ($product->is_featured()) {
-    $favorite_badge = __('Öne Çıkan', 'arim');
+    $product_badge = __('Öne Çıkan', 'arim');
 }
 ?>
 <div id="product-<?php the_ID(); ?>" <?php wc_product_class('arim-single-product', $product); ?>>
@@ -90,7 +90,7 @@ if ($product->is_on_sale()) {
                     data-product-url="<?php echo esc_url(get_permalink($product_id)); ?>"
                     data-product-brand="<?php echo esc_attr($brand ? $brand : __('ARIM', 'arim')); ?>"
                     data-product-store="<?php echo esc_attr($store_name); ?>"
-                    data-product-badge="<?php echo esc_attr($favorite_badge); ?>"
+                    data-product-badge="<?php echo esc_attr($product_badge); ?>"
                     data-product-current-price="<?php echo esc_attr($current_price_value); ?>"
                     data-product-regular-price="<?php echo esc_attr($regular_price_value); ?>"
                 >♡</button>
