@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
         : null;
     let crossTabSyncDebounceTimer = null;
     let recommendationRequestController = null;
-    let recommendationRequestSignature = '';
+    let cachedRecommendationSignature = '';
     const abortSupportWarnings = {};
 
     /**
@@ -1048,10 +1048,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const sourceIds = getRecommendationSourceIds();
-        const signature = sourceIds.join(',');
+        const signature = JSON.stringify(sourceIds);
 
         if (!sourceIds.length) {
-            recommendationRequestSignature = '';
+            cachedRecommendationSignature = '';
             if (recommendationRequestController) {
                 recommendationRequestController.abort();
                 recommendationRequestController = null;
@@ -1065,11 +1065,11 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        if (!forceRefresh && signature === recommendationRequestSignature) {
+        if (!forceRefresh && signature === cachedRecommendationSignature) {
             return;
         }
 
-        recommendationRequestSignature = signature;
+        cachedRecommendationSignature = signature;
 
         if (recommendationRequestController) {
             recommendationRequestController.abort();
@@ -1102,7 +1102,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return response.json();
             })
             .then(function (response) {
-                if (signature !== recommendationRequestSignature) {
+                if (signature !== cachedRecommendationSignature) {
                     return;
                 }
 

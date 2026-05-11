@@ -972,10 +972,14 @@ function arim_live_search_max_query_length() {
     return max(10, (int) apply_filters('arim_live_search_max_query_length', 100));
 }
 
-function arim_public_product_search_ajax() {
+function arim_require_post_request() {
     if (strtoupper((string) wp_unslash($_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST') {
         wp_send_json_error([], 405);
     }
+}
+
+function arim_public_product_search_ajax() {
+    arim_require_post_request();
 
     check_ajax_referer('arim_public_product_search', 'nonce');
 
@@ -1027,9 +1031,7 @@ add_action('wp_ajax_nopriv_arim_public_product_search', 'arim_public_product_sea
  * Kişiselleştirilmiş öneriler için ürünleri döndürür.
  */
 function arim_personalized_recommendations_ajax() {
-    if (strtoupper((string) wp_unslash($_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST') {
-        wp_send_json_error([], 405);
-    }
+    arim_require_post_request();
 
     check_ajax_referer('arim_personalized_recommendations', 'nonce');
 
@@ -1038,7 +1040,8 @@ function arim_personalized_recommendations_ajax() {
     }
 
     $raw_product_ids = filter_input(INPUT_POST, 'productIds', FILTER_UNSAFE_RAW);
-    $decoded_product_ids = json_decode(is_string($raw_product_ids) ? wp_unslash($raw_product_ids) : '[]', true);
+    $product_ids_json = is_string($raw_product_ids) ? wp_unslash($raw_product_ids) : '[]';
+    $decoded_product_ids = json_decode($product_ids_json, true);
     $product_ids     = wp_parse_id_list(is_array($decoded_product_ids) ? $decoded_product_ids : []);
     $product_ids     = array_slice($product_ids, 0, 24);
 
