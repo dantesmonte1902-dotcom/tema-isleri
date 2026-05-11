@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let crossTabSyncDebounceTimer = null;
     let recommendationRequestController = null;
     let recommendationRequestSignature = '';
+    const abortSupportWarnings = {};
 
     /**
      * Numeric config değerini güvenli şekilde normalize eder.
@@ -44,6 +45,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const intervalId = window.setInterval(callback, delay);
         activeIntervals.push(intervalId);
         return intervalId;
+    }
+
+    function createAbortController(featureName) {
+        if (typeof AbortController === 'undefined') {
+            if (!abortSupportWarnings[featureName] && window.console && typeof window.console.warn === 'function') {
+                window.console.warn(featureName + ' abort desteği bu tarayıcıda kullanılamıyor.');
+                abortSupportWarnings[featureName] = true;
+            }
+
+            return null;
+        }
+
+        return new AbortController();
     }
 
     window.addEventListener('pagehide', function () {
@@ -1061,7 +1075,7 @@ document.addEventListener('DOMContentLoaded', function () {
             recommendationRequestController.abort();
         }
 
-        recommendationRequestController = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        recommendationRequestController = createAbortController('Recommendations');
         recommendationsPage.innerHTML = '';
         recommendationsPage.appendChild(createRecommendationState(
             favoriteLabels.recommendationsTitle || 'Sana Özel Öneriler',
@@ -1232,7 +1246,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     activeController.abort();
                 }
 
-                activeController = typeof AbortController !== 'undefined' ? new AbortController() : null;
+                activeController = createAbortController('Live search');
                 resultsWrap.innerHTML = '';
                 resultsWrap.appendChild(createSearchState(favoriteLabels.searchLoading || 'Ürünler yükleniyor...'));
                 showSuggestions(panel);
