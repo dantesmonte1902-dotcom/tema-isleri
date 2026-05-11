@@ -467,6 +467,131 @@
     color: #222;
 }
 
+.arim-myaccount-section-head p {
+    margin: 10px 0 0;
+    color: #666;
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+.arim-myaccount-orders-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.arim-myaccount-orders-stat {
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: #fafafa;
+    border: 1px solid #ececec;
+}
+
+.arim-myaccount-orders-stat span,
+.arim-myaccount-orders-stat strong {
+    display: block;
+}
+
+.arim-myaccount-orders-stat span {
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 12px;
+}
+
+.arim-myaccount-orders-stat strong {
+    color: #222;
+    font-size: 22px;
+    line-height: 1.3;
+}
+
+.arim-myaccount-orders-panels {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.arim-myaccount-orders-spotlight,
+.arim-myaccount-orders-campaigns,
+.arim-myaccount-empty-campaigns {
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid #ececec;
+    background: #fafafa;
+}
+
+.arim-myaccount-orders-spotlight h3 {
+    margin: 0 0 10px;
+    color: #222;
+    font-size: 24px;
+}
+
+.arim-myaccount-orders-spotlight p {
+    margin: 0;
+    color: #666;
+    line-height: 1.8;
+}
+
+.arim-myaccount-orders-actions,
+.arim-myaccount-empty-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+
+.arim-myaccount-orders-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid #ececec;
+    color: #444;
+    font-weight: 700;
+    text-decoration: none;
+    background: #fff;
+}
+
+.arim-myaccount-orders-link:hover {
+    border-color: #f27a1a;
+    color: #f27a1a;
+}
+
+.arim-myaccount-orders-campaigns,
+.arim-myaccount-empty-campaigns {
+    display: grid;
+    gap: 12px;
+}
+
+.arim-myaccount-orders-campaign {
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid #ececec;
+}
+
+.arim-myaccount-orders-campaign strong,
+.arim-myaccount-orders-campaign span {
+    display: block;
+}
+
+.arim-myaccount-orders-campaign strong {
+    margin-bottom: 6px;
+    color: #f27a1a;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.arim-myaccount-orders-campaign span {
+    color: #555;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
 .arim-myaccount-orders-table-wrap {
     overflow-x: auto;
 }
@@ -503,6 +628,42 @@
     color: #f27a1a;
     text-decoration: none;
     font-weight: 600;
+}
+
+.arim-order-status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #eef3ff;
+    color: #3454d1;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.arim-order-status-pill.is-completed {
+    background: #e8f7ee;
+    color: #1f8a4c;
+}
+
+.arim-order-status-pill.is-processing {
+    background: #fff2e8;
+    color: #f27a1a;
+}
+
+.arim-order-status-pill.is-pending,
+.arim-order-status-pill.is-on-hold {
+    background: #fff7dc;
+    color: #8f6a00;
+}
+
+.arim-order-status-pill.is-cancelled,
+.arim-order-status-pill.is-failed,
+.arim-order-status-pill.is-refunded {
+    background: #ffedf0;
+    color: #c23955;
 }
 
 .arim-orders-table .button {
@@ -613,8 +774,13 @@
     }
 
     .arim-myaccount-status-strip,
-    .arim-myaccount-cards {
+    .arim-myaccount-cards,
+    .arim-myaccount-orders-summary {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .arim-myaccount-orders-panels {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -635,18 +801,24 @@
 
     .arim-myaccount-hero-stats,
     .arim-myaccount-status-strip,
-    .arim-myaccount-cards {
+    .arim-myaccount-cards,
+    .arim-myaccount-orders-summary {
         grid-template-columns: 1fr;
     }
 
     .arim-myaccount-panel,
-    .arim-myaccount-order-card {
+    .arim-myaccount-order-card,
+    .arim-myaccount-orders-spotlight,
+    .arim-myaccount-orders-campaigns,
+    .arim-myaccount-empty-campaigns {
         padding: 16px;
     }
 
     .arim-myaccount-panel-head,
     .arim-myaccount-order-top,
-    .arim-myaccount-order-bottom {
+    .arim-myaccount-order-bottom,
+    .arim-myaccount-orders-actions,
+    .arim-myaccount-empty-actions {
         flex-direction: column;
         align-items: flex-start;
     }

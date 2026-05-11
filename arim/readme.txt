@@ -99,3 +99,8 @@ Geliştirilen Özellikler
 - Hesabım ana paneline sipariş, aktif akış, adres ve kampanya sayılarını gösteren özet istatistik alanı eklendi.
 - Hızlı aksiyon kartları siparişler, adresler, hesap bilgileri ve favoriler sayfasına bağlanacak şekilde genişletildi.
 - Son sipariş kartları, kampanya kutuları ve destek aksiyon alanı ile kullanıcı panelinin karar ve takip deneyimi güçlendirildi.
+
+11. Siparişlerim Sayfası Geliştirmeleri
+- Siparişler sayfasına toplam sipariş, aktif akış, tamamlanan sipariş ve son sipariş tarihi özet kartları eklendi.
+- Tablo üstüne teslimat/destek odaklı bilgilendirme paneli ile kampanya fırsat alanları yerleştirildi.
+- Sipariş durumları rozet yapısına taşınarak boş durumda favorilere geri dönüş ve kampanya görünürlüğü güçlendirildi.

@@ -1310,6 +1310,80 @@ function arim_myaccount_dashboard_data() {
 }
 
 /**
+ * Siparişlerim sayfası için özet verileri döndürür.
+ *
+ * @return array<string, mixed>
+ */
+function arim_myaccount_orders_page_data() {
+    $user_id = get_current_user_id();
+
+    if ($user_id < 1 || !function_exists('wc_get_orders')) {
+        return [
+            'stats'      => [],
+            'spotlight'  => [],
+            'campaigns'  => arim_single_product_campaigns(2),
+            'supportUrl' => arim_account_url(),
+        ];
+    }
+
+    $all_orders = wc_get_orders([
+        'customer_id' => $user_id,
+        'limit'       => -1,
+        'orderby'     => 'date',
+        'order'       => 'DESC',
+        'return'      => 'objects',
+    ]);
+
+    $stats = [
+        'orders'        => 0,
+        'active'        => 0,
+        'completed'     => 0,
+        'issue'         => 0,
+        'lastOrderDate' => '',
+    ];
+
+    foreach ($all_orders as $order) {
+        if (!$order instanceof WC_Order) {
+            continue;
+        }
+
+        $stats['orders']++;
+
+        if ($stats['lastOrderDate'] === '' && $order->get_date_created()) {
+            $stats['lastOrderDate'] = wc_format_datetime($order->get_date_created());
+        }
+
+        if (in_array($order->get_status(), ['pending', 'processing', 'on-hold'], true)) {
+            $stats['active']++;
+        }
+
+        if ($order->has_status('completed')) {
+            $stats['completed']++;
+        }
+
+        if ($order->has_status(['cancelled', 'failed', 'refunded'])) {
+            $stats['issue']++;
+        }
+    }
+
+    $spotlight = [
+        'title' => $stats['active'] > 0
+            ? __('Aktif siparişlerini panelden takip et', 'arim')
+            : __('Yeni fırsatlarla sipariş akışını büyüt', 'arim'),
+        'text'  => $stats['active'] > 0
+            ? __('Hazırlanan veya kargoda olan siparişlerinin detayları, teslimat ritmi ve işlem adımları bu ekrandan hızlıca izlenebilir.', 'arim')
+            : __('Sipariş verdiğinde teslimat, destek ve sipariş özeti alanları bu ekranda görünür olur. İstersen favorilere dönerek alışverişe kaldığın yerden devam edebilirsin.', 'arim'),
+    ];
+
+    return [
+        'stats'      => $stats,
+        'spotlight'  => $spotlight,
+        'campaigns'  => arim_single_product_campaigns(2),
+        'supportUrl' => wc_get_account_endpoint_url('edit-account'),
+    ];
+}
+
+/**
  * Geçerli shop archive URL'sini döndürür.
  *
  * @return string
