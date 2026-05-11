@@ -1143,11 +1143,15 @@ function arim_personalized_recommendations_ajax() {
             'post__not_in'        => array_merge($product_ids, $recommended_ids),
             'ignore_sticky_posts' => true,
             'fields'              => 'ids',
-            'meta_key'            => '_featured',
-            'orderby'             => [
-                'meta_value' => 'DESC',
-                'date'       => 'DESC',
+            'tax_query'           => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+                [
+                    'taxonomy' => 'product_visibility',
+                    'field'    => 'name',
+                    'terms'    => ['featured'],
+                ],
             ],
+            'orderby'             => 'date',
+            'order'               => 'DESC',
         ];
 
         $recommended_ids = array_merge($recommended_ids, get_posts($fallback_query_args));
