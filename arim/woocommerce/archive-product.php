@@ -10,6 +10,10 @@ $current_on_sale   = isset($_GET['on_sale']) ? wc_clean(wp_unslash($_GET['on_sal
 $current_featured  = isset($_GET['featured']) ? wc_clean(wp_unslash($_GET['featured'])) : '';
 
 $product_attributes = wc_get_attribute_taxonomies();
+$archive_insights   = arim_shop_archive_insights();
+$active_filters     = arim_shop_active_filter_chips();
+$archive_campaigns  = arim_single_product_campaigns(2);
+$archive_reset_url  = arim_shop_archive_current_url();
 ?>
 
 <div class="arim-woo-page">
@@ -39,6 +43,43 @@ $product_attributes = wc_get_attribute_taxonomies();
             </div>
         </div>
 
+        <div class="arim-woo-insight-strip">
+            <div class="arim-woo-insight-card">
+                <span class="arim-woo-insight-label"><?php echo esc_html($archive_insights['contextTitle']); ?></span>
+                <strong><?php echo esc_html(number_format_i18n((int) $archive_insights['currentCount'])); ?></strong>
+                <small><?php esc_html_e('bu vitrinde görünen ürün', 'arim'); ?></small>
+            </div>
+            <div class="arim-woo-insight-card">
+                <span class="arim-woo-insight-label"><?php esc_html_e('Toplam kategori', 'arim'); ?></span>
+                <strong><?php echo esc_html(number_format_i18n((int) $archive_insights['categoryCount'])); ?></strong>
+                <small><?php esc_html_e('aktif üst kategori', 'arim'); ?></small>
+            </div>
+            <div class="arim-woo-insight-card">
+                <span class="arim-woo-insight-label"><?php esc_html_e('Öne çıkan ürünler', 'arim'); ?></span>
+                <strong><?php echo esc_html(number_format_i18n((int) $archive_insights['featuredCount'])); ?></strong>
+                <small><?php esc_html_e('öne alınmış ürün seçkisi', 'arim'); ?></small>
+            </div>
+        </div>
+
+        <?php if (!empty($archive_campaigns)) : ?>
+            <div class="arim-woo-campaign-strip">
+                <div class="arim-woo-campaign-lead">
+                    <span><?php echo esc_html($archive_insights['campaignKicker']); ?></span>
+                    <strong><?php esc_html_e('Listelemede de kampanya görünürlüğünü koru', 'arim'); ?></strong>
+                    <small><?php echo esc_html($archive_insights['deliveryText']); ?></small>
+                </div>
+
+                <div class="arim-woo-campaign-grid">
+                    <?php foreach ($archive_campaigns as $campaign) : ?>
+                        <div class="arim-woo-campaign-item">
+                            <strong><?php echo esc_html($campaign['value']); ?></strong>
+                            <span><?php echo esc_html($campaign['text']); ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <div class="arim-woo-toolbar arim-woo-toolbar-enhanced">
             <div class="arim-woo-toolbar-left">
                 <div class="arim-woo-result-count">
@@ -48,6 +89,17 @@ $product_attributes = wc_get_attribute_taxonomies();
                 <?php if (function_exists('woocommerce_breadcrumb')) : ?>
                     <div class="arim-woo-breadcrumb">
                         <?php woocommerce_breadcrumb(); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($active_filters)) : ?>
+                    <div class="arim-woo-toolbar-chip arim-woo-toolbar-chip-muted">
+                        <?php
+                        printf(
+                            esc_html__('%d aktif filtre', 'arim'),
+                            count($active_filters)
+                        );
+                        ?>
                     </div>
                 <?php endif; ?>
             </div>
@@ -60,9 +112,44 @@ $product_attributes = wc_get_attribute_taxonomies();
             </div>
         </div>
 
+        <?php if (!empty($active_filters)) : ?>
+            <div class="arim-woo-active-filters" aria-label="<?php esc_attr_e('Aktif filtreler', 'arim'); ?>">
+                <div class="arim-woo-active-filters-head">
+                    <strong><?php esc_html_e('Seçili filtreler', 'arim'); ?></strong>
+                    <a href="<?php echo esc_url($archive_reset_url); ?>"><?php esc_html_e('Bu vitrini sıfırla', 'arim'); ?></a>
+                </div>
+
+                <div class="arim-woo-active-filter-list">
+                    <?php foreach ($active_filters as $filter_chip) : ?>
+                        <a href="<?php echo esc_url($filter_chip['url']); ?>" class="arim-woo-active-filter-chip">
+                            <span><?php echo esc_html($filter_chip['label']); ?></span>
+                            <strong aria-hidden="true">×</strong>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <div class="arim-woo-content-layout">
             <aside class="arim-woo-sidebar">
                 <form class="arim-woo-filter-form" method="get">
+                    <div class="arim-woo-sidebar-box arim-woo-sidebar-highlight">
+                        <span class="arim-woo-sidebar-kicker"><?php echo esc_html($archive_insights['deliveryBadge']); ?></span>
+                        <h3><?php esc_html_e('Keşif rehberi', 'arim'); ?></h3>
+                        <p class="arim-woo-mini-note"><?php echo esc_html($archive_insights['supportText']); ?></p>
+
+                        <div class="arim-woo-sidebar-metrics">
+                            <div class="arim-woo-sidebar-metric">
+                                <strong><?php echo esc_html(number_format_i18n((int) $archive_insights['catalogTotal'])); ?></strong>
+                                <span><?php esc_html_e('toplam ürün', 'arim'); ?></span>
+                            </div>
+                            <div class="arim-woo-sidebar-metric">
+                                <strong><?php echo esc_html(number_format_i18n((int) $archive_insights['featuredCount'])); ?></strong>
+                                <span><?php esc_html_e('öne çıkan seçenek', 'arim'); ?></span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="arim-woo-sidebar-box">
                         <h3><?php esc_html_e('Kategoriler', 'arim'); ?></h3>
                         <ul class="arim-woo-category-list">
@@ -188,7 +275,7 @@ $product_attributes = wc_get_attribute_taxonomies();
                             <?php esc_html_e('Filtreyi Uygula', 'arim'); ?>
                         </button>
 
-                        <a href="<?php echo esc_url(get_post_type_archive_link('product')); ?>" class="arim-filter-reset">
+                        <a href="<?php echo esc_url($archive_reset_url); ?>" class="arim-filter-reset">
                             <?php esc_html_e('Filtreleri Temizle', 'arim'); ?>
                         </a>
                     </div>
@@ -213,6 +300,7 @@ $product_attributes = wc_get_attribute_taxonomies();
                     </div>
                 <?php else : ?>
                     <div class="arim-woo-empty">
+                        <p class="arim-woo-empty-note"><?php esc_html_e('Filtreleri biraz gevşeterek veya kampanya alanından farklı vitrinlere geçerek daha fazla ürün keşfedebilirsin.', 'arim'); ?></p>
                         <?php do_action('woocommerce_no_products_found'); ?>
                     </div>
                 <?php endif; ?>

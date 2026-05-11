@@ -84,3 +84,8 @@ Geliştirilen Özellikler
 - Checkout ekranına sepet-bilgiler-ödeme akışını görünür kılan adım alanı ve güven odaklı bilgi stripi eklendi.
 - Sağ kolona tahmini teslimat, ürün/paket adedi ve canlı destek vurgusu taşıyan ayrı bir teslimat özeti kartı yerleştirildi.
 - Homepage manager kupon verileri checkout tarafında yeniden kullanılarak sipariş öncesi kampanya görünürlüğü artırıldı.
+
+8. Ürün Listeleme Keşif Alanları
+- Shop/category sayfalarına aktif vitrin sayısı, kategori adedi ve öne çıkan ürün toplamını gösteren özet kartları eklendi.
+- Listeleme üstünde kampanya stripi ve aktif filtre çipleri yerleştirilerek filtre temizleme/geri alma akışı hızlandırıldı.
+- Sidebar tarafına keşif rehberi kartı eklenerek katalog büyüklüğü, öne çıkan ürün miktarı ve teslimat destek mesajı görünür hale getirildi.

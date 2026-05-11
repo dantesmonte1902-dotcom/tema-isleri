@@ -58,6 +58,117 @@
     line-height: 1.6;
 }
 
+.arim-woo-insight-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.arim-woo-insight-card {
+    padding: 18px;
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.03);
+}
+
+.arim-woo-insight-label,
+.arim-woo-insight-card strong,
+.arim-woo-insight-card small {
+    display: block;
+}
+
+.arim-woo-insight-label {
+    margin-bottom: 8px;
+    color: #777;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.arim-woo-insight-card strong {
+    margin-bottom: 6px;
+    color: #222;
+    font-size: 28px;
+    line-height: 1;
+}
+
+.arim-woo-insight-card small {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.arim-woo-campaign-strip {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 16px;
+    padding: 18px;
+    margin-bottom: 18px;
+    border: 1px solid #e5ecff;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #f8fbff 0%, #fff 100%);
+}
+
+.arim-woo-campaign-lead span,
+.arim-woo-campaign-lead strong,
+.arim-woo-campaign-lead small {
+    display: block;
+}
+
+.arim-woo-campaign-lead span {
+    margin-bottom: 8px;
+    color: #3454d1;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}
+
+.arim-woo-campaign-lead strong {
+    margin-bottom: 8px;
+    color: #222;
+    font-size: 22px;
+    line-height: 1.35;
+}
+
+.arim-woo-campaign-lead small {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.arim-woo-campaign-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.arim-woo-campaign-item {
+    padding: 16px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid #dfe7ff;
+}
+
+.arim-woo-campaign-item strong,
+.arim-woo-campaign-item span {
+    display: block;
+}
+
+.arim-woo-campaign-item strong {
+    margin-bottom: 6px;
+    color: #3454d1;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.arim-woo-campaign-item span {
+    color: #555;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
 .arim-woo-toolbar {
     display: flex;
     justify-content: space-between;
@@ -104,6 +215,12 @@
     justify-content: center;
 }
 
+.arim-woo-toolbar-chip-muted {
+    background: #fff;
+    color: #666;
+    border: 1px solid #ececec;
+}
+
 .arim-woo-ordering select {
     min-height: 40px;
     border: 1px solid #ddd;
@@ -112,6 +229,58 @@
     padding: 0 14px;
     font-size: 13px;
     outline: none;
+}
+
+.arim-woo-active-filters {
+    padding: 16px 18px;
+    margin-bottom: 18px;
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: #fff;
+}
+
+.arim-woo-active-filters-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.arim-woo-active-filters-head strong {
+    color: #222;
+    font-size: 15px;
+}
+
+.arim-woo-active-filters-head a {
+    color: #f27a1a;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.arim-woo-active-filter-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.arim-woo-active-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: #fff7ef;
+    border: 1px solid #ffd8ba;
+    color: #8b4f1c;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.arim-woo-active-filter-chip strong {
+    font-size: 16px;
+    line-height: 1;
 }
 
 .arim-woo-content-layout {
@@ -137,6 +306,56 @@
     padding: 18px;
     margin-bottom: 16px;
     box-shadow: 0 8px 18px rgba(0,0,0,0.03);
+}
+
+.arim-woo-sidebar-highlight {
+    background: linear-gradient(135deg, #fff7ef 0%, #fff 100%);
+    border-color: #f3e4d6;
+}
+
+.arim-woo-sidebar-kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 12px;
+    margin-bottom: 12px;
+    border-radius: 999px;
+    background: #fff;
+    color: #f27a1a;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.arim-woo-sidebar-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.arim-woo-sidebar-metric {
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid #f3e4d6;
+}
+
+.arim-woo-sidebar-metric strong,
+.arim-woo-sidebar-metric span {
+    display: block;
+}
+
+.arim-woo-sidebar-metric strong {
+    margin-bottom: 5px;
+    color: #222;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.arim-woo-sidebar-metric span {
+    color: #666;
+    font-size: 12px;
+    line-height: 1.5;
 }
 
 .arim-woo-sidebar-box h3 {
@@ -463,6 +682,13 @@
     background: #fafafa;
 }
 
+.arim-woo-empty-note {
+    margin: 0 0 12px;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
 .woocommerce .woocommerce-ordering,
 .woocommerce .woocommerce-result-count {
     float: none;
@@ -479,6 +705,10 @@
         grid-template-columns: 220px 1fr;
     }
 
+    .arim-woo-campaign-strip {
+        grid-template-columns: 1fr;
+    }
+
     .woocommerce ul.products.arim-products-grid,
     .woocommerce-page ul.products.arim-products-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -487,6 +717,11 @@
 
 @media (max-width: 992px) {
     .arim-woo-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .arim-woo-insight-strip,
+    .arim-woo-campaign-grid {
         grid-template-columns: 1fr;
     }
 
@@ -525,6 +760,12 @@
         padding: 14px;
     }
 
+    .arim-woo-insight-card,
+    .arim-woo-campaign-strip,
+    .arim-woo-active-filters {
+        padding: 14px;
+    }
+
     .arim-woo-sidebar-box {
         padding: 14px;
     }
@@ -543,6 +784,15 @@
 
     .arim-listing-price {
         font-size: 16px;
+    }
+
+    .arim-woo-active-filters-head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .arim-woo-sidebar-metrics {
+        grid-template-columns: 1fr;
     }
 }
 

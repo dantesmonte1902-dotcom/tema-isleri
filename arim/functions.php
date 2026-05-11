@@ -1060,6 +1060,194 @@ function arim_checkout_delivery_details() {
 }
 
 /**
+ * Geçerli shop archive URL'sini döndürür.
+ *
+ * @return string
+ */
+function arim_shop_archive_current_url() {
+    $queried_object = get_queried_object();
+
+    if ($queried_object instanceof WP_Term) {
+        $term_link = get_term_link($queried_object);
+
+        if (!is_wp_error($term_link)) {
+            return $term_link;
+        }
+    }
+
+    $archive_url = get_post_type_archive_link('product');
+
+    if (is_string($archive_url) && $archive_url !== '') {
+        return $archive_url;
+    }
+
+    return arim_shop_url();
+}
+
+/**
+ * Shop archive filtreleri için sanitize edilmiş query argümanlarını döndürür.
+ *
+ * @return array<string, string|array<int, string>>
+ */
+function arim_shop_archive_query_args() {
+    $query_args = [];
+
+    foreach ($_GET as $key => $value) {
+        $sanitized_key = sanitize_key(wp_unslash((string) $key));
+        if ($sanitized_key === '') {
+            continue;
+        }
+
+        if (is_array($value)) {
+            $query_args[$sanitized_key] = array_values(array_filter(array_map('sanitize_text_field', wp_unslash($value)), static function ($item) {
+                return $item !== '';
+            }));
+            continue;
+        }
+
+        $sanitized_value = sanitize_text_field(wp_unslash((string) $value));
+        if ($sanitized_value !== '') {
+            $query_args[$sanitized_key] = $sanitized_value;
+        }
+    }
+
+    return $query_args;
+}
+
+/**
+ * Shop archive üst alanında gösterilecek özet verileri döndürür.
+ *
+ * @return array<string, string|int>
+ */
+function arim_shop_archive_insights() {
+    $queried_object = get_queried_object();
+    $product_counts = wp_count_posts('product');
+    $top_categories = get_terms([
+        'taxonomy'   => 'product_cat',
+        'hide_empty' => true,
+        'parent'     => 0,
+        'fields'     => 'ids',
+    ]);
+
+    $catalog_total = isset($product_counts->publish) ? (int) $product_counts->publish : 0;
+    $current_count = $catalog_total;
+    $context_title = __('Tüm Ürünler', 'arim');
+
+    if ($queried_object instanceof WP_Term) {
+        $context_title = $queried_object->name;
+        $current_count = isset($queried_object->count) ? (int) $queried_object->count : $catalog_total;
+    }
+
+    return [
+        'contextTitle'   => $context_title,
+        'currentCount'   => $current_count,
+        'catalogTotal'   => $catalog_total,
+        'categoryCount'  => is_wp_error($top_categories) ? 0 : count($top_categories),
+        'featuredCount'  => function_exists('wc_get_featured_product_ids') ? count(wc_get_featured_product_ids()) : 0,
+        'deliveryBadge'  => __('Hızlı gönderi rotası', 'arim'),
+        'deliveryText'   => __('Öne çıkan ürünlerde siparişler ortalama 24 saat içinde kargoya hazırlanır.', 'arim'),
+        'supportText'    => __('Canlı destek ve kolay iade akışı ile alışveriş boyunca yanında.', 'arim'),
+        'campaignKicker' => __('Seçili kampanyalar', 'arim'),
+    ];
+}
+
+/**
+ * Shop archive üzerinde gösterilecek aktif filtre etiketlerini döndürür.
+ *
+ * @return array<int, array<string, string>>
+ */
+function arim_shop_active_filter_chips() {
+    $query_args        = arim_shop_archive_query_args();
+    $base_url          = arim_shop_archive_current_url();
+    $active_filters    = [];
+    $attribute_labels  = [];
+    $product_attributes = wc_get_attribute_taxonomies();
+
+    if (!empty($product_attributes)) {
+        foreach ($product_attributes as $attribute) {
+            $attribute_labels[wc_attribute_taxonomy_name($attribute->attribute_name)] = $attribute->attribute_label;
+        }
+    }
+
+    if (!empty($query_args['min_price']) || !empty($query_args['max_price'])) {
+        $label = trim(sprintf(
+            '%s%s%s',
+            !empty($query_args['min_price']) ? wc_price((float) $query_args['min_price']) : __('Min', 'arim'),
+            __(' - ', 'arim'),
+            !empty($query_args['max_price']) ? wc_price((float) $query_args['max_price']) : __('Maks', 'arim')
+        ));
+
+        $remove_args = $query_args;
+        unset($remove_args['min_price'], $remove_args['max_price']);
+
+        $active_filters[] = [
+            'label' => wp_strip_all_tags($label),
+            'url'   => add_query_arg($remove_args, $base_url),
+        ];
+    }
+
+    $flag_filters = [
+        'stock_status' => [
+            'value' => 'instock',
+            'label' => __('Stokta olanlar', 'arim'),
+        ],
+        'on_sale' => [
+            'value' => '1',
+            'label' => __('İndirimdekiler', 'arim'),
+        ],
+        'featured' => [
+            'value' => '1',
+            'label' => __('Öne çıkanlar', 'arim'),
+        ],
+    ];
+
+    foreach ($flag_filters as $key => $config) {
+        if (empty($query_args[$key]) || $query_args[$key] !== $config['value']) {
+            continue;
+        }
+
+        $remove_args = $query_args;
+        unset($remove_args[$key]);
+
+        $active_filters[] = [
+            'label' => $config['label'],
+            'url'   => add_query_arg($remove_args, $base_url),
+        ];
+    }
+
+    foreach ($attribute_labels as $taxonomy => $attribute_label) {
+        if (empty($query_args[$taxonomy]) || !is_array($query_args[$taxonomy])) {
+            continue;
+        }
+
+        foreach ($query_args[$taxonomy] as $term_slug) {
+            $term = get_term_by('slug', $term_slug, $taxonomy);
+            if (!$term instanceof WP_Term) {
+                continue;
+            }
+
+            $remove_args = $query_args;
+            $remaining_terms = array_values(array_filter((array) $query_args[$taxonomy], static function ($item) use ($term_slug) {
+                return $item !== $term_slug;
+            }));
+
+            if (empty($remaining_terms)) {
+                unset($remove_args[$taxonomy]);
+            } else {
+                $remove_args[$taxonomy] = $remaining_terms;
+            }
+
+            $active_filters[] = [
+                'label' => sprintf('%s: %s', $attribute_label, $term->name),
+                'url'   => add_query_arg($remove_args, $base_url),
+            ];
+        }
+    }
+
+    return $active_filters;
+}
+
+/**
  * Canlı arama için minimum karakter sayısını döndürür.
  *
  * @return int
