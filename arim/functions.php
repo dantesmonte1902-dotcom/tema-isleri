@@ -964,7 +964,7 @@ function arim_prepare_product_card_payload($product) {
  * Ürün detay sayfası için teslimat vaat bilgisini döndürür.
  *
  * @param WC_Product $product Ürün nesnesi.
- * @hook arim_single_delivery_date_format Teslimat tarihini biçimlendirmek için PHP tarih formatı bekler. Örn: 'j F l', 'd.m.Y'.
+ * @hook arim_single_delivery_date_format Teslimat tarihini biçimlendirmek için wp_date() ile uyumlu PHP tarih formatı bekler. Örn: 'j F l', 'd.m.Y'.
  * @return array<string, string>
  */
 function arim_single_product_delivery_details($product) {
@@ -1160,6 +1160,13 @@ function arim_personalized_recommendations_ajax() {
     $raw_product_ids = filter_input(INPUT_POST, 'productIds', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $product_ids_json = is_string($raw_product_ids) ? html_entity_decode(wp_unslash($raw_product_ids), ENT_QUOTES, 'UTF-8') : '[]';
     $decoded_product_ids = json_decode($product_ids_json, true);
+
+    if ($decoded_product_ids === null && json_last_error() !== JSON_ERROR_NONE) {
+        wp_send_json_error([
+            'message' => __('Geçersiz öneri isteği verisi alındı.', 'arim'),
+        ], 400);
+    }
+
     $product_ids     = wp_parse_id_list(is_array($decoded_product_ids) ? $decoded_product_ids : []);
     $product_ids     = array_slice($product_ids, 0, 24);
 
