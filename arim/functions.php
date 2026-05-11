@@ -964,7 +964,7 @@ function arim_prepare_product_card_payload($product) {
  * Ürün detay sayfası için teslimat vaat bilgisini döndürür.
  *
  * @param WC_Product $product Ürün nesnesi.
- * @uses arim_single_delivery_date_format Teslimat tarihini biçimlendirmek için PHP tarih formatı bekler. Örn: 'j F l', 'd.m.Y'.
+ * @hook arim_single_delivery_date_format Teslimat tarihini biçimlendirmek için PHP tarih formatı bekler. Örn: 'j F l', 'd.m.Y'.
  * @return array<string, string>
  */
 function arim_single_product_delivery_details($product) {
