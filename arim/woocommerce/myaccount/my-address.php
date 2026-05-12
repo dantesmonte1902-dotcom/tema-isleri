@@ -13,6 +13,7 @@ $address_page_data = arim_myaccount_address_page_data();
 $address_stats     = isset($address_page_data['stats']) && is_array($address_page_data['stats']) ? $address_page_data['stats'] : [];
 $address_contact   = isset($address_page_data['contact']) && is_array($address_page_data['contact']) ? $address_page_data['contact'] : [];
 $addresses_map     = isset($address_page_data['addresses']) && is_array($address_page_data['addresses']) ? $address_page_data['addresses'] : [];
+$completion_items  = isset($address_page_data['completionItems']) && is_array($address_page_data['completionItems']) ? $address_page_data['completionItems'] : [];
 $campaigns         = isset($address_page_data['campaigns']) && is_array($address_page_data['campaigns']) ? $address_page_data['campaigns'] : [];
 $support_url       = !empty($address_page_data['supportUrl']) ? $address_page_data['supportUrl'] : wc_get_account_endpoint_url('edit-account');
 $dashboard_url     = !empty($address_page_data['dashboardUrl']) ? $address_page_data['dashboardUrl'] : arim_account_url();
@@ -50,6 +51,32 @@ $dashboard_url     = !empty($address_page_data['dashboardUrl']) ? $address_page_
             <span><?php esc_html_e('İletişim telefonu', 'arim'); ?></span>
             <strong><?php echo esc_html(!empty($address_contact['phone']) ? $address_contact['phone'] : '—'); ?></strong>
         </div>
+    </div>
+
+    <div class="arim-myaccount-completion-card">
+        <div class="arim-myaccount-completion-head">
+            <div>
+                <span class="arim-myaccount-panel-kicker"><?php esc_html_e('Adres hazırlık akışı', 'arim'); ?></span>
+                <h3><?php esc_html_e('Teslimat için eksik alanları tamamla', 'arim'); ?></h3>
+            </div>
+            <strong><?php echo esc_html(number_format_i18n((int) ($address_stats['detailCompletion'] ?? 0))); ?>%</strong>
+        </div>
+        <div class="arim-myaccount-completion-progress" aria-hidden="true">
+            <span style="width: <?php echo esc_attr(max(0, min(100, (int) ($address_stats['detailCompletion'] ?? 0)))); ?>%;"></span>
+        </div>
+        <?php if (!empty($completion_items)) : ?>
+            <div class="arim-myaccount-completion-list">
+                <?php foreach ($completion_items as $item) : ?>
+                    <a class="arim-myaccount-completion-item <?php echo !empty($item['isReady']) ? 'is-ready' : 'is-pending'; ?>" href="<?php echo esc_url($item['actionUrl'] ?? $dashboard_url); ?>">
+                        <span class="arim-myaccount-completion-state"><?php echo !empty($item['isReady']) ? '✓' : '•'; ?></span>
+                        <span class="arim-myaccount-completion-copy">
+                            <strong><?php echo esc_html($item['label'] ?? ''); ?></strong>
+                            <small><?php echo esc_html($item['detail'] ?? ''); ?></small>
+                        </span>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
     </div>
 
     <div class="arim-myaccount-address-layout">

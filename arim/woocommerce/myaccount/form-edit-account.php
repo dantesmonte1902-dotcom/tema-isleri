@@ -13,6 +13,7 @@ $account_page_data = arim_myaccount_account_page_data();
 $account_stats     = isset($account_page_data['stats']) && is_array($account_page_data['stats']) ? $account_page_data['stats'] : [];
 $identity          = isset($account_page_data['identity']) && is_array($account_page_data['identity']) ? $account_page_data['identity'] : [];
 $security          = isset($account_page_data['security']) && is_array($account_page_data['security']) ? $account_page_data['security'] : [];
+$completion_items  = isset($account_page_data['completionItems']) && is_array($account_page_data['completionItems']) ? $account_page_data['completionItems'] : [];
 $campaigns         = isset($account_page_data['campaigns']) && is_array($account_page_data['campaigns']) ? $account_page_data['campaigns'] : [];
 $orders_url        = !empty($account_page_data['ordersUrl']) ? $account_page_data['ordersUrl'] : wc_get_account_endpoint_url('orders');
 $address_url       = !empty($account_page_data['addressUrl']) ? $account_page_data['addressUrl'] : wc_get_account_endpoint_url('edit-address');
@@ -53,6 +54,32 @@ do_action('woocommerce_before_edit_account_form');
             <span><?php esc_html_e('İletişim hattı', 'arim'); ?></span>
             <strong><?php echo esc_html($account_stats['contactChannel'] ?? '—'); ?></strong>
         </div>
+    </div>
+
+    <div class="arim-myaccount-completion-card is-account">
+        <div class="arim-myaccount-completion-head">
+            <div>
+                <span class="arim-myaccount-panel-kicker"><?php esc_html_e('Profil hazırlık akışı', 'arim'); ?></span>
+                <h3><?php esc_html_e('Hesap alanlarını tamamlayarak akışı güçlendir', 'arim'); ?></h3>
+            </div>
+            <strong><?php echo esc_html(number_format_i18n((int) ($account_stats['profileCompletion'] ?? 0))); ?>%</strong>
+        </div>
+        <div class="arim-myaccount-completion-progress" aria-hidden="true">
+            <span style="width: <?php echo esc_attr(max(0, min(100, (int) ($account_stats['profileCompletion'] ?? 0)))); ?>%;"></span>
+        </div>
+        <?php if (!empty($completion_items)) : ?>
+            <div class="arim-myaccount-completion-list">
+                <?php foreach ($completion_items as $item) : ?>
+                    <a class="arim-myaccount-completion-item <?php echo !empty($item['isReady']) ? 'is-ready' : 'is-pending'; ?>" href="<?php echo esc_url($item['actionUrl'] ?? '#account_first_name'); ?>">
+                        <span class="arim-myaccount-completion-state"><?php echo !empty($item['isReady']) ? '✓' : '•'; ?></span>
+                        <span class="arim-myaccount-completion-copy">
+                            <strong><?php echo esc_html($item['label'] ?? ''); ?></strong>
+                            <small><?php echo esc_html($item['detail'] ?? ''); ?></small>
+                        </span>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
     </div>
 
     <div class="arim-myaccount-account-layout">

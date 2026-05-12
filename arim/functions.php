@@ -1892,21 +1892,50 @@ function arim_myaccount_address_page_data() {
         $phone = trim((string) get_user_meta($user_id, 'billing_phone', true));
     }
 
+    $completion_items = [];
+
+    foreach ($addresses as $address_key => $address_data) {
+        $completion_items[] = [
+            'label'    => $address_data['label'],
+            'isReady'  => !empty($address_data['isComplete']),
+            'detail'   => !empty($address_data['isComplete'])
+                ? __('Adres kaydı hazır.', 'arim')
+                : __('Bu adres tipi henüz tamamlanmadı.', 'arim'),
+            'actionUrl'=> $address_data['url'],
+        ];
+    }
+
+    $completion_items[] = [
+        'label'    => __('Telefon bilgisi', 'arim'),
+        'isReady'  => $phone !== '',
+        'detail'   => $phone !== ''
+            ? $phone
+            : __('Kurye ve destek iletişimi için telefon ekle.', 'arim'),
+        'actionUrl'=> wc_get_account_endpoint_url('edit-account'),
+    ];
+
+    $completion_total = count($completion_items);
+    $completion_ready = count(array_filter($completion_items, static function ($item) {
+        return !empty($item['isReady']);
+    }));
+
     return [
         'stats' => [
             'savedCount'    => $saved_count,
             'expectedCount' => count($addresses),
             'completion'    => count($addresses) > 0 ? (int) round(($saved_count / count($addresses)) * 100) : 0,
+            'detailCompletion' => $completion_total > 0 ? (int) round(($completion_ready / $completion_total) * 100) : 0,
         ],
         'contact' => [
             'name'  => $user instanceof WP_User ? $user->display_name : '',
             'email' => $user instanceof WP_User ? $user->user_email : '',
             'phone' => $phone,
         ],
-        'addresses'   => $addresses,
-        'campaigns'   => arim_single_product_campaigns(2),
-        'supportUrl'  => wc_get_account_endpoint_url('edit-account'),
-        'dashboardUrl'=> arim_account_url(),
+        'addresses'    => $addresses,
+        'completionItems' => $completion_items,
+        'campaigns'    => arim_single_product_campaigns(2),
+        'supportUrl'   => wc_get_account_endpoint_url('edit-account'),
+        'dashboardUrl' => arim_account_url(),
     ];
 }
 
@@ -1944,6 +1973,39 @@ function arim_myaccount_account_page_data() {
         }
     }
 
+    $completion_items = [
+        [
+            'label'   => __('Ad', 'arim'),
+            'isReady' => trim((string) $user->first_name) !== '',
+            'detail'  => trim((string) $user->first_name) !== '' ? $user->first_name : __('Ad alanını doldur.', 'arim'),
+            'actionUrl' => '#account_first_name',
+        ],
+        [
+            'label'   => __('Soyad', 'arim'),
+            'isReady' => trim((string) $user->last_name) !== '',
+            'detail'  => trim((string) $user->last_name) !== '' ? $user->last_name : __('Soyad alanını doldur.', 'arim'),
+            'actionUrl' => '#account_last_name',
+        ],
+        [
+            'label'   => __('Görünen ad', 'arim'),
+            'isReady' => trim((string) $user->display_name) !== '',
+            'detail'  => trim((string) $user->display_name) !== '' ? $user->display_name : __('Hesapta görünecek adı belirle.', 'arim'),
+            'actionUrl' => '#account_display_name',
+        ],
+        [
+            'label'   => __('E-posta', 'arim'),
+            'isReady' => trim((string) $user->user_email) !== '',
+            'detail'  => trim((string) $user->user_email) !== '' ? $user->user_email : __('Bildirimler için e-posta ekle.', 'arim'),
+            'actionUrl' => '#account_email',
+        ],
+        [
+            'label'   => __('Telefon', 'arim'),
+            'isReady' => $phone !== '',
+            'detail'  => $phone !== '' ? $phone : __('Teslimat iletişimi için telefon ekle.', 'arim'),
+            'actionUrl' => wc_get_account_endpoint_url('edit-address'),
+        ],
+    ];
+
     return [
         'stats' => [
             'profileCompletion' => (int) round(($completed_fields / 5) * 100),
@@ -1961,6 +2023,7 @@ function arim_myaccount_account_page_data() {
             'title' => __('Şifre ve iletişim bilgilerini güncel tut', 'arim'),
             'text'  => __('Giriş güvenliği, sipariş bildirimleri ve teslimat iletişimi için profil alanlarının dolu olması önemlidir.', 'arim'),
         ],
+        'completionItems' => $completion_items,
         'campaigns'    => arim_single_product_campaigns(2),
         'ordersUrl'    => wc_get_account_endpoint_url('orders'),
         'addressUrl'   => wc_get_account_endpoint_url('edit-address'),

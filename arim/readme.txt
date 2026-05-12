@@ -158,3 +158,8 @@ Geliştirilen Özellikler
 - Hesabım yan menü üst alanına favoriler, karşılaştırma listesi ve son gezilen ürünler için canlı sayaç kartları eklendi.
 - Sayaçlar localStorage akışlarıyla eşzamanlı çalışacak şekilde güncellenerek hesap alanından alışveriş hafızasına daha hızlı dönüş sağlandı.
 - Masaüstü ve mobil görünüm için menü başlığındaki özet kartlar yeniden düzenlenerek hesap navigasyonu daha bilgilendirici hale getirildi.
+
+22. Hesap ve Adres Tamamlama Rehberi Geliştirmeleri
+- Adreslerim ekranına teslimat hazırlığını görünür kılan ilerleme çubuğu ve eksik alan kontrol listesi eklendi.
+- Hesap bilgileri ekranına profil doluluk oranını alan bazında özetleyen tamamlanma kartı yerleştirildi.
+- Kullanıcıların eksik alanları doğru ekrana daha hızlı tamamlayabilmesi için hesap ve adres akışları yönlendirici bağlantılarla güçlendirildi.

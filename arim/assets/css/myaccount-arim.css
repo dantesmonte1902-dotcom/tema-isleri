@@ -952,6 +952,138 @@
     margin-bottom: 18px;
 }
 
+.arim-myaccount-completion-card {
+    margin-bottom: 18px;
+    padding: 20px;
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #fff, #fafafa);
+}
+
+.arim-myaccount-completion-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.arim-myaccount-completion-head h3 {
+    margin: 4px 0 0;
+    color: #222;
+    font-size: 24px;
+}
+
+.arim-myaccount-completion-head strong {
+    color: #f27a1a;
+    font-size: 28px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.arim-myaccount-completion-card.is-account .arim-myaccount-completion-head strong {
+    color: #3454d1;
+}
+
+.arim-myaccount-completion-progress {
+    position: relative;
+    height: 10px;
+    margin-bottom: 16px;
+    border-radius: 999px;
+    background: #eceff8;
+    overflow: hidden;
+}
+
+.arim-myaccount-completion-progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #f27a1a, #ff9d00);
+}
+
+.arim-myaccount-completion-card.is-account .arim-myaccount-completion-progress {
+    background: #edf1ff;
+}
+
+.arim-myaccount-completion-card.is-account .arim-myaccount-completion-progress span {
+    background: linear-gradient(90deg, #3454d1, #6585ff);
+}
+
+.arim-myaccount-completion-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.arim-myaccount-completion-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid #ececec;
+    border-radius: 14px;
+    background: #fff;
+    color: #333;
+    text-decoration: none;
+    transition: .25s ease;
+}
+
+.arim-myaccount-completion-item:hover {
+    border-color: #f6c79f;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+    transform: translateY(-1px);
+}
+
+.arim-myaccount-completion-card.is-account .arim-myaccount-completion-item:hover {
+    border-color: #cfd9ff;
+}
+
+.arim-myaccount-completion-item.is-ready {
+    background: #f7fbf8;
+}
+
+.arim-myaccount-completion-item.is-pending {
+    background: #fffaf6;
+}
+
+.arim-myaccount-completion-state {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: #fff2e8;
+    color: #f27a1a;
+    font-size: 15px;
+    font-weight: 800;
+    flex: 0 0 28px;
+}
+
+.arim-myaccount-completion-card.is-account .arim-myaccount-completion-state {
+    background: #eef3ff;
+    color: #3454d1;
+}
+
+.arim-myaccount-completion-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.arim-myaccount-completion-copy strong {
+    color: #222;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.arim-myaccount-completion-copy small {
+    margin-top: 2px;
+    color: #666;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
 .arim-myaccount-address-stat {
     padding: 16px 18px;
     border-radius: 16px;
@@ -2052,6 +2184,10 @@
         grid-template-columns: 1fr 1fr;
     }
 
+    .arim-myaccount-completion-list {
+        grid-template-columns: 1fr 1fr;
+    }
+
     .arim-myaccount-view-order-support-meta {
         grid-template-columns: 1fr;
     }
@@ -2098,6 +2234,10 @@
         font-size: 24px;
     }
 
+    .arim-myaccount-completion-head {
+        flex-direction: column;
+    }
+
     .arim-myaccount-hero-stats,
     .arim-myaccount-status-strip,
     .arim-myaccount-cards,
@@ -2107,6 +2247,10 @@
     .arim-myaccount-view-order-summary,
     .arim-myaccount-account-grid,
     .arim-myaccount-address-form .woocommerce-address-fields__field-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .arim-myaccount-completion-list {
         grid-template-columns: 1fr;
     }
 
