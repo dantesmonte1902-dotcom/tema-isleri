@@ -1,9 +1,27 @@
 .woocommerce-account .woocommerce {
     display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: minmax(300px, 320px) minmax(0, 1fr);
     gap: 24px;
     align-items: start;
     padding: 28px 0 40px;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation,
+.woocommerce-account .woocommerce-MyAccount-content,
+.woocommerce-account .woocommerce-notices-wrapper {
+    float: none !important;
+    width: auto !important;
+    margin: 0 !important;
+}
+
+.woocommerce-account .woocommerce-notices-wrapper {
+    grid-column: 1 / -1;
+}
+
+.woocommerce-account .woocommerce-MyAccount-navigation,
+.woocommerce-account .woocommerce-MyAccount-content,
+.woocommerce-account .woocommerce-MyAccount-content > * {
+    min-width: 0;
 }
 
 .arim-myaccount-nav-box {
@@ -12,6 +30,8 @@
     background: #fff;
     box-shadow: 0 8px 24px rgba(0,0,0,0.04);
     overflow: hidden;
+    position: sticky;
+    top: 96px;
 }
 
 .arim-myaccount-nav-head {
@@ -44,7 +64,7 @@
 
 .arim-myaccount-nav-shopping-summary {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: 10px;
     margin-top: 12px;
 }
@@ -224,6 +244,8 @@
 .arim-myaccount-dashboard,
 .arim-myaccount-orders,
 .arim-myaccount-addresses,
+.arim-myaccount-account,
+.arim-myaccount-view-order,
 .arim-myaccount-address-edit,
 .arim-myaccount-empty {
     border: 1px solid #ececec;
@@ -2534,6 +2556,10 @@
 @media (max-width: 992px) {
     .woocommerce-account .woocommerce {
         grid-template-columns: 1fr;
+    }
+
+    .arim-myaccount-nav-box {
+        position: static;
     }
 
     .arim-myaccount-status-strip,

@@ -33,6 +33,8 @@ add_action('after_setup_theme', 'arim_theme_setup');
 function arim_enqueue_assets() {
     $theme_style_path = trailingslashit(get_stylesheet_directory()) . 'style.css';
     $theme_js_path    = trailingslashit(get_template_directory()) . 'assets/js/arim-theme.js';
+    $woocommerce_css_path = trailingslashit(get_template_directory()) . 'assets/css/woocommerce-arim.css';
+    $myaccount_css_path   = trailingslashit(get_template_directory()) . 'assets/css/myaccount-arim.css';
 
     wp_enqueue_style(
         'arim-style',
@@ -133,7 +135,7 @@ function arim_enqueue_assets() {
             'arim-woocommerce',
             get_template_directory_uri() . '/assets/css/woocommerce-arim.css',
             ['arim-style'],
-            '1.0.0'
+            file_exists($woocommerce_css_path) ? (string) filemtime($woocommerce_css_path) : '1.0.0'
         );
     }
 
@@ -160,7 +162,7 @@ function arim_enqueue_assets() {
             'arim-myaccount',
             get_template_directory_uri() . '/assets/css/myaccount-arim.css',
             ['arim-style', 'arim-woocommerce'],
-            '1.0.0'
+            file_exists($myaccount_css_path) ? (string) filemtime($myaccount_css_path) : '1.0.0'
         );
     }
 }

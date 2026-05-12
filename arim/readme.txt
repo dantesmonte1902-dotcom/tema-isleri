@@ -188,3 +188,8 @@ Geliştirilen Özellikler
 - Dashboard ana ekrana aktif sipariş, sorunlu sipariş ve eksik teslimat hazırlığı adımlarını öne çıkaran öncelik kartları eklendi.
 - Kullanıcıların sipariş detayı, adres veya hesap ekranına tek tıkla geçebilmesi için öncelik kartları durum bazlı yönlendirici bağlantılarla güçlendirildi.
 - Öncelik alanı mobil ve masaüstü görünümde mevcut hazırlık ve hızlı aksiyon kartlarıyla uyumlu çalışacak şekilde yeniden stillendirildi.
+
+28. Hesabım Masaüstü Yerleşim Stabilizasyonu
+- My Account masaüstü düzeninde WooCommerce’in varsayılan float ve genişlik kuralları nötrlenerek özel grid yerleşimin bozulması engellendi.
+- Sol navigasyon alanı daha kararlı bir genişlikte ve sticky davranışla güncellenerek büyük ekranlarda panel akışı toparlandı.
+- My Account ve WooCommerce stilleri dosya değişim zamanına göre sürümlenerek masaüstü testlerinde eski CSS önbelleği nedeniyle oluşan karışık görünüm azaltıldı.
