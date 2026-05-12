@@ -235,6 +235,6 @@ Geliştirilen Özellikler
 - Tam ekran görünümde odak yönetimi iyileştirilerek kapatma sonrası odağın doğru aksiyona dönmesi sağlandı.
 
 37. Ürün Detay Lightbox Davranış Düzeltmesi
-- Ana görsel üstündeki fazla agresif tam ekran tetikleyicisi kaldırılarak ürün görselinin istemsiz açılma hissi azaltıldı.
+ - Ana görsel üstündeki fazla agresif tam ekran tetikleyici kaldırılarak ürün görselinin istemsiz açılma hissi azaltıldı.
 - Tam ekran deneyimi alt bilgi alanındaki ayrı aksiyonla daha kontrollü hale getirildi ve lightbox üstüne kapanış yönlendirmesi eklendi.
 - Lightbox açılış/kapanış akışı odak, aria-hidden ve arka plan tıklaması davranışlarıyla daha dayanıklı hale getirildi.

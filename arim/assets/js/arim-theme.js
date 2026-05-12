@@ -303,8 +303,8 @@ document.addEventListener('DOMContentLoaded', function () {
             lastTriggerButton = triggerButton || document.activeElement;
             updateGallery(currentIndex);
             lightbox.hidden = false;
-            lightbox.setAttribute('aria-hidden', 'false');
-            document.body.classList.add('arim-gallery-open');
+            lightbox.removeAttribute('aria-hidden');
+            document.body.classList.add('arim-gallery-lightbox-open');
             bindKeyListener();
 
             if (closeButton) {
@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             lightbox.hidden = true;
             lightbox.setAttribute('aria-hidden', 'true');
-            document.body.classList.remove('arim-gallery-open');
+            document.body.classList.remove('arim-gallery-lightbox-open');
             unbindKeyListener();
 
             if (lastTriggerButton && typeof lastTriggerButton.focus === 'function') {
