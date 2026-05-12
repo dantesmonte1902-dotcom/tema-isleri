@@ -218,3 +218,8 @@ Geliştirilen Özellikler
 - Ürün detay sayfasına favoriler, karşılaştırmalar ve son görüntülenenler akışını kullanan ayrı bir kişisel öneri vitrini eklendi.
 - Öneri render akışı mevcut ürünü hariç tutacak ve sonuç kalmadığında bölümü gizleyecek şekilde çoğul hedef desteğiyle genişletildi.
 - Kullanıcıya ürün detaydan ayrılmadan yeni öneri çağırabilmesi için ayrı bir öneri yenile aksiyonu eklendi.
+
+34. Ürün Detay Premium Galeri Geliştirmeleri
+- Ürün detay galeri alanı üst bilgi kartı, premium medya yüzeyi ve görsel sayısı vurgusuyla daha üst segment bir sunuma taşındı.
+- Kullanıcıların ürünü daha rahat inceleyebilmesi için tam ekran lightbox, önceki-sonraki gezinme ve klavye ile galeri kontrolü eklendi.
+- Küçük önizleme şeridi ana görseli de kapsayacak şekilde yeniden düzenlenip aktif durum, hover ve mobil davranışları premium görsel sistemle uyumlu hale getirildi.

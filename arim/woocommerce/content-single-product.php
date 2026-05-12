@@ -8,9 +8,47 @@ if (!$product) {
 }
 
 $product_id = $product->get_id();
-$gallery_ids = $product->get_gallery_image_ids();
 $main_image_id = $product->get_image_id();
 $main_image_url = $main_image_id ? wp_get_attachment_image_url($main_image_id, 'large') : wc_placeholder_img_src();
+$gallery_ids = $product->get_gallery_image_ids();
+$gallery_items = [];
+
+if ($main_image_url) {
+    $gallery_items[] = [
+        'full'  => $main_image_url,
+        'thumb' => $main_image_id ? wp_get_attachment_image_url($main_image_id, 'woocommerce_thumbnail') : $main_image_url,
+        'alt'   => trim((string) get_post_meta($main_image_id, '_wp_attachment_image_alt', true)) ?: $product->get_name(),
+    ];
+}
+
+if (!empty($gallery_ids)) {
+    foreach ($gallery_ids as $gallery_id) {
+        if ((int) $gallery_id === (int) $main_image_id) {
+            continue;
+        }
+
+        $thumb_url = wp_get_attachment_image_url($gallery_id, 'woocommerce_thumbnail');
+        $full_url  = wp_get_attachment_image_url($gallery_id, 'large');
+
+        if (!$thumb_url || !$full_url) {
+            continue;
+        }
+
+        $gallery_items[] = [
+            'full'  => $full_url,
+            'thumb' => $thumb_url,
+            'alt'   => trim((string) get_post_meta($gallery_id, '_wp_attachment_image_alt', true)) ?: $product->get_name(),
+        ];
+    }
+}
+
+$gallery_total = count($gallery_items);
+$gallery_badge_text = $gallery_total > 1
+    ? sprintf(_n('%s görsel', '%s görsel', $gallery_total, 'arim'), number_format_i18n($gallery_total))
+    : __('Premium ürün sunumu', 'arim');
+$gallery_hint_text = $gallery_total > 1
+    ? __('Küçük önizlemeler arasında geçiş yap, detayları tam ekranda incele.', 'arim')
+    : __('Ürünü tam boy inceleyip detaylara daha rahat odaklan.', 'arim');
 
 $brand = arim_product_brand_name($product_id);
 $rating = $product->get_average_rating();
@@ -84,23 +122,98 @@ if ($product->is_on_sale()) {
 >
 
     <div class="arim-single-grid">
-        <div class="arim-single-gallery">
-            <div class="arim-single-main-image">
-                <img src="<?php echo esc_url($main_image_url); ?>" alt="<?php echo esc_attr(get_the_title()); ?>">
+        <div class="arim-single-gallery" data-arim-product-gallery>
+            <div class="arim-single-gallery-head">
+                <div>
+                    <span class="arim-single-highlight-kicker"><?php echo esc_html($gallery_badge_text); ?></span>
+                    <h2><?php esc_html_e('Premium ürün galeri alanı', 'arim'); ?></h2>
+                    <p><?php echo esc_html($gallery_hint_text); ?></p>
+                </div>
+
+                <button
+                    class="arim-single-gallery-zoom"
+                    type="button"
+                    data-arim-gallery-open
+                    aria-label="<?php esc_attr_e('Ürün görsellerini tam ekranda aç', 'arim'); ?>"
+                >
+                    <?php esc_html_e('Yakınlaştır', 'arim'); ?>
+                </button>
             </div>
 
-            <?php if (!empty($gallery_ids)) : ?>
-                <div class="arim-single-thumbs">
-                    <?php foreach ($gallery_ids as $gallery_id) : 
-                        $thumb = wp_get_attachment_image_url($gallery_id, 'woocommerce_thumbnail');
-                        $full  = wp_get_attachment_image_url($gallery_id, 'large');
-                    ?>
-                        <a href="<?php echo esc_url($full); ?>" class="arim-single-thumb">
-                            <img src="<?php echo esc_url($thumb); ?>" alt="">
-                        </a>
+            <div class="arim-single-main-image">
+                <button
+                    class="arim-single-gallery-open-area"
+                    type="button"
+                    data-arim-gallery-open
+                    aria-label="<?php esc_attr_e('Ürün galerisini aç', 'arim'); ?>"
+                >
+                    <img
+                        src="<?php echo esc_url($gallery_items[0]['full'] ?? $main_image_url); ?>"
+                        alt="<?php echo esc_attr($gallery_items[0]['alt'] ?? get_the_title()); ?>"
+                        data-arim-gallery-main-image
+                    >
+                </button>
+
+                <div class="arim-single-gallery-overlay">
+                    <span><?php esc_html_e('Tam ekran inceleme', 'arim'); ?></span>
+                    <strong><?php esc_html_e('Dokun ve detayları büyüt', 'arim'); ?></strong>
+                </div>
+
+                <?php if ($gallery_total > 1) : ?>
+                    <button class="arim-single-gallery-nav arim-single-gallery-nav-prev" type="button" data-arim-gallery-prev aria-label="<?php esc_attr_e('Önceki görsel', 'arim'); ?>">‹</button>
+                    <button class="arim-single-gallery-nav arim-single-gallery-nav-next" type="button" data-arim-gallery-next aria-label="<?php esc_attr_e('Sonraki görsel', 'arim'); ?>">›</button>
+                <?php endif; ?>
+
+                <div class="arim-single-gallery-meta">
+                    <span><?php echo esc_html($gallery_badge_text); ?></span>
+                    <strong><?php esc_html_e('Yüksek çözünürlüklü önizleme', 'arim'); ?></strong>
+                </div>
+            </div>
+
+            <?php if ($gallery_total > 1) : ?>
+                <div class="arim-single-thumbs" role="list" aria-label="<?php esc_attr_e('Ürün galeri küçük önizlemeleri', 'arim'); ?>">
+                    <?php foreach ($gallery_items as $gallery_index => $gallery_item) : ?>
+                        <button
+                            class="arim-single-thumb<?php echo 0 === $gallery_index ? ' is-active' : ''; ?>"
+                            type="button"
+                            role="listitem"
+                            data-arim-gallery-thumb
+                            data-index="<?php echo esc_attr($gallery_index); ?>"
+                            data-full-url="<?php echo esc_url($gallery_item['full']); ?>"
+                            data-alt="<?php echo esc_attr($gallery_item['alt']); ?>"
+                            aria-label="<?php echo esc_attr(sprintf(__('Görsel %d', 'arim'), $gallery_index + 1)); ?>"
+                        >
+                            <img src="<?php echo esc_url($gallery_item['thumb']); ?>" alt="<?php echo esc_attr($gallery_item['alt']); ?>">
+                        </button>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
+
+            <div class="arim-single-gallery-lightbox" hidden data-arim-gallery-lightbox>
+                <div class="arim-single-gallery-dialog" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e('Ürün görsel önizlemesi', 'arim'); ?>">
+                    <button class="arim-single-gallery-close" type="button" data-arim-gallery-close aria-label="<?php esc_attr_e('Galeriyi kapat', 'arim'); ?>">×</button>
+
+                    <?php if ($gallery_total > 1) : ?>
+                        <button class="arim-single-gallery-lightbox-nav arim-single-gallery-lightbox-prev" type="button" data-arim-gallery-prev aria-label="<?php esc_attr_e('Önceki görsel', 'arim'); ?>">‹</button>
+                    <?php endif; ?>
+
+                    <figure class="arim-single-gallery-lightbox-figure">
+                        <img
+                            src="<?php echo esc_url($gallery_items[0]['full'] ?? $main_image_url); ?>"
+                            alt="<?php echo esc_attr($gallery_items[0]['alt'] ?? get_the_title()); ?>"
+                            data-arim-gallery-lightbox-image
+                        >
+                        <figcaption>
+                            <strong><?php echo esc_html($gallery_badge_text); ?></strong>
+                            <span data-arim-gallery-caption><?php echo esc_html($gallery_items[0]['alt'] ?? get_the_title()); ?></span>
+                        </figcaption>
+                    </figure>
+
+                    <?php if ($gallery_total > 1) : ?>
+                        <button class="arim-single-gallery-lightbox-nav arim-single-gallery-lightbox-next" type="button" data-arim-gallery-next aria-label="<?php esc_attr_e('Sonraki görsel', 'arim'); ?>">›</button>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
 
         <div class="arim-single-summary">

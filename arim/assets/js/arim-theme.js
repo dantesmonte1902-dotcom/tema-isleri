@@ -136,30 +136,167 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    const productThumbs = document.querySelectorAll('.arim-single-thumb');
-    const mainImage = document.querySelector('.arim-single-main-image img');
+    function initSingleProductGallery() {
+        const galleryRoot = document.querySelector('[data-arim-product-gallery]');
+        if (!galleryRoot) {
+            return;
+        }
 
-    if (productThumbs.length && mainImage) {
-        productThumbs.forEach(function (thumb) {
-            thumb.addEventListener('click', function (event) {
-                event.preventDefault();
+        const mainImage = galleryRoot.querySelector('[data-arim-gallery-main-image]');
+        const lightbox = galleryRoot.querySelector('[data-arim-gallery-lightbox]');
+        const lightboxImage = galleryRoot.querySelector('[data-arim-gallery-lightbox-image]');
+        const caption = galleryRoot.querySelector('[data-arim-gallery-caption]');
+        const thumbs = Array.prototype.slice.call(galleryRoot.querySelectorAll('[data-arim-gallery-thumb]'));
+        const openButtons = Array.prototype.slice.call(galleryRoot.querySelectorAll('[data-arim-gallery-open]'));
+        const closeButton = galleryRoot.querySelector('[data-arim-gallery-close]');
+        const prevButtons = Array.prototype.slice.call(galleryRoot.querySelectorAll('[data-arim-gallery-prev]'));
+        const nextButtons = Array.prototype.slice.call(galleryRoot.querySelectorAll('[data-arim-gallery-next]'));
 
-                const image = thumb.querySelector('img');
-                if (!image) {
-                    return;
-                }
+        if (!mainImage) {
+            return;
+        }
 
-                const fullUrl = thumb.getAttribute('href') || image.getAttribute('src');
-                mainImage.setAttribute('src', fullUrl);
+        const galleryItems = thumbs.length
+            ? thumbs.map(function (thumb, index) {
+                return {
+                    index: index,
+                    fullUrl: String(thumb.getAttribute('data-full-url') || ''),
+                    alt: String(thumb.getAttribute('data-alt') || ''),
+                };
+            })
+            : [{
+                index: 0,
+                fullUrl: String(mainImage.getAttribute('src') || ''),
+                alt: String(mainImage.getAttribute('alt') || ''),
+            }];
 
-                productThumbs.forEach(function (thumbItem) {
-                    thumbItem.classList.remove('is-active');
-                });
+        let currentIndex = thumbs.findIndex(function (thumb) {
+            return thumb.classList.contains('is-active');
+        });
 
-                thumb.classList.add('is-active');
+        if (currentIndex < 0) {
+            currentIndex = 0;
+        }
+
+        function syncThumbStates() {
+            thumbs.forEach(function (thumb, index) {
+                const isActive = index === currentIndex;
+                thumb.classList.toggle('is-active', isActive);
+                thumb.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
+        }
+
+        function updateGallery(index) {
+            if (!galleryItems.length) {
+                return;
+            }
+
+            currentIndex = (index + galleryItems.length) % galleryItems.length;
+            const activeItem = galleryItems[currentIndex];
+
+            mainImage.setAttribute('src', activeItem.fullUrl);
+            mainImage.setAttribute('alt', activeItem.alt);
+
+            if (lightboxImage) {
+                lightboxImage.setAttribute('src', activeItem.fullUrl);
+                lightboxImage.setAttribute('alt', activeItem.alt);
+            }
+
+            if (caption) {
+                caption.textContent = activeItem.alt;
+            }
+
+            syncThumbStates();
+        }
+
+        function openLightbox() {
+            if (!lightbox || !lightboxImage) {
+                return;
+            }
+
+            updateGallery(currentIndex);
+            lightbox.hidden = false;
+            document.body.classList.add('arim-gallery-open');
+
+            if (closeButton) {
+                closeButton.focus();
+            }
+        }
+
+        function closeLightbox() {
+            if (!lightbox) {
+                return;
+            }
+
+            lightbox.hidden = true;
+            document.body.classList.remove('arim-gallery-open');
+        }
+
+        thumbs.forEach(function (thumb, index) {
+            thumb.addEventListener('click', function () {
+                updateGallery(index);
             });
         });
+
+        openButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                openLightbox();
+            });
+        });
+
+        if (closeButton) {
+            closeButton.addEventListener('click', function () {
+                closeLightbox();
+            });
+        }
+
+        prevButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                updateGallery(currentIndex - 1);
+            });
+        });
+
+        nextButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                updateGallery(currentIndex + 1);
+            });
+        });
+
+        if (lightbox) {
+            lightbox.addEventListener('click', function (event) {
+                if (event.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', function (event) {
+            if (lightbox && !lightbox.hidden && event.key === 'Escape') {
+                closeLightbox();
+                return;
+            }
+
+            const canHandleArrows = lightbox && !lightbox.hidden;
+
+            if (!canHandleArrows) {
+                return;
+            }
+
+            if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                updateGallery(currentIndex - 1);
+            }
+
+            if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                updateGallery(currentIndex + 1);
+            }
+        });
+
+        updateGallery(currentIndex);
     }
+
+    initSingleProductGallery();
 
     function safeParseFavorites() {
         try {
