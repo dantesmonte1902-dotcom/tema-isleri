@@ -283,6 +283,10 @@
     background: rgba(3, 7, 18, 0.84);
 }
 
+.arim-single-gallery-lightbox[hidden] {
+    display: none !important;
+}
+
 .arim-single-gallery-dialog {
     position: relative;
     display: grid;
