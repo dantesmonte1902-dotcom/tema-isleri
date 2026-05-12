@@ -88,7 +88,13 @@
     height: auto;
     object-fit: cover;
     aspect-ratio: 1 / 1;
+    cursor: zoom-in;
     transition: transform .35s ease;
+}
+
+.arim-single-main-image img:focus-visible {
+    outline: 3px solid rgba(52, 84, 209, 0.42);
+    outline-offset: -6px;
 }
 
 .arim-single-main-image:hover img {
@@ -438,6 +444,49 @@
     line-height: 1.25;
     color: #222;
     font-weight: 700;
+}
+
+.arim-single-summary-highlights {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0 0 18px;
+}
+
+.arim-single-summary-highlight {
+    padding: 14px 16px;
+    border: 1px solid #edf1f7;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fff 0%, #f8fbff 100%);
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+}
+
+.arim-single-summary-highlight span,
+.arim-single-summary-highlight strong,
+.arim-single-summary-highlight small {
+    display: block;
+}
+
+.arim-single-summary-highlight span {
+    margin-bottom: 6px;
+    color: #526071;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+}
+
+.arim-single-summary-highlight strong {
+    color: #111827;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.arim-single-summary-highlight small {
+    margin-top: 6px;
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.6;
 }
 
 .arim-single-rating {
@@ -953,6 +1002,7 @@
     }
 
     .arim-single-price-insights,
+    .arim-single-summary-highlights,
     .arim-single-confidence-grid,
     .arim-single-coupon-grid {
         grid-template-columns: 1fr;

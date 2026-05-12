@@ -400,6 +400,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 event.preventDefault();
                 openLightbox(button);
             });
+
+            button.addEventListener('keydown', function (event) {
+                if (event.key !== 'Enter' && event.key !== ' ') {
+                    return;
+                }
+
+                event.preventDefault();
+                openLightbox(button);
+            });
         });
 
         if (closeButton) {

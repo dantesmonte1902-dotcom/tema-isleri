@@ -83,6 +83,23 @@ $price_insight_title = $discount_amount_value > 0
 $price_insight_note = $discount_amount_value > 0
     ? sprintf(__('Bu üründe yaklaşık %s avantaj öne çıkıyor.', 'arim'), $discount_amount_text)
     : __('Fiyat düzenli olarak mağaza vitriniyle senkronize edilir.', 'arim');
+$summary_highlights = [
+    [
+        'label' => __('Teslimat', 'arim'),
+        'value' => $delivery_details['date'],
+        'note'  => $delivery_details['badge'],
+    ],
+    [
+        'label' => __('Mağaza', 'arim'),
+        'value' => $store_name,
+        'note'  => $store_review_text,
+    ],
+    [
+        'label' => __('Güvence', 'arim'),
+        'value' => $product->is_in_stock() ? __('Güvenli sipariş', 'arim') : __('Siparişe özel hazırlık', 'arim'),
+        'note'  => $product->is_in_stock() ? __('Hızlı kargo ve kolay iade', 'arim') : __('Hazırlanınca öncelikli gönderim', 'arim'),
+    ],
+];
 
 $purchase_journey = [
     [
@@ -148,11 +165,15 @@ if ($product->is_on_sale()) {
                     src="<?php echo esc_url($gallery_items[0]['full'] ?? $main_image_url); ?>"
                     alt="<?php echo esc_attr($gallery_items[0]['alt'] ?? get_the_title()); ?>"
                     data-arim-gallery-main-image
+                    data-arim-gallery-open
+                    role="button"
+                    tabindex="0"
+                    aria-label="<?php esc_attr_e('Ürün görselini büyük aç', 'arim'); ?>"
                 >
 
                 <div class="arim-single-gallery-overlay">
                     <span><?php esc_html_e('Detay görünümü', 'arim'); ?></span>
-                    <strong><?php esc_html_e('Küçük görsellerle hızlı geçiş yap', 'arim'); ?></strong>
+                    <strong><?php esc_html_e('Tıklayıp büyük görünüm aç', 'arim'); ?></strong>
                 </div>
 
                 <?php if ($gallery_total > 1) : ?>
@@ -245,6 +266,16 @@ if ($product->is_on_sale()) {
             <?php endif; ?>
 
             <h1 class="arim-single-title"><?php the_title(); ?></h1>
+
+            <div class="arim-single-summary-highlights" aria-label="<?php esc_attr_e('Ürün kısa özet bilgileri', 'arim'); ?>">
+                <?php foreach ($summary_highlights as $highlight) : ?>
+                    <article class="arim-single-summary-highlight">
+                        <span><?php echo esc_html($highlight['label']); ?></span>
+                        <strong><?php echo esc_html($highlight['value']); ?></strong>
+                        <small><?php echo esc_html($highlight['note']); ?></small>
+                    </article>
+                <?php endforeach; ?>
+            </div>
 
             <?php if ($rating > 0) : ?>
                 <div class="arim-single-rating">
