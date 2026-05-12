@@ -51,7 +51,7 @@ $gallery_hint_text = $gallery_total > 1
     : __('Ürünü tam boy inceleyip detaylara daha rahat odaklan.', 'arim');
 $gallery_footer_text = $gallery_total > 1
     ? __('Küçük görseller veya kaydırma hareketiyle hızlıca gez.', 'arim')
-    : __('Tam ekran görünüm için sağ üstteki butonu kullan.', 'arim');
+    : __('Tam ekran görünüm için aşağıdaki butonu kullan.', 'arim');
 
 $brand = arim_product_brand_name($product_id);
 $rating = $product->get_average_rating();
@@ -144,15 +144,6 @@ if ($product->is_on_sale()) {
             </div>
 
             <div class="arim-single-main-image">
-                <button
-                    class="arim-single-gallery-floating-action"
-                    type="button"
-                    data-arim-gallery-open
-                    aria-label="<?php esc_attr_e('Ürün görselini tam ekranda aç', 'arim'); ?>"
-                >
-                    <?php esc_html_e('Tam ekran', 'arim'); ?>
-                </button>
-
                 <img
                     src="<?php echo esc_url($gallery_items[0]['full'] ?? $main_image_url); ?>"
                     alt="<?php echo esc_attr($gallery_items[0]['alt'] ?? get_the_title()); ?>"
@@ -195,16 +186,35 @@ if ($product->is_on_sale()) {
             <?php endif; ?>
 
             <div class="arim-single-gallery-footer">
-                <span class="arim-single-gallery-status" aria-live="polite">
-                    <strong data-arim-gallery-current-index>1</strong>
-                    <span>/ <?php echo esc_html(number_format_i18n($gallery_total)); ?></span>
-                </span>
-                <p><?php echo esc_html($gallery_footer_text); ?></p>
+                <div class="arim-single-gallery-footer-copy">
+                    <span class="arim-single-gallery-status" aria-live="polite">
+                        <strong data-arim-gallery-current-index>1</strong>
+                        <span>/ <?php echo esc_html(number_format_i18n($gallery_total)); ?></span>
+                    </span>
+                    <p><?php echo esc_html($gallery_footer_text); ?></p>
+                </div>
+                <button
+                    class="arim-single-gallery-footer-action"
+                    type="button"
+                    data-arim-gallery-open
+                    aria-label="<?php esc_attr_e('Ürün görsellerini tam ekranda aç', 'arim'); ?>"
+                >
+                    <?php esc_html_e('Tam ekranda incele', 'arim'); ?>
+                </button>
             </div>
 
-            <div class="arim-single-gallery-lightbox" hidden data-arim-gallery-lightbox>
-                <div class="arim-single-gallery-dialog" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e('Ürün görsel önizlemesi', 'arim'); ?>">
-                    <button class="arim-single-gallery-close" type="button" data-arim-gallery-close aria-label="<?php esc_attr_e('Galeriyi kapat', 'arim'); ?>">×</button>
+            <div class="arim-single-gallery-lightbox" hidden aria-hidden="true" data-arim-gallery-lightbox>
+                <div class="arim-single-gallery-dialog" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e('Ürün görsel önizlemesi', 'arim'); ?>" tabindex="-1" data-arim-gallery-dialog>
+                    <div class="arim-single-gallery-lightbox-topbar">
+                        <div class="arim-single-gallery-lightbox-copy">
+                            <span class="arim-single-gallery-lightbox-status" aria-live="polite">
+                                <strong data-arim-gallery-lightbox-current-index>1</strong>
+                                <span>/ <?php echo esc_html(number_format_i18n($gallery_total)); ?></span>
+                            </span>
+                            <p><?php esc_html_e('Kapatmak için çarpı butonunu veya karanlık alanı kullan.', 'arim'); ?></p>
+                        </div>
+                        <button class="arim-single-gallery-close" type="button" data-arim-gallery-close aria-label="<?php esc_attr_e('Galeriyi kapat', 'arim'); ?>">×</button>
+                    </div>
 
                     <?php if ($gallery_total > 1) : ?>
                         <button class="arim-single-gallery-lightbox-nav arim-single-gallery-lightbox-prev" type="button" data-arim-gallery-prev aria-label="<?php esc_attr_e('Önceki görsel', 'arim'); ?>">‹</button>

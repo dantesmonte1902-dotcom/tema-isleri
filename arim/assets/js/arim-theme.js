@@ -144,9 +144,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const mainImage = galleryRoot.querySelector('[data-arim-gallery-main-image]');
         const lightbox = galleryRoot.querySelector('[data-arim-gallery-lightbox]');
+        const dialog = galleryRoot.querySelector('[data-arim-gallery-dialog]');
         const lightboxImage = galleryRoot.querySelector('[data-arim-gallery-lightbox-image]');
         const caption = galleryRoot.querySelector('[data-arim-gallery-caption]');
         const currentIndexLabel = galleryRoot.querySelector('[data-arim-gallery-current-index]');
+        const lightboxCurrentIndexLabel = galleryRoot.querySelector('[data-arim-gallery-lightbox-current-index]');
         const thumbs = Array.prototype.slice.call(galleryRoot.querySelectorAll('[data-arim-gallery-thumb]'));
         const openButtons = Array.prototype.slice.call(galleryRoot.querySelectorAll('[data-arim-gallery-open]'));
         const closeButton = galleryRoot.querySelector('[data-arim-gallery-close]');
@@ -181,13 +183,17 @@ document.addEventListener('DOMContentLoaded', function () {
             currentIndex = 0;
         }
 
+        function isLightboxOpen() {
+            return Boolean(lightbox && !lightbox.hidden);
+        }
+
         function handleGalleryKeydown(event) {
             if (event.key === 'Escape') {
                 closeLightbox();
                 return;
             }
 
-            if (event.key === 'Tab' && lightbox && !lightbox.hidden) {
+            if (event.key === 'Tab' && isLightboxOpen()) {
                 const focusableElements = Array.prototype.slice.call(
                     lightbox.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')
                 ).filter(function (element) {
@@ -211,6 +217,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     event.preventDefault();
                     firstElement.focus();
                 }
+            }
+
+            if (!isLightboxOpen() && !galleryRoot.contains(document.activeElement)) {
+                return;
             }
 
             if (event.key === 'ArrowLeft') {
@@ -274,6 +284,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 currentIndexLabel.textContent = String(currentIndex + 1);
             }
 
+            if (lightboxCurrentIndexLabel) {
+                lightboxCurrentIndexLabel.textContent = String(currentIndex + 1);
+            }
+
             syncThumbStates();
         }
 
@@ -282,23 +296,31 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
+            if (isLightboxOpen()) {
+                return;
+            }
+
             lastTriggerButton = triggerButton || document.activeElement;
             updateGallery(currentIndex);
             lightbox.hidden = false;
+            lightbox.setAttribute('aria-hidden', 'false');
             document.body.classList.add('arim-gallery-open');
             bindKeyListener();
 
             if (closeButton) {
                 closeButton.focus();
+            } else if (dialog) {
+                dialog.focus();
             }
         }
 
         function closeLightbox() {
-            if (!lightbox) {
+            if (!lightbox || !isLightboxOpen()) {
                 return;
             }
 
             lightbox.hidden = true;
+            lightbox.setAttribute('aria-hidden', 'true');
             document.body.classList.remove('arim-gallery-open');
             unbindKeyListener();
 
@@ -326,6 +348,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }, { passive: true });
 
             target.addEventListener('touchend', function (event) {
+                if (!touchStartX && !touchStartY) {
+                    return;
+                }
+
                 const changedTouch = event.changedTouches && event.changedTouches[0];
                 if (!changedTouch) {
                     return;
@@ -335,15 +361,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 const deltaY = changedTouch.clientY - touchStartY;
 
                 if (Math.abs(deltaX) < 40 || Math.abs(deltaX) <= Math.abs(deltaY)) {
+                    touchStartX = 0;
+                    touchStartY = 0;
                     return;
                 }
 
                 if (deltaX < 0) {
                     updateGallery(currentIndex + 1);
+                    touchStartX = 0;
+                    touchStartY = 0;
                     return;
                 }
 
                 updateGallery(currentIndex - 1);
+                touchStartX = 0;
+                touchStartY = 0;
             }, { passive: true });
         }
 
@@ -354,7 +386,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         openButtons.forEach(function (button) {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
                 openLightbox(button);
             });
         });
@@ -383,6 +416,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     closeLightbox();
                 }
             });
+        }
+
+        if (dialog) {
+            dialog.addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+        }
+
+        mainImage.setAttribute('draggable', 'false');
+        if (lightboxImage) {
+            lightboxImage.setAttribute('draggable', 'false');
         }
 
         bindSwipeNavigation(mainImage);

@@ -233,3 +233,8 @@ Geliştirilen Özellikler
 - Galeriye aktif görsel durumunu gösteren yeni sayaç ve yönlendirme alanı eklenerek kullanıcının nerede olduğu daha net hale getirildi.
 - Mobil kullanım için ana görsel ve tam ekran görünümde kaydırarak görsel değiştirme desteği eklendi.
 - Tam ekran görünümde odak yönetimi iyileştirilerek kapatma sonrası odağın doğru aksiyona dönmesi sağlandı.
+
+37. Ürün Detay Lightbox Davranış Düzeltmesi
+- Ana görsel üstündeki fazla agresif tam ekran tetikleyicisi kaldırılarak ürün görselinin istemsiz açılma hissi azaltıldı.
+- Tam ekran deneyimi alt bilgi alanındaki ayrı aksiyonla daha kontrollü hale getirildi ve lightbox üstüne kapanış yönlendirmesi eklendi.
+- Lightbox açılış/kapanış akışı odak, aria-hidden ve arka plan tıklaması davranışlarıyla daha dayanıklı hale getirildi.

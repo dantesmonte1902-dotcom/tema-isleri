@@ -95,32 +95,6 @@
     transform: scale(1.04);
 }
 
-.arim-single-gallery-floating-action {
-    position: absolute;
-    top: 18px;
-    right: 18px;
-    z-index: 3;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 40px;
-    padding: 0 14px;
-    border: 1px solid rgba(255, 255, 255, 0.56);
-    border-radius: 999px;
-    background: rgba(17, 24, 39, 0.72);
-    color: #fff;
-    font-size: 12px;
-    font-weight: 800;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-    transition: transform .2s ease, background .2s ease;
-}
-
-.arim-single-gallery-floating-action:hover {
-    transform: translateY(-1px);
-    background: rgba(17, 24, 39, 0.88);
-}
-
 .arim-single-gallery-overlay,
 .arim-single-gallery-meta {
     position: absolute;
@@ -237,6 +211,13 @@
     background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
 }
 
+.arim-single-gallery-footer-copy {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
 .arim-single-gallery-status {
     display: inline-flex;
     align-items: baseline;
@@ -264,7 +245,31 @@
     color: #526071;
     font-size: 13px;
     line-height: 1.6;
-    text-align: right;
+    text-align: left;
+}
+
+.arim-single-gallery-footer-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 999px;
+    background: #111827;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.arim-single-gallery-footer-action:hover {
+    transform: translateY(-1px);
+    background: #1f2937;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.22);
 }
 
 .arim-single-gallery-lightbox {
@@ -285,6 +290,51 @@
     align-items: center;
     gap: 20px;
     width: min(1120px, 100%);
+}
+
+.arim-single-gallery-lightbox-topbar {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.arim-single-gallery-lightbox-copy {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.arim-single-gallery-lightbox-status {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    flex-shrink: 0;
+    padding: 9px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    backdrop-filter: blur(12px);
+}
+
+.arim-single-gallery-lightbox-status strong {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.arim-single-gallery-lightbox-status span {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.arim-single-gallery-lightbox-copy p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 13px;
+    line-height: 1.6;
 }
 
 .arim-single-gallery-lightbox-figure {
@@ -344,11 +394,10 @@
 }
 
 .arim-single-gallery-close {
-    position: absolute;
-    top: -12px;
-    right: -12px;
     font-size: 30px;
     line-height: 1;
+    flex-shrink: 0;
+    z-index: 2;
 }
 
 .arim-gallery-open {
@@ -906,12 +955,22 @@
         align-items: stretch;
     }
 
+    .arim-single-gallery-footer-copy,
+    .arim-single-gallery-lightbox-copy {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
     .arim-single-gallery-zoom {
         width: 100%;
     }
 
     .arim-single-gallery-footer p {
         text-align: left;
+    }
+
+    .arim-single-gallery-footer-action {
+        width: 100%;
     }
 }
 
@@ -930,11 +989,6 @@
         right: 12px;
         flex-direction: column;
         align-items: flex-start;
-    }
-
-    .arim-single-gallery-floating-action {
-        top: 12px;
-        right: 12px;
     }
 
     .arim-single-gallery-overlay strong,
@@ -957,13 +1011,15 @@
         gap: 12px;
     }
 
+    .arim-single-gallery-lightbox-topbar {
+        align-items: flex-start;
+    }
+
     .arim-single-gallery-lightbox-nav {
         display: none;
     }
 
     .arim-single-gallery-close {
-        top: 10px;
-        right: 10px;
         width: 44px;
         height: 44px;
         font-size: 24px;
