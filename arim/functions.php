@@ -2466,6 +2466,25 @@ function arim_shop_archive_query_args() {
 }
 
 /**
+ * Shop archive üzerinde tema tarafından yönetilen filtre anahtarlarını döndürür.
+ *
+ * @return array<int, string>
+ */
+function arim_shop_archive_reserved_filter_keys() {
+    return ['min_price', 'max_price', 'stock_status', 'on_sale', 'featured', 'new_arrivals', 'submit_filter', 'paged'];
+}
+
+/**
+ * Verilen query anahtarının shop archive filtre anahtarı olup olmadığını kontrol eder.
+ *
+ * @param string $key Query anahtarı.
+ * @return bool
+ */
+function arim_shop_archive_is_reserved_filter_key($key) {
+    return in_array($key, arim_shop_archive_reserved_filter_keys(), true) || strpos($key, 'pa_') === 0;
+}
+
+/**
  * Shop archive üst alanında gösterilecek özet verileri döndürür.
  *
  * @return array<string, string|int>
@@ -2550,6 +2569,10 @@ function arim_shop_active_filter_chips() {
             'value' => '1',
             'label' => __('Öne çıkanlar', 'arim'),
         ],
+        'new_arrivals' => [
+            'value' => '1',
+            'label' => __('Yeni gelenler', 'arim'),
+        ],
     ];
 
     foreach ($flag_filters as $key => $config) {
@@ -2596,6 +2619,220 @@ function arim_shop_active_filter_chips() {
     }
 
     return $active_filters;
+}
+
+/**
+ * Shop archive sorgusunun mevcut taksonomi bağlamını döndürür.
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function arim_shop_archive_context_tax_query() {
+    $queried_object = get_queried_object();
+
+    if (!$queried_object instanceof WP_Term || !taxonomy_exists($queried_object->taxonomy)) {
+        return [];
+    }
+
+    return [[
+        'taxonomy'         => $queried_object->taxonomy,
+        'field'            => 'term_id',
+        'terms'            => [$queried_object->term_id],
+        'include_children' => is_taxonomy_hierarchical($queried_object->taxonomy),
+    ]];
+}
+
+/**
+ * Shop archive için ürün sayısını bağlama göre hesaplar.
+ *
+ * @param array<string, mixed> $query_args Ek sorgu argümanları.
+ * @return int
+ */
+function arim_shop_archive_product_count($query_args = []) {
+    $defaults = [
+        'post_type'      => 'product',
+        'post_status'    => 'publish',
+        'posts_per_page' => 1,
+        'fields'         => 'ids',
+        'no_found_rows'  => false,
+    ];
+
+    $prepared_args = wp_parse_args($query_args, $defaults);
+    $context_tax_query = arim_shop_archive_context_tax_query();
+
+    if (!empty($context_tax_query)) {
+        $prepared_args['tax_query'] = isset($prepared_args['tax_query']) && is_array($prepared_args['tax_query'])
+            ? array_merge($context_tax_query, $prepared_args['tax_query'])
+            : $context_tax_query;
+    }
+
+    $query = new WP_Query($prepared_args);
+
+    return isset($query->found_posts) ? (int) $query->found_posts : 0;
+}
+
+/**
+ * Shop archive için hızlı koleksiyon kartlarını döndürür.
+ *
+ * @return array<int, array<string, string|int|bool>>
+ */
+function arim_shop_archive_collection_cards() {
+    $base_url   = arim_shop_archive_current_url();
+    $query_args = arim_shop_archive_query_args();
+    $base_args  = $query_args;
+
+    foreach (array_keys($base_args) as $key) {
+        if (arim_shop_archive_is_reserved_filter_key($key)) {
+            unset($base_args[$key]);
+        }
+    }
+
+    $sale_ids      = function_exists('wc_get_product_ids_on_sale') ? array_values(array_filter(array_map('absint', wc_get_product_ids_on_sale()))) : [];
+    $featured_ids  = function_exists('wc_get_featured_product_ids') ? array_values(array_filter(array_map('absint', wc_get_featured_product_ids()))) : [];
+    $current_count = arim_shop_archive_product_count();
+
+    $cards = [
+        [
+            'key'      => 'all',
+            'badge'    => __('Hazır vitrin', 'arim'),
+            'title'    => __('Genel görünüm', 'arim'),
+            'text'     => __('Filtre baskısını kaldırıp en geniş ürün seçkisine dön.', 'arim'),
+            'count'    => $current_count,
+            'args'     => [],
+            'isActive' => empty($query_args['stock_status']) && empty($query_args['on_sale']) && empty($query_args['featured']) && empty($query_args['new_arrivals']),
+        ],
+        [
+            'key'      => 'featured',
+            'badge'    => __('Editör seçkisi', 'arim'),
+            'title'    => __('Öne çıkanlar', 'arim'),
+            'text'     => __('Karar vermeyi hızlandıran seçili ürünleri öne al.', 'arim'),
+            'count'    => !empty($featured_ids) ? arim_shop_archive_product_count([
+                'tax_query' => [[
+                    'taxonomy' => 'product_visibility',
+                    'field'    => 'name',
+                    'terms'    => ['featured'],
+                    'operator' => 'IN',
+                ]],
+            ]) : 0,
+            'args'     => ['featured' => '1'],
+            'isActive' => !empty($query_args['featured']) && $query_args['featured'] === '1',
+        ],
+        [
+            'key'      => 'sale',
+            'badge'    => __('Fırsat rotası', 'arim'),
+            'title'    => __('İndirimdekiler', 'arim'),
+            'text'     => __('Avantajlı fiyatlı ürünleri tek akışta görüntüle.', 'arim'),
+            'count'    => !empty($sale_ids) ? arim_shop_archive_product_count([
+                'post__in' => $sale_ids,
+            ]) : 0,
+            'args'     => ['on_sale' => '1'],
+            'isActive' => !empty($query_args['on_sale']) && $query_args['on_sale'] === '1',
+        ],
+        [
+            'key'      => 'new',
+            'badge'    => __('Yeni sezon', 'arim'),
+            'title'    => __('Yeni gelenler', 'arim'),
+            'text'     => __('Son 30 günde eklenen yeni ürünleri hızlıca ayır.', 'arim'),
+            'count'    => arim_shop_archive_product_count([
+                'date_query' => [[
+                    'after'     => gmdate('Y-m-d', strtotime('-30 days')),
+                    'inclusive' => true,
+                ]],
+            ]),
+            'args'     => ['new_arrivals' => '1'],
+            'isActive' => !empty($query_args['new_arrivals']) && $query_args['new_arrivals'] === '1',
+        ],
+    ];
+
+    foreach ($cards as $index => $card) {
+        $cards[$index]['url'] = empty($card['args'])
+            ? add_query_arg($base_args, $base_url)
+            : add_query_arg(array_merge($base_args, $card['args']), $base_url);
+    }
+
+    return $cards;
+}
+
+/**
+ * Shop archive için popüler marka linklerini döndürür.
+ *
+ * @return array<int, array<string, string|int|bool>>
+ */
+function arim_shop_archive_brand_links() {
+    $links = [];
+
+    if (taxonomy_exists('product_brand')) {
+        $brand_terms = get_terms([
+            'taxonomy'   => 'product_brand',
+            'hide_empty' => true,
+            'number'     => 8,
+            'orderby'    => 'count',
+            'order'      => 'DESC',
+        ]);
+
+        if (!is_wp_error($brand_terms) && !empty($brand_terms)) {
+            $queried_object = get_queried_object();
+
+            foreach ($brand_terms as $term) {
+                $term_link = get_term_link($term);
+
+                if (is_wp_error($term_link)) {
+                    continue;
+                }
+
+                $links[] = [
+                    'label'    => $term->name,
+                    'url'      => $term_link,
+                    'count'    => (int) $term->count,
+                    'isActive' => $queried_object instanceof WP_Term && $queried_object->taxonomy === 'product_brand' && (int) $queried_object->term_id === (int) $term->term_id,
+                ];
+            }
+        }
+    }
+
+    if (!empty($links)) {
+        return $links;
+    }
+
+    $products = wc_get_products([
+        'status'  => 'publish',
+        'limit'   => 18,
+        'orderby' => 'date',
+        'order'   => 'DESC',
+        'return'  => 'ids',
+    ]);
+
+    if (empty($products)) {
+        return [];
+    }
+
+    $brand_counts = [];
+
+    foreach ($products as $product_id) {
+        $brand_name = arim_product_brand_name((int) $product_id);
+
+        if ($brand_name === '') {
+            continue;
+        }
+
+        if (!isset($brand_counts[$brand_name])) {
+            $brand_counts[$brand_name] = 0;
+        }
+
+        $brand_counts[$brand_name]++;
+    }
+
+    arsort($brand_counts);
+
+    foreach (array_slice($brand_counts, 0, 8, true) as $brand_name => $count) {
+        $links[] = [
+            'label'    => $brand_name,
+            'url'      => add_query_arg(['s' => $brand_name, 'post_type' => 'product'], home_url('/')),
+            'count'    => (int) $count,
+            'isActive' => false,
+        ];
+    }
+
+    return $links;
 }
 
 /**
@@ -3068,6 +3305,13 @@ function arim_custom_product_query($q) {
             'terms'    => ['featured'],
             'operator' => 'IN',
         ];
+    }
+
+    if (isset($_GET['new_arrivals']) && $_GET['new_arrivals'] === '1') {
+        $q->set('date_query', [[
+            'after'     => gmdate('Y-m-d', strtotime('-30 days')),
+            'inclusive' => true,
+        ]]);
     }
 
     if (isset($_GET['on_sale']) && $_GET['on_sale'] === '1') {

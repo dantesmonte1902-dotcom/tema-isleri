@@ -169,6 +169,117 @@
     line-height: 1.7;
 }
 
+.arim-woo-discovery-hub {
+    padding: 18px;
+    margin-bottom: 18px;
+    border: 1px solid #ece9ff;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #faf8ff 0%, #ffffff 100%);
+}
+
+.arim-woo-discovery-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 16px;
+}
+
+.arim-woo-discovery-kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 12px;
+    margin-bottom: 10px;
+    border-radius: 999px;
+    background: #efeaff;
+    color: #6b46ff;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.arim-woo-discovery-head h2 {
+    margin: 0;
+    color: #222;
+    font-size: 24px;
+    line-height: 1.35;
+}
+
+.arim-woo-discovery-head p {
+    max-width: 420px;
+    margin: 0;
+    color: #666;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.arim-woo-discovery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.arim-woo-discovery-card {
+    display: grid;
+    gap: 8px;
+    padding: 16px;
+    border: 1px solid #e7e2fb;
+    border-radius: 16px;
+    background: #fff;
+    color: #333;
+    text-decoration: none;
+    transition: .22s ease;
+}
+
+.arim-woo-discovery-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 22px rgba(56, 39, 122, 0.08);
+    border-color: #d7cdfb;
+}
+
+.arim-woo-discovery-card.is-active {
+    border-color: #6b46ff;
+    background: linear-gradient(180deg, #f5f1ff 0%, #fff 100%);
+}
+
+.arim-woo-discovery-card-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: #f3efff;
+    color: #6b46ff;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.arim-woo-discovery-card h3,
+.arim-woo-discovery-card p,
+.arim-woo-discovery-card strong {
+    margin: 0;
+}
+
+.arim-woo-discovery-card h3 {
+    color: #222;
+    font-size: 17px;
+    line-height: 1.4;
+}
+
+.arim-woo-discovery-card p {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.arim-woo-discovery-card strong {
+    color: #6b46ff;
+    font-size: 13px;
+    font-weight: 800;
+}
+
 .arim-woo-toolbar {
     display: flex;
     justify-content: space-between;
@@ -386,6 +497,38 @@
 }
 
 .arim-woo-category-list li a:hover {
+    background: #fff2e8;
+    color: #f27a1a;
+}
+
+.arim-woo-brand-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.arim-woo-brand-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #fafafa;
+    border: 1px solid #ececec;
+    color: #444;
+    text-decoration: none;
+    transition: .2s ease;
+}
+
+.arim-woo-brand-pill strong {
+    color: #666;
+    font-size: 12px;
+}
+
+.arim-woo-brand-pill:hover,
+.arim-woo-brand-pill.is-active {
+    border-color: #f27a1a;
     background: #fff2e8;
     color: #f27a1a;
 }
@@ -689,6 +832,41 @@
     line-height: 1.8;
 }
 
+.arim-woo-empty-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.arim-woo-empty-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 12px;
+    border: 1px solid #ececec;
+    background: #fff;
+    color: #444;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: .22s ease;
+}
+
+.arim-woo-empty-link:hover {
+    border-color: #f27a1a;
+    color: #f27a1a;
+}
+
+.arim-woo-empty-link.is-primary {
+    background: #f27a1a;
+    border-color: #f27a1a;
+    color: #fff;
+}
+
 .woocommerce .woocommerce-ordering,
 .woocommerce .woocommerce-result-count {
     float: none;
@@ -709,6 +887,10 @@
         grid-template-columns: 1fr;
     }
 
+    .arim-woo-discovery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .woocommerce ul.products.arim-products-grid,
     .woocommerce-page ul.products.arim-products-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -721,13 +903,18 @@
     }
 
     .arim-woo-insight-strip,
-    .arim-woo-campaign-grid {
+    .arim-woo-campaign-grid,
+    .arim-woo-discovery-grid {
         grid-template-columns: 1fr;
     }
 
     .arim-woo-toolbar {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .arim-woo-discovery-head {
+        flex-direction: column;
     }
 
     .arim-woo-content-layout {
@@ -762,7 +949,8 @@
 
     .arim-woo-insight-card,
     .arim-woo-campaign-strip,
-    .arim-woo-active-filters {
+    .arim-woo-active-filters,
+    .arim-woo-discovery-hub {
         padding: 14px;
     }
 
@@ -793,6 +981,11 @@
 
     .arim-woo-sidebar-metrics {
         grid-template-columns: 1fr;
+    }
+
+    .arim-woo-empty-actions {
+        flex-direction: column;
+        align-items: stretch;
     }
 }
 

@@ -13,6 +13,8 @@ $product_attributes = wc_get_attribute_taxonomies();
 $archive_insights   = arim_shop_archive_insights();
 $active_filters     = arim_shop_active_filter_chips();
 $archive_campaigns  = arim_single_product_campaigns(2);
+$archive_collections = arim_shop_archive_collection_cards();
+$archive_brand_links = arim_shop_archive_brand_links();
 $archive_reset_url  = arim_shop_archive_current_url();
 ?>
 
@@ -78,6 +80,37 @@ $archive_reset_url  = arim_shop_archive_current_url();
                     <?php endforeach; ?>
                 </div>
             </div>
+        <?php endif; ?>
+
+        <?php if (!empty($archive_collections)) : ?>
+            <section class="arim-woo-discovery-hub" aria-label="<?php esc_attr_e('Hızlı keşif rotaları', 'arim'); ?>">
+                <div class="arim-woo-discovery-head">
+                    <div>
+                        <span class="arim-woo-discovery-kicker"><?php esc_html_e('Hızlı keşif', 'arim'); ?></span>
+                        <h2><?php esc_html_e('Alışveriş niyetine göre vitrine tek tıkla geç', 'arim'); ?></h2>
+                    </div>
+                    <p><?php esc_html_e('En geniş görünüm, editör seçkisi, indirim rotası ve yeni gelenleri filtre formuna inmeden ayır.', 'arim'); ?></p>
+                </div>
+
+                <div class="arim-woo-discovery-grid">
+                    <?php foreach ($archive_collections as $collection) : ?>
+                        <a class="arim-woo-discovery-card<?php echo !empty($collection['isActive']) ? ' is-active' : ''; ?>" href="<?php echo esc_url($collection['url']); ?>">
+                            <span class="arim-woo-discovery-card-badge"><?php echo esc_html($collection['badge']); ?></span>
+                            <h3><?php echo esc_html($collection['title']); ?></h3>
+                            <p><?php echo esc_html($collection['text']); ?></p>
+                            <strong>
+                                <?php
+                                printf(
+                                    /* translators: %s: number of products */
+                                    esc_html__('%s ürün', 'arim'),
+                                    esc_html(number_format_i18n((int) $collection['count']))
+                                );
+                                ?>
+                            </strong>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </section>
         <?php endif; ?>
 
         <div class="arim-woo-toolbar arim-woo-toolbar-enhanced">
@@ -176,6 +209,20 @@ $archive_reset_url  = arim_shop_archive_current_url();
                         </ul>
                     </div>
 
+                    <?php if (!empty($archive_brand_links)) : ?>
+                        <div class="arim-woo-sidebar-box">
+                            <h3><?php esc_html_e('Popüler markalar', 'arim'); ?></h3>
+                            <div class="arim-woo-brand-pills">
+                                <?php foreach ($archive_brand_links as $brand_link) : ?>
+                                    <a class="arim-woo-brand-pill<?php echo !empty($brand_link['isActive']) ? ' is-active' : ''; ?>" href="<?php echo esc_url($brand_link['url']); ?>">
+                                        <span><?php echo esc_html($brand_link['label']); ?></span>
+                                        <strong><?php echo esc_html(number_format_i18n((int) $brand_link['count'])); ?></strong>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
                     <div class="arim-woo-sidebar-box">
                         <h3><?php esc_html_e('Fiyat Aralığı', 'arim'); ?></h3>
 
@@ -253,10 +300,7 @@ $archive_reset_url  = arim_shop_archive_current_url();
 
                     <?php
                     foreach ($_GET as $key => $value) {
-                        if (
-                            in_array($key, ['min_price', 'max_price', 'stock_status', 'on_sale', 'featured', 'submit_filter'], true) ||
-                            strpos($key, 'pa_') === 0
-                        ) {
+                        if (arim_shop_archive_is_reserved_filter_key((string) $key)) {
                             continue;
                         }
 
@@ -301,6 +345,15 @@ $archive_reset_url  = arim_shop_archive_current_url();
                 <?php else : ?>
                     <div class="arim-woo-empty">
                         <p class="arim-woo-empty-note"><?php esc_html_e('Filtreleri biraz gevşeterek veya kampanya alanından farklı vitrinlere geçerek daha fazla ürün keşfedebilirsin.', 'arim'); ?></p>
+                        <div class="arim-woo-empty-actions">
+                            <a href="<?php echo esc_url($archive_reset_url); ?>" class="arim-woo-empty-link is-primary"><?php esc_html_e('Genel vitrini aç', 'arim'); ?></a>
+                            <?php if (!empty($archive_collections[1]['url'])) : ?>
+                                <a href="<?php echo esc_url($archive_collections[1]['url']); ?>" class="arim-woo-empty-link"><?php esc_html_e('Öne çıkanları keşfet', 'arim'); ?></a>
+                            <?php endif; ?>
+                            <?php if (!empty($archive_collections[2]['url'])) : ?>
+                                <a href="<?php echo esc_url($archive_collections[2]['url']); ?>" class="arim-woo-empty-link"><?php esc_html_e('İndirim rotasına geç', 'arim'); ?></a>
+                            <?php endif; ?>
+                        </div>
                         <?php do_action('woocommerce_no_products_found'); ?>
                     </div>
                 <?php endif; ?>

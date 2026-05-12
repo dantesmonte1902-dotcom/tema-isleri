@@ -198,3 +198,8 @@ Geliştirilen Özellikler
 - My Account kabuğu masaüstünde kartlı, yumuşak geçişli ve tema diliyle uyumlu yeni bir yüzey düzenine taşınarak navigasyon ile içerik alanı daha net ayrıştırıldı.
 - Notice, form, select2, tablo ve yardımcı aksiyon bileşenleri ortak bir görsel sistem altında birleştirilerek hesap, adres ve sipariş ekranları daha tutarlı hale getirildi.
 - Sol navigasyona hızlı dönüş ve alışveriş devamı aksiyonları eklenerek kullanıcıların hesap içi dolaşımı daha akıcı ve modern bir yapıya kavuştu.
+
+30. Ürün Listeleme Hızlı Keşif Geliştirmeleri
+- Shop/category arşivine genel görünüm, öne çıkanlar, indirimdekiler ve yeni gelenler için hızlı koleksiyon kartları eklenerek kullanıcıların filtre formuna girmeden doğru vitrine geçmesi sağlandı.
+- Sidebar alanı popüler marka rozetleriyle genişletilerek kategori filtresinden sonra marka bazlı ikinci bir hızlı keşif katmanı oluşturuldu.
+- Boş sonuç durumuna genel vitrine, öne çıkan ürünlere ve indirim rotasına dönen net CTA bağlantıları eklenerek listeleme tıkanmalarında yönlendirme deneyimi güçlendirildi.
