@@ -219,7 +219,12 @@ Geliştirilen Özellikler
 - Öneri render akışı mevcut ürünü hariç tutacak ve sonuç kalmadığında bölümü gizleyecek şekilde çoğul hedef desteğiyle genişletildi.
 - Kullanıcıya ürün detaydan ayrılmadan yeni öneri çağırabilmesi için ayrı bir öneri yenile aksiyonu eklendi.
 
-34. Ürün Detay Premium Galeri Geliştirmeleri
-- Ürün detay galeri alanı üst bilgi kartı, premium medya yüzeyi ve görsel sayısı vurgusuyla daha üst segment bir sunuma taşındı.
-- Kullanıcıların ürünü daha rahat inceleyebilmesi için tam ekran lightbox, önceki-sonraki gezinme ve klavye ile galeri kontrolü eklendi.
-- Küçük önizleme şeridi ana görseli de kapsayacak şekilde yeniden düzenlenip aktif durum, hover ve mobil davranışları premium görsel sistemle uyumlu hale getirildi.
+34. Ürün Detay Galeri Geliştirmeleri
+ - Ürün detay galeri alanı üst bilgi kartı, sade medya yüzeyi ve görsel sayısı vurgusuyla daha modern bir düzene taşındı.
+ - Kullanıcıların ürünü daha rahat inceleyebilmesi için tam ekran lightbox, önceki-sonraki gezinme ve klavye ile galeri kontrolü eklendi.
+ - Küçük önizleme şeridi ana görseli de kapsayacak şekilde yeniden düzenlenip aktif durum, hover ve mobil davranışları daha kullanıcı dostu hale getirildi.
+
+35. Ürün Detay Galeri Kullanılabilirlik Güncellemesi
+- Ana ürün görselinin istemsiz şekilde tam ekrana açılmasını önlemek için tam ekran aksiyonu ayrı butona taşındı.
+- Galeri başlıkları ve yardımcı metinler daha doğal bir dil kullanacak şekilde güncellendi.
+- Ana görsel üzerinde tıklama baskısını azaltan, sade ama modern görünümü koruyan yeni aksiyon yerleşimi uygulandı.

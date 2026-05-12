@@ -45,7 +45,7 @@ if (!empty($gallery_ids)) {
 $gallery_total = count($gallery_items);
 $gallery_badge_text = $gallery_total > 1
     ? sprintf(_n('%s görsel', '%s görsel', $gallery_total, 'arim'), number_format_i18n($gallery_total))
-    : __('Premium ürün sunumu', 'arim');
+    : __('Görsel önizleme', 'arim');
 $gallery_hint_text = $gallery_total > 1
     ? __('Küçük önizlemeler arasında geçiş yap, detayları tam ekranda incele.', 'arim')
     : __('Ürünü tam boy inceleyip detaylara daha rahat odaklan.', 'arim');
@@ -126,7 +126,7 @@ if ($product->is_on_sale()) {
             <div class="arim-single-gallery-head">
                 <div>
                     <span class="arim-single-highlight-kicker"><?php echo esc_html($gallery_badge_text); ?></span>
-                    <h2><?php esc_html_e('Premium ürün galeri alanı', 'arim'); ?></h2>
+                    <h2><?php esc_html_e('Ürün görselleri', 'arim'); ?></h2>
                     <p><?php echo esc_html($gallery_hint_text); ?></p>
                 </div>
 
@@ -142,21 +142,23 @@ if ($product->is_on_sale()) {
 
             <div class="arim-single-main-image">
                 <button
-                    class="arim-single-gallery-open-area"
+                    class="arim-single-gallery-floating-action"
                     type="button"
                     data-arim-gallery-open
-                    aria-label="<?php esc_attr_e('Ürün galerisini aç', 'arim'); ?>"
+                    aria-label="<?php esc_attr_e('Ürün görselini tam ekranda aç', 'arim'); ?>"
                 >
-                    <img
-                        src="<?php echo esc_url($gallery_items[0]['full'] ?? $main_image_url); ?>"
-                        alt="<?php echo esc_attr($gallery_items[0]['alt'] ?? get_the_title()); ?>"
-                        data-arim-gallery-main-image
-                    >
+                    <?php esc_html_e('Tam ekran', 'arim'); ?>
                 </button>
 
+                <img
+                    src="<?php echo esc_url($gallery_items[0]['full'] ?? $main_image_url); ?>"
+                    alt="<?php echo esc_attr($gallery_items[0]['alt'] ?? get_the_title()); ?>"
+                    data-arim-gallery-main-image
+                >
+
                 <div class="arim-single-gallery-overlay">
-                    <span><?php esc_html_e('Tam ekran inceleme', 'arim'); ?></span>
-                    <strong><?php esc_html_e('Dokun ve detayları büyüt', 'arim'); ?></strong>
+                    <span><?php esc_html_e('Detay görünümü', 'arim'); ?></span>
+                    <strong><?php esc_html_e('Küçük görsellerle hızlı geçiş yap', 'arim'); ?></strong>
                 </div>
 
                 <?php if ($gallery_total > 1) : ?>
@@ -166,7 +168,7 @@ if ($product->is_on_sale()) {
 
                 <div class="arim-single-gallery-meta">
                     <span><?php echo esc_html($gallery_badge_text); ?></span>
-                    <strong><?php esc_html_e('Yüksek çözünürlüklü önizleme', 'arim'); ?></strong>
+                    <strong><?php esc_html_e('Net ve büyük ürün görünümü', 'arim'); ?></strong>
                 </div>
             </div>
 
