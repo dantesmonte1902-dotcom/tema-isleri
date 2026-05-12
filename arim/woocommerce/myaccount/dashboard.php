@@ -184,6 +184,50 @@ $quick_actions = [
         </aside>
     </div>
 
+    <div class="arim-myaccount-personal-grid">
+        <section class="arim-myaccount-panel arim-myaccount-personal-panel">
+            <div class="arim-myaccount-panel-head">
+                <div>
+                    <span class="arim-myaccount-panel-kicker"><?php esc_html_e('Karar alanın', 'arim'); ?></span>
+                    <h3><?php esc_html_e('Karşılaştırma listem', 'arim'); ?></h3>
+                </div>
+                <a href="<?php echo esc_url(arim_favorites_url() . '#compare'); ?>">
+                    <?php esc_html_e('Karşılaştırmaya git', 'arim'); ?>
+                </a>
+            </div>
+
+            <div class="arim-myaccount-personal-body" data-arim-compare-page></div>
+        </section>
+
+        <section class="arim-myaccount-panel arim-myaccount-personal-panel">
+            <div class="arim-myaccount-panel-head">
+                <div>
+                    <span class="arim-myaccount-panel-kicker"><?php esc_html_e('Geri dönüş alanın', 'arim'); ?></span>
+                    <h3><?php esc_html_e('Son görüntülenen ürünler', 'arim'); ?></h3>
+                </div>
+                <a href="<?php echo esc_url(arim_shop_url()); ?>">
+                    <?php esc_html_e('Mağazaya dön', 'arim'); ?>
+                </a>
+            </div>
+
+            <div class="arim-myaccount-personal-body" data-arim-recently-viewed-page></div>
+        </section>
+
+        <section class="arim-myaccount-panel arim-myaccount-personal-panel">
+            <div class="arim-myaccount-panel-head">
+                <div>
+                    <span class="arim-myaccount-panel-kicker"><?php esc_html_e('Sana özel', 'arim'); ?></span>
+                    <h3><?php esc_html_e('Öneri vitrini', 'arim'); ?></h3>
+                </div>
+                <button class="arim-myaccount-inline-link" type="button" data-arim-refresh-recommendations>
+                    <?php esc_html_e('Yenile', 'arim'); ?>
+                </button>
+            </div>
+
+            <div class="arim-myaccount-personal-body" data-arim-recommendations-page></div>
+        </section>
+    </div>
+
     <div class="arim-myaccount-note">
         <?php
         do_action('woocommerce_account_dashboard');

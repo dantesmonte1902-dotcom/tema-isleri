@@ -143,3 +143,8 @@ Geliştirilen Özellikler
 - Sipariş içeriğindeki ürün kartlarına ürün inceleme, yeniden alışverişe dönüş ve favoriye ekleme için hızlı aksiyon satırı eklendi.
 - Sipariş rehberi kartı favoriler ve adres yönetimi bağlantılarıyla zenginleştirilerek sipariş sonrası hesap akışına daha hızlı geçiş sağlandı.
 - Ürün bazlı aksiyonlar sipariş geçmişinden mağazaya geri dönmeyi kolaylaştıracak şekilde sipariş detay ekranına taşındı.
+
+19. Hesabım Dashboard Kişisel Vitrin Geliştirmeleri
+- Hesabım ana paneline karşılaştırma listesi, son görüntülenen ürünler ve öneri vitrini için ayrı ön izleme panelleri eklendi.
+- Favoriler sayfasında kullanılan compare/recently viewed/recommendation akışları dashboard üzerinde de aynı anda çalışacak şekilde çoğul hedef desteğiyle genişletildi.
+- Kullanıcının alışverişe geri dönüşü için dashboard üzerinden karşılaştırma, ürün inceleme ve öneri yenileme akışları görünür hale getirildi.

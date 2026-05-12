@@ -758,56 +758,63 @@ document.addEventListener('DOMContentLoaded', function () {
         return tableWrap;
     }
 
+    function getRenderTargets(selector) {
+        return Array.prototype.slice.call(document.querySelectorAll(selector));
+    }
+
     function renderCompareSection() {
-        const comparePage = document.querySelector('[data-arim-compare-page]');
-        if (!comparePage) {
+        const comparePages = getRenderTargets('[data-arim-compare-page]');
+        if (!comparePages.length) {
             return;
         }
 
         const items = safeParseCompare();
-        comparePage.innerHTML = '';
 
-        if (!items.length) {
-            const emptyState = document.createElement('div');
-            emptyState.className = 'arim-favorites-empty arim-favorites-empty-secondary';
+        comparePages.forEach(function (comparePage) {
+            comparePage.innerHTML = '';
 
-            const title = document.createElement('h2');
-            title.textContent = favoriteLabels.compareEmptyTitle || 'Karşılaştırma listen hazır değil';
-            emptyState.appendChild(title);
+            if (!items.length) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'arim-favorites-empty arim-favorites-empty-secondary';
 
-            const description = document.createElement('p');
-            description.textContent = favoriteLabels.compareEmptyText || 'Ürün kartlarındaki karşılaştır butonuyla en fazla 4 ürünü yan yana inceleyebilirsin.';
-            emptyState.appendChild(description);
+                const title = document.createElement('h2');
+                title.textContent = favoriteLabels.compareEmptyTitle || 'Karşılaştırma listen hazır değil';
+                emptyState.appendChild(title);
 
-            comparePage.appendChild(emptyState);
-            return;
-        }
+                const description = document.createElement('p');
+                description.textContent = favoriteLabels.compareEmptyText || 'Ürün kartlarındaki karşılaştır butonuyla en fazla 4 ürünü yan yana inceleyebilirsin.';
+                emptyState.appendChild(description);
 
-        const intro = document.createElement('div');
-        intro.className = 'arim-compare-intro';
+                comparePage.appendChild(emptyState);
+                return;
+            }
 
-        const introText = document.createElement('p');
-        introText.className = 'arim-favorites-secondary-note';
-        introText.textContent = favoriteLabels.compareDescription || 'Seçtiğin ürünleri aynı tabloda kıyasla, en iyi fiyatı yakala ve kararını hızlandır.';
-        intro.appendChild(introText);
+            const intro = document.createElement('div');
+            intro.className = 'arim-compare-intro';
 
-        const counter = document.createElement('span');
-        counter.className = 'arim-compare-limit-note';
-        counter.textContent = String(items.length) + '/' + String(compareLimit) + ' • ' + (favoriteLabels.compareMaxNotice || 'Karşılaştırma listesinde en fazla 4 ürün tutulur.');
-        intro.appendChild(counter);
-        comparePage.appendChild(intro);
+            const introText = document.createElement('p');
+            introText.className = 'arim-favorites-secondary-note';
+            introText.textContent = favoriteLabels.compareDescription || 'Seçtiğin ürünleri aynı tabloda kıyasla, en iyi fiyatı yakala ve kararını hızlandır.';
+            intro.appendChild(introText);
 
-        const lowestPrice = getLowestComparePrice(items);
+            const counter = document.createElement('span');
+            counter.className = 'arim-compare-limit-note';
+            counter.textContent = String(items.length) + '/' + String(compareLimit) + ' • ' + (favoriteLabels.compareMaxNotice || 'Karşılaştırma listesinde en fazla 4 ürün tutulur.');
+            intro.appendChild(counter);
+            comparePage.appendChild(intro);
 
-        const grid = document.createElement('div');
-        grid.className = 'arim-compare-grid';
+            const lowestPrice = getLowestComparePrice(items);
 
-        items.forEach(function (item) {
-            grid.appendChild(createCompareCard(item, lowestPrice));
+            const grid = document.createElement('div');
+            grid.className = 'arim-compare-grid';
+
+            items.forEach(function (item) {
+                grid.appendChild(createCompareCard(item, lowestPrice));
+            });
+
+            comparePage.appendChild(grid);
+            comparePage.appendChild(createCompareTable(items, lowestPrice));
         });
-
-        comparePage.appendChild(grid);
-        comparePage.appendChild(createCompareTable(items, lowestPrice));
     }
 
     function renderFavoritesPage() {
@@ -910,48 +917,50 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function renderRecentlyViewedSection() {
-        const recentlyViewedPage = document.querySelector('[data-arim-recently-viewed-page]');
-        const recentlyViewedSection = document.querySelector('[data-arim-recently-viewed-section]');
+        const recentlyViewedPages = getRenderTargets('[data-arim-recently-viewed-page]');
 
-        if (!recentlyViewedPage || !recentlyViewedSection) {
+        if (!recentlyViewedPages.length) {
             return;
         }
 
         const items = safeParseRecentlyViewed();
-        recentlyViewedPage.innerHTML = '';
 
-        if (!items.length) {
-            const emptyState = document.createElement('div');
-            emptyState.className = 'arim-favorites-empty arim-favorites-empty-secondary';
+        recentlyViewedPages.forEach(function (recentlyViewedPage) {
+            recentlyViewedPage.innerHTML = '';
 
-            const title = document.createElement('h2');
-            title.textContent = favoriteLabels.recentlyViewedTitle || 'Son görüntülenen ürünler';
-            emptyState.appendChild(title);
+            if (!items.length) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'arim-favorites-empty arim-favorites-empty-secondary';
 
-            const description = document.createElement('p');
-            description.textContent = favoriteLabels.recentlyViewedEmpty || 'Bir ürün detay sayfasını ziyaret ettiğinde burada görünür.';
-            emptyState.appendChild(description);
+                const title = document.createElement('h2');
+                title.textContent = favoriteLabels.recentlyViewedTitle || 'Son görüntülenen ürünler';
+                emptyState.appendChild(title);
 
-            recentlyViewedPage.appendChild(emptyState);
-            return;
-        }
+                const description = document.createElement('p');
+                description.textContent = favoriteLabels.recentlyViewedEmpty || 'Bir ürün detay sayfasını ziyaret ettiğinde burada görünür.';
+                emptyState.appendChild(description);
 
-        const intro = document.createElement('p');
-        intro.className = 'arim-favorites-secondary-note';
-        intro.textContent = favoriteLabels.recentlyViewedText || 'İncelediğin ürünleri burada tut, dilediğin zaman hızlıca geri dön.';
-        recentlyViewedPage.appendChild(intro);
+                recentlyViewedPage.appendChild(emptyState);
+                return;
+            }
 
-        const grid = document.createElement('div');
-        grid.className = 'arim-favorites-grid arim-favorites-grid-secondary';
+            const intro = document.createElement('p');
+            intro.className = 'arim-favorites-secondary-note';
+            intro.textContent = favoriteLabels.recentlyViewedText || 'İncelediğin ürünleri burada tut, dilediğin zaman hızlıca geri dön.';
+            recentlyViewedPage.appendChild(intro);
 
-        items.forEach(function (item) {
-            grid.appendChild(createFavoriteCard(item, {
-                removable: false,
-                viewLabel: favoriteLabels.viewAgain || favoriteLabels.viewProduct || 'Tekrar İncele',
-            }));
+            const grid = document.createElement('div');
+            grid.className = 'arim-favorites-grid arim-favorites-grid-secondary';
+
+            items.forEach(function (item) {
+                grid.appendChild(createFavoriteCard(item, {
+                    removable: false,
+                    viewLabel: favoriteLabels.viewAgain || favoriteLabels.viewProduct || 'Tekrar İncele',
+                }));
+            });
+
+            recentlyViewedPage.appendChild(grid);
         });
-
-        recentlyViewedPage.appendChild(grid);
     }
 
     function createRecommendationState(titleText, descriptionText, extraClassName) {
@@ -992,58 +1001,61 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function renderRecommendationsSection(items) {
-        const recommendationsPage = document.querySelector('[data-arim-recommendations-page]');
-        if (!recommendationsPage) {
+        const recommendationsPages = getRenderTargets('[data-arim-recommendations-page]');
+        if (!recommendationsPages.length) {
             return;
         }
 
-        recommendationsPage.innerHTML = '';
+        recommendationsPages.forEach(function (recommendationsPage) {
+            recommendationsPage.innerHTML = '';
 
-        if (!Array.isArray(items) || !items.length) {
-            recommendationsPage.appendChild(createRecommendationState(
-                favoriteLabels.recommendationsEmptyTitle || 'Öneri alanı seni bekliyor',
-                favoriteLabels.recommendationsEmptyText || 'Favori ekledikçe veya ürün inceledikçe burada sana daha uygun öneriler gösterilir.'
-            ));
-            return;
-        }
+            if (!Array.isArray(items) || !items.length) {
+                recommendationsPage.appendChild(createRecommendationState(
+                    favoriteLabels.recommendationsEmptyTitle || 'Öneri alanı seni bekliyor',
+                    favoriteLabels.recommendationsEmptyText || 'Favori ekledikçe veya ürün inceledikçe burada sana daha uygun öneriler gösterilir.'
+                ));
+                return;
+            }
 
-        const intro = document.createElement('p');
-        intro.className = 'arim-favorites-secondary-note';
-        intro.textContent = favoriteLabels.recommendationsText || 'Favorilerin, karşılaştırmaların ve son ziyaretlerine göre seçilmiş ürünlerle vitrini genişlet.';
-        recommendationsPage.appendChild(intro);
+            const intro = document.createElement('p');
+            intro.className = 'arim-favorites-secondary-note';
+            intro.textContent = favoriteLabels.recommendationsText || 'Favorilerin, karşılaştırmaların ve son ziyaretlerine göre seçilmiş ürünlerle vitrini genişlet.';
+            recommendationsPage.appendChild(intro);
 
-        const grid = document.createElement('div');
-        grid.className = 'arim-favorites-grid arim-favorites-grid-secondary arim-recommendations-grid';
+            const grid = document.createElement('div');
+            grid.className = 'arim-favorites-grid arim-favorites-grid-secondary arim-recommendations-grid';
 
-        items.forEach(function (item) {
-            const recommendationItem = {
-                id: String(item.id || ''),
-                title: String(item.title || ''),
-                price: String(item.price || ''),
-                image: String(item.image || ''),
-                url: String(item.url || ''),
-                brand: String(item.brand || ''),
-                store: String(item.store || ''),
-                badge: String(item.badge || favoriteLabels.recommendationsBadge || ''),
-                currentPrice: toNumber(item.currentPrice),
-                regularPrice: toNumber(item.regularPrice),
-            };
+            items.forEach(function (item) {
+                const recommendationItem = {
+                    id: String(item.id || ''),
+                    title: String(item.title || ''),
+                    price: String(item.price || ''),
+                    image: String(item.image || ''),
+                    url: String(item.url || ''),
+                    brand: String(item.brand || ''),
+                    store: String(item.store || ''),
+                    badge: String(item.badge || favoriteLabels.recommendationsBadge || ''),
+                    currentPrice: toNumber(item.currentPrice),
+                    regularPrice: toNumber(item.regularPrice),
+                };
 
-            grid.appendChild(createFavoriteCard(recommendationItem, {
-                removable: false,
-                quickActions: true,
-                viewLabel: favoriteLabels.viewProduct || 'Ürünü İncele',
-            }));
+                grid.appendChild(createFavoriteCard(recommendationItem, {
+                    removable: false,
+                    quickActions: true,
+                    viewLabel: favoriteLabels.viewProduct || 'Ürünü İncele',
+                }));
+            });
+
+            recommendationsPage.appendChild(grid);
         });
 
-        recommendationsPage.appendChild(grid);
         updateFavoriteButtons();
         updateCompareButtons();
     }
 
     function requestRecommendations(forceRefresh) {
-        const recommendationsPage = document.querySelector('[data-arim-recommendations-page]');
-        if (!recommendationsPage || !themeConfig.ajaxUrl || !themeConfig.recommendationsNonce) {
+        const recommendationsPages = getRenderTargets('[data-arim-recommendations-page]');
+        if (!recommendationsPages.length || !themeConfig.ajaxUrl || !themeConfig.recommendationsNonce) {
             return;
         }
 
@@ -1057,11 +1069,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 recommendationRequestController = null;
             }
 
-            recommendationsPage.innerHTML = '';
-            recommendationsPage.appendChild(createRecommendationState(
-                favoriteLabels.recommendationsEmptyTitle || 'Öneri alanı seni bekliyor',
-                favoriteLabels.recommendationsEmptyText || 'Favori ekledikçe veya ürün inceledikçe burada sana daha uygun öneriler gösterilir.'
-            ));
+            renderRecommendationsSection([]);
             return;
         }
 
@@ -1076,12 +1084,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         recommendationRequestController = createAbortController('Recommendations');
-        recommendationsPage.innerHTML = '';
-        recommendationsPage.appendChild(createRecommendationState(
-            favoriteLabels.recommendationsTitle || 'Sana Özel Öneriler',
-            favoriteLabels.recommendationsLoading || 'Senin için öneriler hazırlanıyor...',
-            'arim-recommendations-loading'
-        ));
+        recommendationsPages.forEach(function (recommendationsPage) {
+            recommendationsPage.innerHTML = '';
+            recommendationsPage.appendChild(createRecommendationState(
+                favoriteLabels.recommendationsTitle || 'Sana Özel Öneriler',
+                favoriteLabels.recommendationsLoading || 'Senin için öneriler hazırlanıyor...',
+                'arim-recommendations-loading'
+            ));
+        });
 
         const body = new URLSearchParams({
             action: 'arim_personalized_recommendations',
