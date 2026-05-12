@@ -148,3 +148,8 @@ Geliştirilen Özellikler
 - Hesabım ana paneline karşılaştırma listesi, son görüntülenen ürünler ve öneri vitrini için ayrı ön izleme panelleri eklendi.
 - Favoriler sayfasında kullanılan compare/recently viewed/recommendation akışları dashboard üzerinde de aynı anda çalışacak şekilde çoğul hedef desteğiyle genişletildi.
 - Kullanıcının alışverişe geri dönüşü için dashboard üzerinden karşılaştırma, ürün inceleme ve öneri yenileme akışları görünür hale getirildi.
+
+20. Siparişlerim Sayfası Hızlı Arama Geliştirmeleri
+- Siparişlerim ekranına mevcut sayfadaki siparişleri sipariş no, durum, tarih ve özet metin üzerinden daraltan hızlı arama alanı eklendi.
+- Arama sonucu görünür sipariş sayısı anlık olarak güncellenerek kullanıcının filtre sonrası kaç sipariş kaldığını hızlıca görmesi sağlandı.
+- Sonuç bulunamadığında ayrı bir yönlendirici boş durum kartı gösterilerek yeni arama veya genel filtreye dönüş daha anlaşılır hale getirildi.

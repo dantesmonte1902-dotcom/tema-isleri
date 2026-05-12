@@ -689,6 +689,61 @@
     margin-top: 6px;
 }
 
+.arim-myaccount-orders-search {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 18px;
+    margin-bottom: 18px;
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: #fff;
+}
+
+.arim-myaccount-orders-search-field {
+    flex: 1 1 320px;
+}
+
+.arim-myaccount-orders-search-field input {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 0 16px;
+    color: #222;
+    font-size: 14px;
+    background: #fafafa;
+}
+
+.arim-myaccount-orders-search-field input:focus {
+    outline: none;
+    border-color: #f27a1a;
+    background: #fff;
+}
+
+.arim-myaccount-orders-search-meta {
+    display: grid;
+    gap: 4px;
+    min-width: 180px;
+}
+
+.arim-myaccount-orders-search-meta strong {
+    color: #222;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.arim-myaccount-orders-search-meta span {
+    color: #666;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.arim-myaccount-orders-search-empty[hidden] {
+    display: none;
+}
+
 .arim-myaccount-orders-stat {
     padding: 16px 18px;
     border-radius: 16px;
@@ -2029,6 +2084,7 @@
     .arim-myaccount-panel-head,
     .arim-myaccount-order-top,
     .arim-myaccount-order-bottom,
+    .arim-myaccount-orders-search,
     .arim-myaccount-orders-filters,
     .arim-myaccount-orders-actions,
     .arim-myaccount-empty-actions,
@@ -2043,6 +2099,10 @@
     .arim-myaccount-orders-filter {
         width: 100%;
         justify-content: space-between;
+    }
+
+    .arim-myaccount-orders-search-meta {
+        min-width: 0;
     }
 
     .arim-myaccount-nav-summary {

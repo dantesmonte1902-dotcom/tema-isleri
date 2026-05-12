@@ -1135,6 +1135,62 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
+    function initMyAccountOrderSearch() {
+        const searchWrap = document.querySelector('[data-arim-orders-search]');
+        if (!searchWrap) {
+            return;
+        }
+
+        const input = searchWrap.querySelector('[data-arim-orders-search-input]');
+        const countTarget = searchWrap.querySelector('[data-arim-orders-search-count]');
+        const labelTarget = searchWrap.querySelector('[data-arim-orders-search-label]');
+        const emptyState = document.querySelector('[data-arim-orders-search-empty]');
+        const rows = Array.prototype.slice.call(document.querySelectorAll('[data-arim-order-search-row]'));
+
+        if (!input || !rows.length) {
+            return;
+        }
+
+        function normalizeSearchText(value) {
+            return String(value || '')
+                .toLocaleLowerCase('tr-TR')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function updateSearchResults() {
+            const query = normalizeSearchText(input.value);
+            let visibleCount = 0;
+
+            rows.forEach(function (row) {
+                const searchText = normalizeSearchText(row.getAttribute('data-arim-order-search-text') || row.textContent);
+                const isVisible = !query || searchText.indexOf(query) >= 0;
+
+                row.hidden = !isVisible;
+                if (isVisible) {
+                    visibleCount++;
+                }
+            });
+
+            if (countTarget) {
+                countTarget.textContent = visibleCount.toLocaleString('tr-TR');
+            }
+
+            if (labelTarget) {
+                labelTarget.textContent = query
+                    ? 'sipariş aramana göre görünür'
+                    : 'sipariş bu sayfada listeleniyor';
+            }
+
+            if (emptyState) {
+                emptyState.hidden = visibleCount > 0;
+            }
+        }
+
+        input.addEventListener('input', updateSearchResults);
+        updateSearchResults();
+    }
+
     function initLiveSearch() {
         const searchForms = document.querySelectorAll('[data-arim-live-search]');
 
@@ -1443,6 +1499,7 @@ document.addEventListener('DOMContentLoaded', function () {
     renderFavoritesPage();
     renderCompareSection();
     renderRecentlyViewedSection();
+    initMyAccountOrderSearch();
     requestRecommendations();
     initLiveSearch();
 });

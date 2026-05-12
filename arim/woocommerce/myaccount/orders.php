@@ -70,6 +70,25 @@ if ($has_orders) : ?>
             </div>
         <?php endif; ?>
 
+        <?php if (!empty($filtered_orders)) : ?>
+            <div class="arim-myaccount-orders-search" data-arim-orders-search>
+                <div class="arim-myaccount-orders-search-field">
+                    <label class="screen-reader-text" for="arim-myaccount-orders-search-input"><?php esc_html_e('Siparişlerde ara', 'arim'); ?></label>
+                    <input
+                        id="arim-myaccount-orders-search-input"
+                        type="search"
+                        value=""
+                        placeholder="<?php esc_attr_e('Sipariş no, ürün adedi veya durum ara', 'arim'); ?>"
+                        data-arim-orders-search-input
+                    >
+                </div>
+                <div class="arim-myaccount-orders-search-meta">
+                    <strong data-arim-orders-search-count><?php echo esc_html(number_format_i18n(count($filtered_orders))); ?></strong>
+                    <span data-arim-orders-search-label><?php esc_html_e('sipariş bu sayfada listeleniyor', 'arim'); ?></span>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <div class="arim-myaccount-orders-panels">
             <div class="arim-myaccount-orders-spotlight">
                 <span class="arim-myaccount-panel-kicker"><?php esc_html_e('Sipariş takibi', 'arim'); ?></span>
@@ -133,8 +152,23 @@ if ($has_orders) : ?>
                             <?php
                             $item_count  = $order->get_item_count() - $order->get_item_count_refunded();
                             $status_note = arim_myaccount_order_status_note($order);
+                            $search_text = implode(' ', array_filter([
+                                '#' . $order->get_order_number(),
+                                $order->get_date_created() ? wc_format_datetime($order->get_date_created()) : '',
+                                wc_get_order_status_name($order->get_status()),
+                                wp_strip_all_tags($order->get_formatted_order_total()),
+                                sprintf(
+                                    _n('%s ürün', '%s ürün', $item_count, 'arim'),
+                                    number_format_i18n($item_count)
+                                ),
+                                $status_note,
+                            ]));
                             ?>
-                            <tr class="woocommerce-orders-table__row woocommerce-orders-table__row--status-<?php echo esc_attr($order->get_status()); ?> order">
+                            <tr
+                                class="woocommerce-orders-table__row woocommerce-orders-table__row--status-<?php echo esc_attr($order->get_status()); ?> order"
+                                data-arim-order-search-row
+                                data-arim-order-search-text="<?php echo esc_attr(wp_strip_all_tags($search_text)); ?>"
+                            >
                                 <?php foreach (wc_get_account_orders_columns() as $column_id => $column_name) : ?>
                                     <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-<?php echo esc_attr($column_id); ?>" data-title="<?php echo esc_attr($column_name); ?>">
                                         <?php if (has_action('woocommerce_my_account_my_orders_column_' . $column_id)) : ?>
@@ -185,6 +219,11 @@ if ($has_orders) : ?>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+            </div>
+
+            <div class="arim-myaccount-inline-empty arim-myaccount-orders-inline-empty arim-myaccount-orders-search-empty" data-arim-orders-search-empty hidden>
+                <h3><?php esc_html_e('Aramana uygun sipariş bulunamadı', 'arim'); ?></h3>
+                <p><?php esc_html_e('Farklı bir sipariş numarası, durum ifadesi veya genel filtre deneyerek sonuçlarını genişletebilirsin.', 'arim'); ?></p>
             </div>
         <?php else : ?>
             <div class="arim-myaccount-inline-empty arim-myaccount-orders-inline-empty">
