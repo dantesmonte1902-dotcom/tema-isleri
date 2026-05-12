@@ -183,3 +183,8 @@ Geliştirilen Özellikler
 - Siparişlerim arama alanına tüm tarihler, son 30 gün, son 6 ay ve son 12 ay seçenekleri eklenerek aynı sayfada daha hızlı sipariş daraltma akışı sağlandı.
 - Metin araması ile tarih filtresi birlikte çalışacak şekilde güncellenerek görünür sipariş sayısı ve boş durum mesajı seçilen filtrelere göre anlık yenilendi.
 - Tarih seçici mobil ve masaüstü sipariş arama bloğuyla uyumlu olacak şekilde yeniden düzenlenerek mevcut filtre deneyimine ek yük getirmeden kullanıma sunuldu.
+
+27. Hesabım Dashboard Öncelik Merkezi Geliştirmeleri
+- Dashboard ana ekrana aktif sipariş, sorunlu sipariş ve eksik teslimat hazırlığı adımlarını öne çıkaran öncelik kartları eklendi.
+- Kullanıcıların sipariş detayı, adres veya hesap ekranına tek tıkla geçebilmesi için öncelik kartları durum bazlı yönlendirici bağlantılarla güçlendirildi.
+- Öncelik alanı mobil ve masaüstü görünümde mevcut hazırlık ve hızlı aksiyon kartlarıyla uyumlu çalışacak şekilde yeniden stillendirildi.

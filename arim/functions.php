@@ -1213,6 +1213,7 @@ function arim_myaccount_dashboard_data() {
             'stats'        => [],
             'recentOrders' => [],
             'readiness'    => [],
+            'priorities'   => [],
             'campaigns'    => arim_single_product_campaigns(3),
         ];
     }
@@ -1238,7 +1239,10 @@ function arim_myaccount_dashboard_data() {
         'active'     => 0,
         'completed'  => 0,
         'processing' => 0,
+        'issues'     => 0,
     ];
+    $active_order = null;
+    $issue_order  = null;
 
     foreach ($all_orders as $order) {
         if (!$order instanceof WC_Order) {
@@ -1249,6 +1253,10 @@ function arim_myaccount_dashboard_data() {
 
         if (in_array($order->get_status(), ['pending', 'processing', 'on-hold'], true)) {
             $totals['active']++;
+
+            if (!$active_order instanceof WC_Order) {
+                $active_order = $order;
+            }
         }
 
         if ($order->has_status('completed')) {
@@ -1257,6 +1265,14 @@ function arim_myaccount_dashboard_data() {
 
         if ($order->has_status('processing')) {
             $totals['processing']++;
+        }
+
+        if ($order->has_status(['cancelled', 'failed', 'refunded'])) {
+            $totals['issues']++;
+
+            if (!$issue_order instanceof WC_Order) {
+                $issue_order = $order;
+            }
         }
     }
 
@@ -1347,6 +1363,105 @@ function arim_myaccount_dashboard_data() {
         'items'   => $readiness_items,
     ];
 
+    $priorities = [];
+
+    if ($active_order instanceof WC_Order) {
+        $priorities[] = [
+            'badge'       => __('Aktif teslimat', 'arim'),
+            'title'       => sprintf(
+                __('#%s siparişin işlemde', 'arim'),
+                $active_order->get_order_number()
+            ),
+            'text'        => arim_myaccount_order_status_note($active_order),
+            'meta'        => $active_order->get_date_created()
+                ? sprintf(
+                    __('%s · %s', 'arim'),
+                    wc_get_order_status_name($active_order->get_status()),
+                    wc_format_datetime($active_order->get_date_created())
+                )
+                : wc_get_order_status_name($active_order->get_status()),
+            'actionLabel' => __('Sipariş detayını aç', 'arim'),
+            'url'         => $active_order->get_view_order_url(),
+            'state'       => 'is-active',
+        ];
+    }
+
+    if ($issue_order instanceof WC_Order) {
+        $priorities[] = [
+            'badge'       => __('İşlem kontrolü', 'arim'),
+            'title'       => sprintf(
+                __('#%s siparişinde kontrol gerekiyor', 'arim'),
+                $issue_order->get_order_number()
+            ),
+            'text'        => arim_myaccount_order_status_note($issue_order),
+            'meta'        => $issue_order->get_date_created()
+                ? sprintf(
+                    __('%s · %s', 'arim'),
+                    wc_get_order_status_name($issue_order->get_status()),
+                    wc_format_datetime($issue_order->get_date_created())
+                )
+                : wc_get_order_status_name($issue_order->get_status()),
+            'actionLabel' => __('Durumu incele', 'arim'),
+            'url'         => $issue_order->get_view_order_url(),
+            'state'       => 'is-issue',
+        ];
+    }
+
+    if ($overall_completion < 100) {
+        $completion_url   = wc_get_account_endpoint_url('edit-account');
+        $completion_title = __('Teslimat hazırlığını tamamla', 'arim');
+        $completion_text  = __('Eksik profil, adres veya telefon bilgilerini tamamlayarak teslimat ve destek akışını daha sorunsuz hale getirebilirsin.', 'arim');
+        $completion_meta  = sprintf(
+            __('Hazırlık seviyesi %s', 'arim'),
+            sprintf('%s%%', number_format_i18n($overall_completion))
+        );
+
+        if ($address_missing_count > 0) {
+            $completion_url = wc_get_account_endpoint_url('edit-address');
+            $completion_text = sprintf(
+                _n('%s adres alanı eksik görünüyor; teslimat aksamasını önlemek için adres bilgilerini güncelle.', '%s adres alanı eksik görünüyor; teslimat aksamasını önlemek için adres bilgilerini güncelle.', $address_missing_count, 'arim'),
+                number_format_i18n($address_missing_count)
+            );
+        } elseif (!$phone_ready) {
+            $completion_url = wc_get_account_endpoint_url('edit-account');
+            $completion_text = __('Kurye ve destek akışının hızlanması için telefon numaranı hesabına ekle.', 'arim');
+        } elseif ($profile_missing_count > 0) {
+            $completion_url = wc_get_account_endpoint_url('edit-account');
+            $completion_text = sprintf(
+                _n('%s profil alanı güncellenmeyi bekliyor; hesap detaylarını tamamlayarak bildirim akışını netleştirebilirsin.', '%s profil alanı güncellenmeyi bekliyor; hesap detaylarını tamamlayarak bildirim akışını netleştirebilirsin.', $profile_missing_count, 'arim'),
+                number_format_i18n($profile_missing_count)
+            );
+        }
+
+        $priorities[] = [
+            'badge'       => __('Hazırlık adımı', 'arim'),
+            'title'       => $completion_title,
+            'text'        => $completion_text,
+            'meta'        => $completion_meta,
+            'actionLabel' => __('Eksikleri tamamla', 'arim'),
+            'url'         => $completion_url,
+            'state'       => 'is-pending',
+        ];
+    }
+
+    if (count($priorities) < 3) {
+        $priorities[] = [
+            'badge'       => __('Alışveriş planı', 'arim'),
+            'title'       => $totals['orders'] > 0
+                ? __('Yeni sipariş için vitrinin hazır', 'arim')
+                : __('İlk siparişine hızlı başlangıç yap', 'arim'),
+            'text'        => $totals['orders'] > 0
+                ? __('Favori, karşılaştırma ve öneri alanlarını kullanarak sonraki alışverişini daha hızlı planlayabilirsin.', 'arim')
+                : __('Favorilerini oluşturup mağazaya dönerek ilk sipariş akışını kısa sürede başlatabilirsin.', 'arim'),
+            'meta'        => $totals['orders'] > 0
+                ? __('Favoriler ve öneriler seni bekliyor', 'arim')
+                : __('Mağaza ve favori alanı hazır', 'arim'),
+            'actionLabel' => $totals['orders'] > 0 ? __('Favorilere dön', 'arim') : __('Mağazaya git', 'arim'),
+            'url'         => $totals['orders'] > 0 ? arim_favorites_url() : arim_shop_url(),
+            'state'       => 'is-neutral',
+        ];
+    }
+
     $recent_order_items = [];
 
     foreach ($recent_orders as $order) {
@@ -1377,11 +1492,13 @@ function arim_myaccount_dashboard_data() {
             'active'        => $totals['active'],
             'completed'     => $totals['completed'],
             'processing'    => $totals['processing'],
+            'issues'        => $totals['issues'],
             'addressCount'  => $address_count,
             'campaignCount' => count(arim_single_product_campaigns(3)),
         ],
         'recentOrders' => $recent_order_items,
         'readiness'    => $readiness,
+        'priorities'   => array_slice($priorities, 0, 3),
         'campaigns'    => arim_single_product_campaigns(3),
     ];
 }

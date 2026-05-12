@@ -7,6 +7,7 @@ $dashboard_stats = isset($dashboard_data['stats']) && is_array($dashboard_data['
 $recent_orders  = isset($dashboard_data['recentOrders']) && is_array($dashboard_data['recentOrders']) ? $dashboard_data['recentOrders'] : [];
 $readiness      = isset($dashboard_data['readiness']) && is_array($dashboard_data['readiness']) ? $dashboard_data['readiness'] : [];
 $readiness_items = isset($readiness['items']) && is_array($readiness['items']) ? $readiness['items'] : [];
+$priorities     = isset($dashboard_data['priorities']) && is_array($dashboard_data['priorities']) ? $dashboard_data['priorities'] : [];
 $campaigns      = isset($dashboard_data['campaigns']) && is_array($dashboard_data['campaigns']) ? $dashboard_data['campaigns'] : [];
 
 $quick_actions = [
@@ -124,6 +125,30 @@ $quick_actions = [
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
+        </section>
+    <?php endif; ?>
+
+    <?php if (!empty($priorities)) : ?>
+        <section class="arim-myaccount-priority-board">
+            <div class="arim-myaccount-priority-head">
+                <div>
+                    <span class="arim-myaccount-panel-kicker"><?php esc_html_e('Öncelik merkezi', 'arim'); ?></span>
+                    <h3><?php esc_html_e('Bugün hangi adıma odaklanmalısın?', 'arim'); ?></h3>
+                    <p><?php esc_html_e('Aktif sipariş, eksik teslimat bilgisi ve yeniden alışveriş fırsatlarını tek blokta sırala.', 'arim'); ?></p>
+                </div>
+            </div>
+
+            <div class="arim-myaccount-priority-grid">
+                <?php foreach ($priorities as $priority) : ?>
+                    <a class="arim-myaccount-priority-item <?php echo esc_attr($priority['state'] ?? 'is-neutral'); ?>" href="<?php echo esc_url($priority['url'] ?? wc_get_account_endpoint_url('orders')); ?>">
+                        <span class="arim-myaccount-priority-badge"><?php echo esc_html($priority['badge'] ?? __('Öncelik', 'arim')); ?></span>
+                        <h4><?php echo esc_html($priority['title'] ?? ''); ?></h4>
+                        <p><?php echo esc_html($priority['text'] ?? ''); ?></p>
+                        <strong><?php echo esc_html($priority['meta'] ?? ''); ?></strong>
+                        <span class="arim-myaccount-priority-link"><?php echo esc_html($priority['actionLabel'] ?? __('Detayı aç', 'arim')); ?></span>
+                    </a>
+                <?php endforeach; ?>
+            </div>
         </section>
     <?php endif; ?>
 

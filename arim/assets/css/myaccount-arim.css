@@ -376,6 +376,120 @@
     gap: 12px;
 }
 
+.arim-myaccount-priority-board {
+    margin-bottom: 22px;
+    padding: 20px;
+    border: 1px solid #ececec;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #fffaf6, #fff);
+}
+
+.arim-myaccount-priority-head {
+    margin-bottom: 16px;
+}
+
+.arim-myaccount-priority-head h3 {
+    margin: 4px 0 8px;
+    color: #222;
+    font-size: 24px;
+}
+
+.arim-myaccount-priority-head p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.arim-myaccount-priority-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.arim-myaccount-priority-item {
+    display: grid;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid #f1e5db;
+    border-radius: 16px;
+    background: #fff;
+    color: #333;
+    text-decoration: none;
+    transition: .25s ease;
+}
+
+.arim-myaccount-priority-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.05);
+}
+
+.arim-myaccount-priority-item.is-active {
+    background: linear-gradient(180deg, #fff7ef 0%, #fff 100%);
+    border-color: #f6c79f;
+}
+
+.arim-myaccount-priority-item.is-issue {
+    background: linear-gradient(180deg, #fff6f7 0%, #fff 100%);
+    border-color: #f1c8ce;
+}
+
+.arim-myaccount-priority-item.is-pending {
+    background: linear-gradient(180deg, #fffbf2 0%, #fff 100%);
+    border-color: #f3e0a4;
+}
+
+.arim-myaccount-priority-item.is-neutral {
+    background: linear-gradient(180deg, #f8fbff 0%, #fff 100%);
+    border-color: #d9e6ff;
+}
+
+.arim-myaccount-priority-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: #fff3e7;
+    color: #f27a1a;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.arim-myaccount-priority-item h4,
+.arim-myaccount-priority-item p,
+.arim-myaccount-priority-item strong {
+    margin: 0;
+}
+
+.arim-myaccount-priority-item h4 {
+    color: #222;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.arim-myaccount-priority-item p {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.arim-myaccount-priority-item strong {
+    color: #222;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.arim-myaccount-priority-link {
+    display: inline-flex;
+    align-items: center;
+    color: #f27a1a;
+    font-size: 13px;
+    font-weight: 700;
+}
+
 .arim-myaccount-readiness-item {
     display: flex;
     align-items: flex-start;
@@ -2424,6 +2538,7 @@
 
     .arim-myaccount-status-strip,
     .arim-myaccount-cards,
+    .arim-myaccount-priority-grid,
     .arim-myaccount-readiness-grid,
     .arim-myaccount-orders-summary,
     .arim-myaccount-address-summary,
@@ -2497,6 +2612,7 @@
     .arim-myaccount-hero-stats,
     .arim-myaccount-status-strip,
     .arim-myaccount-cards,
+    .arim-myaccount-priority-grid,
     .arim-myaccount-readiness-grid,
     .arim-myaccount-orders-summary,
     .arim-myaccount-address-summary,
