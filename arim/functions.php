@@ -34,6 +34,7 @@ function arim_enqueue_assets() {
     $theme_style_path = trailingslashit(get_stylesheet_directory()) . 'style.css';
     $theme_js_path    = trailingslashit(get_template_directory()) . 'assets/js/arim-theme.js';
     $woocommerce_css_path = trailingslashit(get_template_directory()) . 'assets/css/woocommerce-arim.css';
+    $single_product_css_path = trailingslashit(get_template_directory()) . 'assets/css/single-product-arim.css';
     $myaccount_css_path   = trailingslashit(get_template_directory()) . 'assets/css/myaccount-arim.css';
 
     wp_enqueue_style(
@@ -144,7 +145,12 @@ function arim_enqueue_assets() {
             'arim-single-product',
             get_template_directory_uri() . '/assets/css/single-product-arim.css',
             ['arim-style', 'arim-woocommerce'],
-            '1.0.0'
+            file_exists($single_product_css_path) ? (string) filemtime($single_product_css_path) : '1.0.0'
+        );
+
+        wp_add_inline_style(
+            'arim-single-product',
+            '.arim-single-gallery-lightbox:not(.is-open), .arim-single-gallery-lightbox[hidden]{display:none !important;visibility:hidden !important;opacity:0 !important;pointer-events:none !important;}.arim-single-gallery-lightbox.is-open{display:flex !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;}'
         );
     }
 
