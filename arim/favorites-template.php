@@ -37,10 +37,32 @@ $shop_url = function_exists('arim_shop_url') ? arim_shop_url() : home_url('/shop
         </section>
 
         <div class="arim-favorites-toolbar">
-            <a class="arim-favorites-toolbar-link is-primary" href="<?php echo esc_url($shop_url); ?>">
-                <?php esc_html_e('Yeni ürünler keşfet', 'arim'); ?>
-            </a>
-            <span class="arim-favorites-toolbar-note"><?php esc_html_e('Kalp ikonuyla eklediğin ürünler bu sayfada otomatik olarak görünür.', 'arim'); ?></span>
+            <div class="arim-favorites-toolbar-main">
+                <a class="arim-favorites-toolbar-link is-primary" href="<?php echo esc_url($shop_url); ?>">
+                    <?php esc_html_e('Yeni ürünler keşfet', 'arim'); ?>
+                </a>
+                <span class="arim-favorites-toolbar-note"><?php esc_html_e('Kalp ikonuyla eklediğin ürünler bu sayfada otomatik olarak görünür.', 'arim'); ?></span>
+            </div>
+
+            <div class="arim-favorites-toolbar-controls">
+                <label class="arim-favorites-control">
+                    <span><?php esc_html_e('Favorilerde ara', 'arim'); ?></span>
+                    <input type="search" data-arim-favorites-search placeholder="<?php esc_attr_e('Ürün, marka veya mağaza ara', 'arim'); ?>" autocomplete="off">
+                </label>
+
+                <label class="arim-favorites-control">
+                    <span><?php esc_html_e('Sırala', 'arim'); ?></span>
+                    <select data-arim-favorites-sort>
+                        <option value="recent"><?php esc_html_e('En yeni eklenenler', 'arim'); ?></option>
+                        <option value="price-asc"><?php esc_html_e('Fiyat artan', 'arim'); ?></option>
+                        <option value="price-desc"><?php esc_html_e('Fiyat azalan', 'arim'); ?></option>
+                        <option value="savings-desc"><?php esc_html_e('Avantajı yüksek olanlar', 'arim'); ?></option>
+                        <option value="title-asc"><?php esc_html_e('A-Z sırala', 'arim'); ?></option>
+                    </select>
+                </label>
+
+                <span class="arim-favorites-toolbar-result" data-arim-favorites-results><?php esc_html_e('Tüm favoriler listeleniyor', 'arim'); ?></span>
+            </div>
         </div>
 
         <div class="arim-favorites-dynamic" data-arim-favorites-page></div>

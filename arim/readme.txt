@@ -168,3 +168,8 @@ Geliştirilen Özellikler
 - Dashboard ana ekranına profil, adres ve iletişim durumu için yüzdesel hazırlık kartı eklendi.
 - Eksik kalan alanlar tek bakışta görünür hale getirilerek kullanıcıların doğru hesap veya adres ekranına daha hızlı geçmesi sağlandı.
 - Hazırlık paneli mobil ve masaüstü düzenlerde sipariş kartlarıyla uyumlu çalışacak şekilde yeniden stillendirildi.
+
+24. Favorilerim Keşif ve Sıralama Geliştirmeleri
+- Favoriler sayfasına ürün, marka ve mağaza bazlı hızlı arama alanı eklenerek uzun listelerde doğru ürüne erişim hızlandırıldı.
+- En yeni, fiyat, avantaj ve alfabetik sıralama seçenekleriyle favori koleksiyonunun farklı alışveriş senaryolarına göre düzenlenmesi sağlandı.
+- Sonuç sayısı ve boş arama durumu görünür hale getirilerek filtre temizleme akışı daha anlaşılır hale getirildi.

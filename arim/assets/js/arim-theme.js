@@ -562,6 +562,82 @@ document.addEventListener('DOMContentLoaded', function () {
         return 0;
     }
 
+    function normalizeFavoritesSearchValue(value) {
+        return String(value || '')
+            .toLocaleLowerCase('tr-TR')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    function sortFavoriteItems(items, sortValue) {
+        const normalizedSort = String(sortValue || 'recent');
+        const sortedItems = items.slice();
+
+        if ('price-asc' === normalizedSort) {
+            return sortedItems.sort(function (leftItem, rightItem) {
+                return toNumber(leftItem.currentPrice) - toNumber(rightItem.currentPrice);
+            });
+        }
+
+        if ('price-desc' === normalizedSort) {
+            return sortedItems.sort(function (leftItem, rightItem) {
+                return toNumber(rightItem.currentPrice) - toNumber(leftItem.currentPrice);
+            });
+        }
+
+        if ('savings-desc' === normalizedSort) {
+            return sortedItems.sort(function (leftItem, rightItem) {
+                return getProductSavings(rightItem) - getProductSavings(leftItem);
+            });
+        }
+
+        if ('title-asc' === normalizedSort) {
+            return sortedItems.sort(function (leftItem, rightItem) {
+                return String(leftItem.title || '').localeCompare(String(rightItem.title || ''), 'tr');
+            });
+        }
+
+        return sortedItems;
+    }
+
+    function updateFavoritesResultsText(target, visibleCount, totalCount, searchValue) {
+        if (!target) {
+            return;
+        }
+
+        if (totalCount < 1) {
+            target.textContent = favoriteLabels.favoritesEmptyText || 'Beğendiğin ürünleri kalp ikonuyla favorilerine ekle.';
+            return;
+        }
+
+        if (searchValue) {
+            target.textContent = String(visibleCount) + '/' + String(totalCount) + ' ürün "' + searchValue + '" için gösteriliyor';
+            return;
+        }
+
+        target.textContent = String(totalCount) + ' favori ürünü listeleniyor';
+    }
+
+    function bindFavoritesToolbarControls() {
+        const favoritesPage = document.querySelector('[data-arim-favorites-page]');
+        const searchInput = document.querySelector('[data-arim-favorites-search]');
+        const sortSelect = document.querySelector('[data-arim-favorites-sort]');
+
+        if (!favoritesPage) {
+            return;
+        }
+
+        if (searchInput && searchInput.dataset.arimBound !== 'true') {
+            searchInput.addEventListener('input', renderFavoritesPage);
+            searchInput.dataset.arimBound = 'true';
+        }
+
+        if (sortSelect && sortSelect.dataset.arimBound !== 'true') {
+            sortSelect.addEventListener('change', renderFavoritesPage);
+            sortSelect.dataset.arimBound = 'true';
+        }
+    }
+
     function getLowestComparePrice(items) {
         const pricedItems = items.filter(function (item) {
             return item.currentPrice > 0;
@@ -831,10 +907,17 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        bindFavoritesToolbarControls();
+
         const favorites = safeParseFavorites();
         const countTarget = document.querySelector('[data-arim-favorites-count]');
         const saleCountTarget = document.querySelector('[data-arim-favorites-sale-count]');
         const savingsTarget = document.querySelector('[data-arim-favorites-savings]');
+        const searchInput = document.querySelector('[data-arim-favorites-search]');
+        const sortSelect = document.querySelector('[data-arim-favorites-sort]');
+        const resultsTarget = document.querySelector('[data-arim-favorites-results]');
+        const searchValue = searchInput ? normalizeFavoritesSearchValue(searchInput.value) : '';
+        const sortValue = sortSelect ? String(sortSelect.value || 'recent') : 'recent';
 
         const saleCount = favorites.filter(function (item) {
             return item.currentPrice > 0 && item.regularPrice > item.currentPrice;
@@ -860,6 +943,25 @@ document.addEventListener('DOMContentLoaded', function () {
             savingsTarget.textContent = formatCurrency(totalSavings);
         }
 
+        const filteredFavorites = favorites.filter(function (item) {
+            if (!searchValue) {
+                return true;
+            }
+
+            const searchableText = normalizeFavoritesSearchValue([
+                item.title,
+                item.brand,
+                item.store,
+                item.badge,
+                item.price,
+            ].join(' '));
+
+            return searchableText.indexOf(searchValue) !== -1;
+        });
+        const visibleFavorites = sortFavoriteItems(filteredFavorites, sortValue);
+
+        updateFavoritesResultsText(resultsTarget, visibleFavorites.length, favorites.length, searchValue);
+
         favoritesPage.innerHTML = '';
 
         if (!favorites.length) {
@@ -884,10 +986,43 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        if (!visibleFavorites.length) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'arim-favorites-empty';
+
+            const title = document.createElement('h2');
+            title.textContent = 'Aramana uygun favori bulunamadı';
+            emptyState.appendChild(title);
+
+            const description = document.createElement('p');
+            description.textContent = 'Arama kelimeni değiştir veya sıralamayı sıfırlayarak tüm favori ürünlerine geri dön.';
+            emptyState.appendChild(description);
+
+            const resetButton = document.createElement('button');
+            resetButton.type = 'button';
+            resetButton.className = 'arim-favorites-empty-link';
+            resetButton.textContent = 'Filtreleri temizle';
+            resetButton.addEventListener('click', function () {
+                if (searchInput) {
+                    searchInput.value = '';
+                }
+
+                if (sortSelect) {
+                    sortSelect.value = 'recent';
+                }
+
+                renderFavoritesPage();
+            });
+            emptyState.appendChild(resetButton);
+
+            favoritesPage.appendChild(emptyState);
+            return;
+        }
+
         const grid = document.createElement('div');
         grid.className = 'arim-favorites-grid';
 
-        favorites.forEach(function (item) {
+        visibleFavorites.forEach(function (item) {
             grid.appendChild(createFavoriteCard(item));
         });
 

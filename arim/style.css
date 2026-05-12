@@ -886,6 +886,55 @@ textarea {
     background: #fff;
 }
 
+.arim-favorites-toolbar-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.arim-favorites-toolbar-controls {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 12px;
+    flex: 1 1 520px;
+    flex-wrap: wrap;
+}
+
+.arim-favorites-control {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 180px;
+}
+
+.arim-favorites-control span {
+    color: #666;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.arim-favorites-control input,
+.arim-favorites-control select {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid #e2e2e2;
+    border-radius: 12px;
+    background: #fff;
+    color: #222;
+    font-size: 14px;
+}
+
+.arim-favorites-control input:focus,
+.arim-favorites-control select:focus {
+    outline: none;
+    border-color: #f27a1a;
+    box-shadow: 0 0 0 3px rgba(242,122,26,0.12);
+}
+
 .arim-favorites-toolbar-link {
     min-height: 44px;
     padding: 0 18px;
@@ -906,6 +955,13 @@ textarea {
     color: #666;
     font-size: 13px;
     line-height: 1.7;
+}
+
+.arim-favorites-toolbar-result {
+    color: #444;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.6;
 }
 
 .arim-favorites-grid {
@@ -1036,6 +1092,11 @@ textarea {
     font-size: 14px;
     font-weight: 700;
     transition: .2s ease;
+}
+
+.arim-favorites-empty-link {
+    background: #fff;
+    cursor: pointer;
 }
 
 .arim-favorites-card-link:hover,
@@ -1714,6 +1775,14 @@ textarea {
 
     .arim-favorites-section-head {
         align-items: flex-start;
+    }
+
+    .arim-favorites-toolbar-controls {
+        justify-content: flex-start;
+    }
+
+    .arim-favorites-control {
+        width: 100%;
     }
 
     .arim-favorites-grid-secondary {
