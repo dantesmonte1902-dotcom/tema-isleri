@@ -14,6 +14,8 @@ $hero       = isset($order_data['hero']) && is_array($order_data['hero']) ? $ord
 $summary    = isset($order_data['summary']) && is_array($order_data['summary']) ? $order_data['summary'] : [];
 $status     = isset($order_data['status']) && is_array($order_data['status']) ? $order_data['status'] : [];
 $items      = isset($order_data['items']) && is_array($order_data['items']) ? $order_data['items'] : [];
+$buy_again  = isset($order_data['buyAgain']) && is_array($order_data['buyAgain']) ? $order_data['buyAgain'] : [];
+$recommendations = isset($order_data['recommendations']) && is_array($order_data['recommendations']) ? $order_data['recommendations'] : [];
 $highlights = isset($order_data['highlights']) && is_array($order_data['highlights']) ? $order_data['highlights'] : [];
 $timeline   = isset($order_data['timeline']) && is_array($order_data['timeline']) ? $order_data['timeline'] : [];
 $support    = isset($order_data['support']) && is_array($order_data['support']) ? $order_data['support'] : [];
@@ -286,6 +288,57 @@ $links      = isset($order_data['links']) && is_array($order_data['links']) ? $o
                 </section>
             <?php endforeach; ?>
         </div>
+    <?php endif; ?>
+
+    <?php if (!empty($buy_again) || !empty($recommendations)) : ?>
+        <section class="arim-myaccount-view-order-discovery">
+            <div class="arim-myaccount-panel-head">
+                <div>
+                    <span class="arim-myaccount-panel-kicker"><?php esc_html_e('Alışverişe geri dönüş', 'arim'); ?></span>
+                    <h3><?php esc_html_e('Yeniden sipariş ve benzer ürünler', 'arim'); ?></h3>
+                </div>
+                <a href="<?php echo esc_url($links['shop'] ?? arim_shop_url()); ?>">
+                    <?php esc_html_e('Mağazaya git', 'arim'); ?>
+                </a>
+            </div>
+
+            <div class="arim-myaccount-view-order-discovery-grid">
+                <?php if (!empty($buy_again)) : ?>
+                    <article class="arim-myaccount-view-order-buy-again">
+                        <span class="arim-myaccount-panel-kicker"><?php echo esc_html($buy_again['title'] ?? __('Yeniden sipariş', 'arim')); ?></span>
+                        <h4><?php echo esc_html($buy_again['productName'] ?? ''); ?></h4>
+                        <p><?php echo esc_html($buy_again['text'] ?? ''); ?></p>
+                        <strong><?php echo esc_html($buy_again['price'] ?? ''); ?></strong>
+                        <a class="arim-myaccount-orders-link" href="<?php echo esc_url($buy_again['url'] ?? ($links['shop'] ?? arim_shop_url())); ?>">
+                            <?php echo esc_html($buy_again['actionLabel'] ?? __('Ürüne geri dön', 'arim')); ?>
+                        </a>
+                    </article>
+                <?php endif; ?>
+
+                <?php if (!empty($recommendations)) : ?>
+                    <div class="arim-myaccount-view-order-recommendations">
+                        <?php foreach ($recommendations as $recommendation) : ?>
+                            <article class="arim-myaccount-view-order-recommendation-card">
+                                <a class="arim-myaccount-view-order-recommendation-media" href="<?php echo esc_url($recommendation['url'] ?? ($links['shop'] ?? arim_shop_url())); ?>">
+                                    <?php echo wp_kses_post($recommendation['image'] ?? ''); ?>
+                                </a>
+                                <div class="arim-myaccount-view-order-recommendation-content">
+                                    <h4>
+                                        <a href="<?php echo esc_url($recommendation['url'] ?? ($links['shop'] ?? arim_shop_url())); ?>">
+                                            <?php echo esc_html($recommendation['title'] ?? ''); ?>
+                                        </a>
+                                    </h4>
+                                    <strong><?php echo esc_html($recommendation['price'] ?? ''); ?></strong>
+                                    <a class="arim-myaccount-orders-link" href="<?php echo esc_url($recommendation['url'] ?? ($links['shop'] ?? arim_shop_url())); ?>">
+                                        <?php echo esc_html($recommendation['actionLabel'] ?? __('İncele', 'arim')); ?>
+                                    </a>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </section>
     <?php endif; ?>
 
     <div class="arim-myaccount-view-order-details">

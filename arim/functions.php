@@ -1628,6 +1628,8 @@ function arim_myaccount_view_order_data($order) {
             'summary'   => [],
             'status'    => [],
             'items'     => [],
+            'buyAgain'  => [],
+            'recommendations' => [],
             'highlights' => [],
             'timeline'   => [],
             'support'    => [],
@@ -1794,6 +1796,7 @@ function arim_myaccount_view_order_data($order) {
     ];
 
     $items = [];
+    $ordered_product_ids = [];
 
     foreach ($order->get_items('line_item') as $item) {
         if (!$item instanceof WC_Order_Item_Product) {
@@ -1804,6 +1807,10 @@ function arim_myaccount_view_order_data($order) {
         $product_id = $product instanceof WC_Product ? $product->get_id() : 0;
         $product_url = ($product instanceof WC_Product && $product->is_visible()) ? $product->get_permalink() : '';
         $brand = $product_id > 0 ? get_post_meta($product_id, 'brand', true) : '';
+
+        if ($product_id > 0) {
+            $ordered_product_ids[] = $product_id;
+        }
 
         if (!$brand && $product_id > 0) {
             $terms = get_the_terms($product_id, 'product_brand');
@@ -1845,6 +1852,98 @@ function arim_myaccount_view_order_data($order) {
             'price'     => $product instanceof WC_Product ? arim_product_price_text($product) : wp_strip_all_tags($order->get_formatted_line_subtotal($item)),
             'actions'   => $item_actions,
         ];
+    }
+
+    $ordered_product_ids = array_values(array_unique(array_filter(array_map('absint', $ordered_product_ids))));
+    $buy_again = [];
+    $recommendations = [];
+
+    foreach ($ordered_product_ids as $ordered_product_id) {
+        $ordered_product = wc_get_product($ordered_product_id);
+
+        if (!$ordered_product instanceof WC_Product) {
+            continue;
+        }
+
+        if (empty($buy_again) && $ordered_product->is_purchasable() && $ordered_product->is_in_stock()) {
+            $buy_again = [
+                'title'       => __('Yeniden siparişe hazır', 'arim'),
+                'text'        => __('Daha önce aldığın ürünlerden biri yeniden satın almaya uygun durumda. Tek dokunuşla ürün sayfasına dönüp siparişini hızlandırabilirsin.', 'arim'),
+                'productName' => $ordered_product->get_name(),
+                'price'       => arim_product_price_text($ordered_product),
+                'url'         => $ordered_product->is_visible() ? $ordered_product->get_permalink() : $ordered_product->add_to_cart_url(),
+                'actionLabel' => __('Ürüne geri dön', 'arim'),
+            ];
+        }
+
+        if (!function_exists('wc_get_related_products')) {
+            continue;
+        }
+
+        foreach (wc_get_related_products($ordered_product_id, 4, $ordered_product_ids) as $related_product_id) {
+            $related_product_id = absint($related_product_id);
+
+            if ($related_product_id < 1 || isset($recommendations[$related_product_id])) {
+                continue;
+            }
+
+            $related_product = wc_get_product($related_product_id);
+
+            if (
+                !$related_product instanceof WC_Product ||
+                !$related_product->is_visible() ||
+                !$related_product->is_purchasable()
+            ) {
+                continue;
+            }
+
+            $recommendations[$related_product_id] = [
+                'id'          => $related_product_id,
+                'title'       => $related_product->get_name(),
+                'price'       => arim_product_price_text($related_product),
+                'url'         => $related_product->get_permalink(),
+                'image'       => $related_product->get_image('woocommerce_thumbnail'),
+                'actionLabel' => $related_product->is_in_stock() ? __('İncele', 'arim') : __('Detayı gör', 'arim'),
+            ];
+
+            if (count($recommendations) >= 3) {
+                break 2;
+            }
+        }
+    }
+
+    if (count($recommendations) < 3 && function_exists('wc_get_products')) {
+        $fallback_products = wc_get_products([
+            'status'  => 'publish',
+            'limit'   => 3 - count($recommendations),
+            'exclude' => array_merge($ordered_product_ids, array_keys($recommendations)),
+            'orderby' => 'date',
+            'order'   => 'DESC',
+            'return'  => 'objects',
+        ]);
+
+        foreach ($fallback_products as $fallback_product) {
+            if (
+                !$fallback_product instanceof WC_Product ||
+                !$fallback_product->is_visible() ||
+                !$fallback_product->is_purchasable()
+            ) {
+                continue;
+            }
+
+            $recommendations[$fallback_product->get_id()] = [
+                'id'          => $fallback_product->get_id(),
+                'title'       => $fallback_product->get_name(),
+                'price'       => arim_product_price_text($fallback_product),
+                'url'         => $fallback_product->get_permalink(),
+                'image'       => $fallback_product->get_image('woocommerce_thumbnail'),
+                'actionLabel' => $fallback_product->is_in_stock() ? __('İncele', 'arim') : __('Detayı gör', 'arim'),
+            ];
+
+            if (count($recommendations) >= 3) {
+                break;
+            }
+        }
     }
 
     $contacts = [
@@ -1897,6 +1996,8 @@ function arim_myaccount_view_order_data($order) {
             'key'   => $status_key,
         ],
         'items' => $items,
+        'buyAgain' => $buy_again,
+        'recommendations' => array_values($recommendations),
         'highlights' => $highlights,
         'timeline' => $timeline,
         'support' => [

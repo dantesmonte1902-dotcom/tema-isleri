@@ -173,3 +173,8 @@ Geliştirilen Özellikler
 - Favoriler sayfasına ürün, marka ve mağaza bazlı hızlı arama alanı eklenerek uzun listelerde doğru ürüne erişim hızlandırıldı.
 - En yeni, fiyat, avantaj ve alfabetik sıralama seçenekleriyle favori koleksiyonunun farklı alışveriş senaryolarına göre düzenlenmesi sağlandı.
 - Sonuç sayısı ve boş arama durumu görünür hale getirilerek filtre temizleme akışı daha anlaşılır hale getirildi.
+
+25. Sipariş Detayı Yeniden Keşif Geliştirmeleri
+- Sipariş detay ekranına yeniden siparişe uygun ürün için hızlı geri dönüş kartı eklenerek önceki alışverişe tek adımda dönme akışı güçlendirildi.
+- Siparişteki ürünlerden türetilen benzer ürün önerileri aynı sayfada görünür hale getirilerek alışverişe devam etme senaryosu desteklendi.
+- Yeni öneri alanı mevcut sipariş özeti ve destek kartlarıyla uyumlu, mobilde tek sütuna düşen ek bir keşif bölümü olarak düzenlendi.
