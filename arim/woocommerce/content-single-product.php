@@ -314,6 +314,25 @@ if ($product->is_on_sale()) {
         <?php endif; ?>
     </div>
 
+    <section class="arim-single-recently-viewed" data-arim-recently-viewed-shell>
+        <div class="arim-single-section-head">
+            <div>
+                <span class="arim-single-highlight-kicker"><?php esc_html_e('Alışverişe geri dön', 'arim'); ?></span>
+                <h2><?php esc_html_e('Son baktığın ürünler', 'arim'); ?></h2>
+            </div>
+            <a class="arim-single-store-link" href="<?php echo esc_url(arim_favorites_url()); ?>">
+                <?php esc_html_e('Tüm geçmişi favorilerde gör', 'arim'); ?>
+            </a>
+        </div>
+
+        <div
+            class="arim-single-recently-viewed-content"
+            data-arim-recently-viewed-page
+            data-arim-exclude-product-id="<?php echo esc_attr($product_id); ?>"
+            data-arim-hide-empty="true"
+        ></div>
+    </section>
+
     <div class="arim-single-related">
         <?php woocommerce_output_related_products(); ?>
     </div>

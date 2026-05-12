@@ -208,3 +208,8 @@ Geliştirilen Özellikler
 - Ürün detay ekranına fiyat avantajı, aktif kampanya sayısı ve stok durumunu tek bakışta özetleyen satın alma kartları eklendi.
 - Sepete ekleme alanının altına sipariş onayı, hazırlık ve teslimat akışını anlatan kısa bir yol haritası yerleştirilerek süreç görünürlüğü artırıldı.
 - Yeni özet blokları mevcut teslimat, mağaza ve kampanya kartlarıyla görsel uyum korunacak şekilde ürün detay düzenine entegre edildi.
+
+32. Ürün Detay Son Görüntülenenler Geliştirmeleri
+- Ürün detay sayfasına, mevcut ürünü hariç tutarak son ziyaret edilen ürünleri gösteren yeni bir geri dönüş bölümü eklendi.
+- Mevcut localStorage tabanlı recently viewed akışı, sayfa bazlı hariç tutma ve boş durumda bölümü gizleme desteğiyle genişletildi.
+- Yeni alan global favori kart yapısını yeniden kullanacak şekilde entegre edilerek ek JS/CSS tekrarından kaçınıldı.

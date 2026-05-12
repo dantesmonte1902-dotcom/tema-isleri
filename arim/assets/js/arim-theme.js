@@ -1070,9 +1070,27 @@ document.addEventListener('DOMContentLoaded', function () {
         const items = safeParseRecentlyViewed();
 
         recentlyViewedPages.forEach(function (recentlyViewedPage) {
+            const excludedProductId = String(recentlyViewedPage.getAttribute('data-arim-exclude-product-id') || '').trim();
+            const hideEmptyState = recentlyViewedPage.getAttribute('data-arim-hide-empty') === 'true';
+            const shell = recentlyViewedPage.closest('[data-arim-recently-viewed-shell]');
+            const scopedItems = excludedProductId
+                ? items.filter(function (item) {
+                    return String(item.id || '').trim() !== excludedProductId;
+                })
+                : items.slice();
+
             recentlyViewedPage.innerHTML = '';
 
-            if (!items.length) {
+            if (!scopedItems.length) {
+                if (shell && hideEmptyState) {
+                    shell.classList.add('is-hidden');
+                    return;
+                }
+
+                if (shell) {
+                    shell.classList.remove('is-hidden');
+                }
+
                 const emptyState = document.createElement('div');
                 emptyState.className = 'arim-favorites-empty arim-favorites-empty-secondary';
 
@@ -1088,6 +1106,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
+            if (shell) {
+                shell.classList.remove('is-hidden');
+            }
+
             const intro = document.createElement('p');
             intro.className = 'arim-favorites-secondary-note';
             intro.textContent = favoriteLabels.recentlyViewedText || 'İncelediğin ürünleri burada tut, dilediğin zaman hızlıca geri dön.';
@@ -1096,7 +1118,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const grid = document.createElement('div');
             grid.className = 'arim-favorites-grid arim-favorites-grid-secondary';
 
-            items.forEach(function (item) {
+            scopedItems.forEach(function (item) {
                 grid.appendChild(createFavoriteCard(item, {
                     removable: false,
                     viewLabel: favoriteLabels.viewAgain || favoriteLabels.viewProduct || 'Tekrar İncele',
