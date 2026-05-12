@@ -152,7 +152,7 @@ if ($has_orders) : ?>
                             <?php
                             $item_count  = $order->get_item_count() - $order->get_item_count_refunded();
                             $status_note = arim_myaccount_order_status_note($order);
-                            $search_text = implode(' ', array_filter([
+                            $searchable_text = implode(' ', array_filter([
                                 '#' . $order->get_order_number(),
                                 $order->get_date_created() ? wc_format_datetime($order->get_date_created()) : '',
                                 wc_get_order_status_name($order->get_status()),
@@ -167,7 +167,7 @@ if ($has_orders) : ?>
                             <tr
                                 class="woocommerce-orders-table__row woocommerce-orders-table__row--status-<?php echo esc_attr($order->get_status()); ?> order"
                                 data-arim-order-search-row
-                                data-arim-order-search-text="<?php echo esc_attr(wp_strip_all_tags($search_text)); ?>"
+                                data-arim-order-search-text="<?php echo esc_attr(wp_strip_all_tags($searchable_text)); ?>"
                             >
                                 <?php foreach (wc_get_account_orders_columns() as $column_id => $column_name) : ?>
                                     <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-<?php echo esc_attr($column_id); ?>" data-title="<?php echo esc_attr($column_name); ?>">

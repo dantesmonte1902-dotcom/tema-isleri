@@ -150,6 +150,6 @@ Geliştirilen Özellikler
 - Kullanıcının alışverişe geri dönüşü için dashboard üzerinden karşılaştırma, ürün inceleme ve öneri yenileme akışları görünür hale getirildi.
 
 20. Siparişlerim Sayfası Hızlı Arama Geliştirmeleri
-- Siparişlerim ekranına mevcut sayfadaki siparişleri sipariş no, durum, tarih ve özet metin üzerinden daraltan hızlı arama alanı eklendi.
+ - Siparişlerim ekranına mevcut sayfadaki siparişleri sipariş no, durum, tarih ve özet metin üzerinden daraltılan hızlı arama alanı eklendi.
 - Arama sonucu görünür sipariş sayısı anlık olarak güncellenerek kullanıcının filtre sonrası kaç sipariş kaldığını hızlıca görmesi sağlandı.
 - Sonuç bulunamadığında ayrı bir yönlendirici boş durum kartı gösterilerek yeni arama veya genel filtreye dönüş daha anlaşılır hale getirildi.
