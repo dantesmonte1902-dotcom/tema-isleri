@@ -49,6 +49,9 @@ $gallery_badge_text = $gallery_total > 1
 $gallery_hint_text = $gallery_total > 1
     ? __('Küçük önizlemeler arasında geçiş yap, detayları tam ekranda incele.', 'arim')
     : __('Ürünü tam boy inceleyip detaylara daha rahat odaklan.', 'arim');
+$gallery_footer_text = $gallery_total > 1
+    ? __('Küçük görseller veya kaydırma hareketiyle hızlıca gez.', 'arim')
+    : __('Tam ekran görünüm için sağ üstteki butonu kullan.', 'arim');
 
 $brand = arim_product_brand_name($product_id);
 $rating = $product->get_average_rating();
@@ -190,6 +193,14 @@ if ($product->is_on_sale()) {
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
+
+            <div class="arim-single-gallery-footer">
+                <span class="arim-single-gallery-status" aria-live="polite">
+                    <strong data-arim-gallery-current-index>1</strong>
+                    <span>/ <?php echo esc_html(number_format_i18n($gallery_total)); ?></span>
+                </span>
+                <p><?php echo esc_html($gallery_footer_text); ?></p>
+            </div>
 
             <div class="arim-single-gallery-lightbox" hidden data-arim-gallery-lightbox>
                 <div class="arim-single-gallery-dialog" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e('Ürün görsel önizlemesi', 'arim'); ?>">

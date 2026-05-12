@@ -146,6 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const lightbox = galleryRoot.querySelector('[data-arim-gallery-lightbox]');
         const lightboxImage = galleryRoot.querySelector('[data-arim-gallery-lightbox-image]');
         const caption = galleryRoot.querySelector('[data-arim-gallery-caption]');
+        const currentIndexLabel = galleryRoot.querySelector('[data-arim-gallery-current-index]');
         const thumbs = Array.prototype.slice.call(galleryRoot.querySelectorAll('[data-arim-gallery-thumb]'));
         const openButtons = Array.prototype.slice.call(galleryRoot.querySelectorAll('[data-arim-gallery-open]'));
         const closeButton = galleryRoot.querySelector('[data-arim-gallery-close]');
@@ -173,6 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let currentIndex = thumbs.findIndex(function (thumb) {
             return thumb.classList.contains('is-active');
         });
+        let lastTriggerButton = null;
         let isKeyListenerBound = false;
 
         if (currentIndex < 0) {
@@ -183,6 +185,32 @@ document.addEventListener('DOMContentLoaded', function () {
             if (event.key === 'Escape') {
                 closeLightbox();
                 return;
+            }
+
+            if (event.key === 'Tab' && lightbox && !lightbox.hidden) {
+                const focusableElements = Array.prototype.slice.call(
+                    lightbox.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')
+                ).filter(function (element) {
+                    return element.offsetParent !== null;
+                });
+
+                if (!focusableElements.length) {
+                    return;
+                }
+
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+
+                if (event.shiftKey && document.activeElement === firstElement) {
+                    event.preventDefault();
+                    lastElement.focus();
+                    return;
+                }
+
+                if (!event.shiftKey && document.activeElement === lastElement) {
+                    event.preventDefault();
+                    firstElement.focus();
+                }
             }
 
             if (event.key === 'ArrowLeft') {
@@ -242,14 +270,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 caption.textContent = activeItem.alt;
             }
 
+            if (currentIndexLabel) {
+                currentIndexLabel.textContent = String(currentIndex + 1);
+            }
+
             syncThumbStates();
         }
 
-        function openLightbox() {
+        function openLightbox(triggerButton) {
             if (!lightbox || !lightboxImage) {
                 return;
             }
 
+            lastTriggerButton = triggerButton || document.activeElement;
             updateGallery(currentIndex);
             lightbox.hidden = false;
             document.body.classList.add('arim-gallery-open');
@@ -268,6 +301,50 @@ document.addEventListener('DOMContentLoaded', function () {
             lightbox.hidden = true;
             document.body.classList.remove('arim-gallery-open');
             unbindKeyListener();
+
+            if (lastTriggerButton && typeof lastTriggerButton.focus === 'function') {
+                lastTriggerButton.focus();
+            }
+        }
+
+        function bindSwipeNavigation(target) {
+            if (!target || galleryItems.length < 2) {
+                return;
+            }
+
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            target.addEventListener('touchstart', function (event) {
+                const firstTouch = event.touches && event.touches[0];
+                if (!firstTouch) {
+                    return;
+                }
+
+                touchStartX = firstTouch.clientX;
+                touchStartY = firstTouch.clientY;
+            }, { passive: true });
+
+            target.addEventListener('touchend', function (event) {
+                const changedTouch = event.changedTouches && event.changedTouches[0];
+                if (!changedTouch) {
+                    return;
+                }
+
+                const deltaX = changedTouch.clientX - touchStartX;
+                const deltaY = changedTouch.clientY - touchStartY;
+
+                if (Math.abs(deltaX) < 40 || Math.abs(deltaX) <= Math.abs(deltaY)) {
+                    return;
+                }
+
+                if (deltaX < 0) {
+                    updateGallery(currentIndex + 1);
+                    return;
+                }
+
+                updateGallery(currentIndex - 1);
+            }, { passive: true });
         }
 
         thumbs.forEach(function (thumb, index) {
@@ -278,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         openButtons.forEach(function (button) {
             button.addEventListener('click', function () {
-                openLightbox();
+                openLightbox(button);
             });
         });
 
@@ -307,6 +384,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         }
+
+        bindSwipeNavigation(mainImage);
+        bindSwipeNavigation(lightboxImage);
 
         updateGallery(currentIndex);
     }

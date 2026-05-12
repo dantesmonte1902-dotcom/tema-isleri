@@ -228,3 +228,8 @@ Geliştirilen Özellikler
 - Ana ürün görselinin istemsiz şekilde tam ekrana açılmasını önlemek için tam ekran aksiyonu ayrı butona taşındı.
 - Galeri başlıkları ve yardımcı metinler daha doğal bir dil kullanacak şekilde güncellendi.
 - Ana görsel üzerinde tıklama baskısını azaltan, sade ama modern görünümü koruyan yeni aksiyon yerleşimi uygulandı.
+
+36. Ürün Detay Galeri Mobil ve Erişilebilirlik Dokunuşları
+- Galeriye aktif görsel durumunu gösteren yeni sayaç ve yönlendirme alanı eklenerek kullanıcının nerede olduğu daha net hale getirildi.
+- Mobil kullanım için ana görsel ve tam ekran görünümde kaydırarak görsel değiştirme desteği eklendi.
+- Tam ekran görünümde odak yönetimi iyileştirilerek kapatma sonrası odağın doğru aksiyona dönmesi sağlandı.
