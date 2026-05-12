@@ -213,3 +213,8 @@ Geliştirilen Özellikler
 - Ürün detay sayfasına, mevcut ürünü hariç tutarak son ziyaret edilen ürünleri gösteren yeni bir geri dönüş bölümü eklendi.
 - Mevcut localStorage tabanlı recently viewed akışı, sayfa bazlı hariç tutma ve boş durumda bölümü gizleme desteğiyle genişletildi.
 - Yeni alan global favori kart yapısını yeniden kullanacak şekilde entegre edilerek ek JS/CSS tekrarından kaçınıldı.
+
+33. Ürün Detay Kişisel Öneri Vitrini Geliştirmeleri
+- Ürün detay sayfasına favoriler, karşılaştırmalar ve son görüntülenenler akışını kullanan ayrı bir kişisel öneri vitrini eklendi.
+- Öneri render akışı mevcut ürünü hariç tutacak ve sonuç kalmadığında bölümü gizleyecek şekilde çoğul hedef desteğiyle genişletildi.
+- Kullanıcıya ürün detaydan ayrılmadan yeni öneri çağırabilmesi için ayrı bir öneri yenile aksiyonu eklendi.

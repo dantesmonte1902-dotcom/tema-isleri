@@ -333,6 +333,25 @@ if ($product->is_on_sale()) {
         ></div>
     </section>
 
+    <section class="arim-single-recommendations" data-arim-recommendations-shell>
+        <div class="arim-single-section-head">
+            <div>
+                <span class="arim-single-highlight-kicker"><?php esc_html_e('Senin ritmine göre', 'arim'); ?></span>
+                <h2><?php esc_html_e('Sana özel ürün önerileri', 'arim'); ?></h2>
+            </div>
+            <button class="arim-single-store-link arim-single-section-action" type="button" data-arim-refresh-recommendations>
+                <?php esc_html_e('Önerileri yenile', 'arim'); ?>
+            </button>
+        </div>
+
+        <div
+            class="arim-single-recommendations-content"
+            data-arim-recommendations-page
+            data-arim-exclude-product-id="<?php echo esc_attr($product_id); ?>"
+            data-arim-hide-empty="true"
+        ></div>
+    </section>
+
     <div class="arim-single-related">
         <?php woocommerce_output_related_products(); ?>
     </div>

@@ -1173,14 +1173,36 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         recommendationsPages.forEach(function (recommendationsPage) {
+            const excludedProductId = String(recommendationsPage.getAttribute('data-arim-exclude-product-id') || '').trim();
+            const hideEmptyState = recommendationsPage.getAttribute('data-arim-hide-empty') === 'true';
+            const shell = recommendationsPage.closest('[data-arim-recommendations-shell]');
+            const scopedItems = excludedProductId
+                ? (Array.isArray(items) ? items : []).filter(function (item) {
+                    return String(item && item.id ? item.id : '').trim() !== excludedProductId;
+                })
+                : (Array.isArray(items) ? items.slice() : []);
+
             recommendationsPage.innerHTML = '';
 
-            if (!Array.isArray(items) || !items.length) {
+            if (!scopedItems.length) {
+                if (shell && hideEmptyState) {
+                    shell.classList.add('is-hidden');
+                    return;
+                }
+
+                if (shell) {
+                    shell.classList.remove('is-hidden');
+                }
+
                 recommendationsPage.appendChild(createRecommendationState(
                     favoriteLabels.recommendationsEmptyTitle || 'Öneri alanı seni bekliyor',
                     favoriteLabels.recommendationsEmptyText || 'Favori ekledikçe veya ürün inceledikçe burada sana daha uygun öneriler gösterilir.'
                 ));
                 return;
+            }
+
+            if (shell) {
+                shell.classList.remove('is-hidden');
             }
 
             const intro = document.createElement('p');
@@ -1191,7 +1213,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const grid = document.createElement('div');
             grid.className = 'arim-favorites-grid arim-favorites-grid-secondary arim-recommendations-grid';
 
-            items.forEach(function (item) {
+            scopedItems.forEach(function (item) {
                 const recommendationItem = {
                     id: String(item.id || ''),
                     title: String(item.title || ''),

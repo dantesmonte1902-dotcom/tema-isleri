@@ -481,7 +481,16 @@
     background: #fff;
 }
 
-.arim-single-recently-viewed.is-hidden {
+.arim-single-recommendations {
+    margin-top: 24px;
+    padding: 24px;
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fff 0%, #f9fbff 100%);
+}
+
+.arim-single-recently-viewed.is-hidden,
+.arim-single-recommendations.is-hidden {
     display: none;
 }
 
@@ -500,7 +509,16 @@
     color: #222;
 }
 
+.arim-single-section-action {
+    border: 0;
+    cursor: pointer;
+}
+
 .arim-single-recently-viewed-content .arim-favorites-secondary-note {
+    margin-bottom: 16px;
+}
+
+.arim-single-recommendations-content .arim-favorites-secondary-note {
     margin-bottom: 16px;
 }
 
