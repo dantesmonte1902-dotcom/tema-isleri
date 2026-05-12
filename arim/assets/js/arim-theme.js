@@ -390,6 +390,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function updateRecentlyViewedCounters() {
+        const recentlyViewedItems = safeParseRecentlyViewed();
+
+        document.querySelectorAll('.arim-recently-viewed-count').forEach(function (counter) {
+            counter.textContent = String(recentlyViewedItems.length);
+        });
+    }
+
     function saveCompare(items) {
         try {
             window.localStorage.setItem(compareStorageKey, JSON.stringify(items));
@@ -893,6 +901,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        updateRecentlyViewedCounters();
         renderRecentlyViewedSection();
         requestRecommendations();
     }
@@ -1483,6 +1492,7 @@ document.addEventListener('DOMContentLoaded', function () {
             updateFavoriteCounters();
             updateCompareButtons();
             updateCompareCounters();
+            updateRecentlyViewedCounters();
             renderFavoritesPage();
             renderCompareSection();
             renderRecentlyViewedSection();
@@ -1496,6 +1506,7 @@ document.addEventListener('DOMContentLoaded', function () {
     updateFavoriteCounters();
     updateCompareButtons();
     updateCompareCounters();
+    updateRecentlyViewedCounters();
     renderFavoritesPage();
     renderCompareSection();
     renderRecentlyViewedSection();

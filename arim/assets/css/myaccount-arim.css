@@ -42,6 +42,13 @@
     margin-top: 16px;
 }
 
+.arim-myaccount-nav-shopping-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+}
+
 .arim-myaccount-nav-summary-item {
     padding: 12px;
     border-radius: 14px;
@@ -66,6 +73,41 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .03em;
+}
+
+.arim-myaccount-nav-shopping-item {
+    display: block;
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.14);
+    color: #fff;
+    text-decoration: none;
+    transition: .25s ease;
+}
+
+.arim-myaccount-nav-shopping-item strong,
+.arim-myaccount-nav-shopping-item span {
+    display: block;
+}
+
+.arim-myaccount-nav-shopping-item strong {
+    margin-bottom: 4px;
+    font-size: 18px;
+    line-height: 1.2;
+}
+
+.arim-myaccount-nav-shopping-item span {
+    color: rgba(255,255,255,0.88);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.5;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+.arim-myaccount-nav-shopping-item:hover {
+    background: rgba(255,255,255,0.24);
+    transform: translateY(-1px);
 }
 
 .arim-myaccount-nav ul {
@@ -2004,6 +2046,10 @@
     }
 
     .arim-myaccount-view-order-support-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .arim-myaccount-nav-shopping-summary {
         grid-template-columns: 1fr;
     }
 

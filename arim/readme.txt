@@ -153,3 +153,8 @@ Geliştirilen Özellikler
  - Siparişlerim ekranına mevcut sayfadaki siparişleri sipariş no, durum, tarih ve özet metin üzerinden daraltılan hızlı arama alanı eklendi.
 - Arama sonucu görünür sipariş sayısı anlık olarak güncellenerek kullanıcının filtre sonrası kaç sipariş kaldığını hızlıca görmesi sağlandı.
 - Sonuç bulunamadığında ayrı bir yönlendirici boş durum kartı gösterilerek yeni arama veya genel filtreye dönüş daha anlaşılır hale getirildi.
+
+21. Hesabım Navigasyon Alışveriş Özeti Geliştirmeleri
+- Hesabım yan menü üst alanına favoriler, karşılaştırma listesi ve son gezilen ürünler için canlı sayaç kartları eklendi.
+- Sayaçlar localStorage akışlarıyla eşzamanlı çalışacak şekilde güncellenerek hesap alanından alışveriş hafızasına daha hızlı dönüş sağlandı.
+- Masaüstü ve mobil görünüm için menü başlığındaki özet kartlar yeniden düzenlenerek hesap navigasyonu daha bilgilendirici hale getirildi.

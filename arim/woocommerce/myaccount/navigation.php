@@ -24,6 +24,21 @@ $nav_items       = isset($navigation_data['items']) && is_array($navigation_data
                     <span><?php esc_html_e('adres', 'arim'); ?></span>
                 </div>
             </div>
+
+            <div class="arim-myaccount-nav-shopping-summary">
+                <a class="arim-myaccount-nav-shopping-item" href="<?php echo esc_url(arim_favorites_url()); ?>">
+                    <strong class="arim-favorites-count">0</strong>
+                    <span><?php esc_html_e('favori ürün', 'arim'); ?></span>
+                </a>
+                <a class="arim-myaccount-nav-shopping-item" href="<?php echo esc_url(arim_favorites_url() . '#compare'); ?>">
+                    <strong class="arim-compare-count">0</strong>
+                    <span><?php esc_html_e('karşılaştırma', 'arim'); ?></span>
+                </a>
+                <a class="arim-myaccount-nav-shopping-item" href="<?php echo esc_url(arim_shop_url()); ?>">
+                    <strong class="arim-recently-viewed-count">0</strong>
+                    <span><?php esc_html_e('son gezilen', 'arim'); ?></span>
+                </a>
+            </div>
         </div>
 
         <ul>
