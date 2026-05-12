@@ -1212,6 +1212,7 @@ function arim_myaccount_dashboard_data() {
         return [
             'stats'        => [],
             'recentOrders' => [],
+            'readiness'    => [],
             'campaigns'    => arim_single_product_campaigns(3),
         ];
     }
@@ -1271,6 +1272,81 @@ function arim_myaccount_dashboard_data() {
         }
     }
 
+    $address_data             = arim_myaccount_address_page_data();
+    $account_data             = arim_myaccount_account_page_data();
+    $account_stats            = isset($account_data['stats']) && is_array($account_data['stats']) ? $account_data['stats'] : [];
+    $address_stats            = isset($address_data['stats']) && is_array($address_data['stats']) ? $address_data['stats'] : [];
+    $account_completion_items = isset($account_data['completionItems']) && is_array($account_data['completionItems']) ? $account_data['completionItems'] : [];
+    $address_completion_items = isset($address_data['completionItems']) && is_array($address_data['completionItems']) ? $address_data['completionItems'] : [];
+    $identity                 = isset($account_data['identity']) && is_array($account_data['identity']) ? $account_data['identity'] : [];
+    $profile_completion       = (int) ($account_stats['profileCompletion'] ?? 0);
+    $address_completion       = (int) ($address_stats['detailCompletion'] ?? 0);
+    $profile_missing_count    = count(array_filter($account_completion_items, static function ($item) {
+        return empty($item['isReady']);
+    }));
+    $address_missing_count    = count(array_filter($address_completion_items, static function ($item) {
+        return empty($item['isReady']);
+    }));
+    $phone_ready              = !empty($identity['phone']);
+
+    $readiness_items = [
+        [
+            'label'    => __('Profil durumu', 'arim'),
+            'value'    => sprintf(
+                __('%s tamamlandı', 'arim'),
+                number_format_i18n($profile_completion)
+            ),
+            'detail'   => $profile_missing_count > 0
+                ? sprintf(
+                    _n('%s alan bekliyor', '%s alan bekliyor', $profile_missing_count, 'arim'),
+                    number_format_i18n($profile_missing_count)
+                )
+                : __('Profil alanların hazır görünüyor.', 'arim'),
+            'url'      => wc_get_account_endpoint_url('edit-account'),
+            'isReady'  => $profile_missing_count < 1,
+        ],
+        [
+            'label'    => __('Adres hazırlığı', 'arim'),
+            'value'    => sprintf(
+                __('%s tamamlandı', 'arim'),
+                number_format_i18n($address_completion)
+            ),
+            'detail'   => $address_missing_count > 0
+                ? sprintf(
+                    _n('%s kayıt eksik', '%s kayıt eksik', $address_missing_count, 'arim'),
+                    number_format_i18n($address_missing_count)
+                )
+                : __('Teslimat ve fatura akışı hazır.', 'arim'),
+            'url'      => wc_get_account_endpoint_url('edit-address'),
+            'isReady'  => $address_missing_count < 1,
+        ],
+        [
+            'label'    => __('İletişim hattı', 'arim'),
+            'value'    => $phone_ready ? wp_strip_all_tags((string) $identity['phone']) : __('Telefon ekle', 'arim'),
+            'detail'   => $phone_ready
+                ? __('Kurye ve destek akışı için ulaşılabilir.', 'arim')
+                : __('Teslimat iletişimini hızlandırmak için telefonunu kaydet.', 'arim'),
+            'url'      => $phone_ready ? wc_get_account_endpoint_url('edit-account') : wc_get_account_endpoint_url('edit-address'),
+            'isReady'  => $phone_ready,
+        ],
+    ];
+
+    $ready_item_count   = count(array_filter($readiness_items, static function ($item) {
+        return !empty($item['isReady']);
+    }));
+    $overall_completion = count($readiness_items) > 0 ? (int) round(($ready_item_count / count($readiness_items)) * 100) : 0;
+
+    $readiness = [
+        'title'   => $overall_completion >= 100
+            ? __('Hesap akışın hazır', 'arim')
+            : __('Hesabını birkaç adımda tamamla', 'arim'),
+        'text'    => $overall_completion >= 100
+            ? __('Profil, adres ve iletişim alanların güncel. Sipariş, teslimat ve destek akışı dashboard üzerinden sorunsuz ilerleyebilir.', 'arim')
+            : __('Eksik profil veya adres alanlarını tamamlayarak teslimat, ödeme ve bildirim süreçlerini daha akıcı hale getirebilirsin.', 'arim'),
+        'percent' => $overall_completion,
+        'items'   => $readiness_items,
+    ];
+
     $recent_order_items = [];
 
     foreach ($recent_orders as $order) {
@@ -1305,6 +1381,7 @@ function arim_myaccount_dashboard_data() {
             'campaignCount' => count(arim_single_product_campaigns(3)),
         ],
         'recentOrders' => $recent_order_items,
+        'readiness'    => $readiness,
         'campaigns'    => arim_single_product_campaigns(3),
     ];
 }

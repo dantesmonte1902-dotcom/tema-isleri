@@ -163,3 +163,8 @@ Geliştirilen Özellikler
 - Adreslerim ekranına teslimat hazırlığını görünür kılan ilerleme çubuğu ve eksik alan kontrol listesi eklendi.
 - Hesap bilgileri ekranına profil doluluk oranını alan bazında özetleyen tamamlanma kartı yerleştirildi.
 - Kullanıcıların eksik alanları doğru ekrana daha hızlı tamamlayabilmesi için hesap ve adres akışları yönlendirici bağlantılarla güçlendirildi.
+
+23. Hesabım Dashboard Hazırlık Merkezi Geliştirmeleri
+- Dashboard ana ekranına profil, adres ve iletişim durumu için yüzdesel hazırlık kartı eklendi.
+- Eksik kalan alanlar tek bakışta görünür hale getirilerek kullanıcıların doğru hesap veya adres ekranına daha hızlı geçmesi sağlandı.
+- Hazırlık paneli mobil ve masaüstü düzenlerde sipariş kartlarıyla uyumlu çalışacak şekilde yeniden stillendirildi.

@@ -5,6 +5,8 @@ $user           = wp_get_current_user();
 $dashboard_data = arim_myaccount_dashboard_data();
 $dashboard_stats = isset($dashboard_data['stats']) && is_array($dashboard_data['stats']) ? $dashboard_data['stats'] : [];
 $recent_orders  = isset($dashboard_data['recentOrders']) && is_array($dashboard_data['recentOrders']) ? $dashboard_data['recentOrders'] : [];
+$readiness      = isset($dashboard_data['readiness']) && is_array($dashboard_data['readiness']) ? $dashboard_data['readiness'] : [];
+$readiness_items = isset($readiness['items']) && is_array($readiness['items']) ? $readiness['items'] : [];
 $campaigns      = isset($dashboard_data['campaigns']) && is_array($dashboard_data['campaigns']) ? $dashboard_data['campaigns'] : [];
 
 $quick_actions = [
@@ -92,6 +94,38 @@ $quick_actions = [
             <strong><?php esc_html_e('7/24', 'arim'); ?></strong>
         </div>
     </div>
+
+    <?php if (!empty($readiness)) : ?>
+        <section class="arim-myaccount-readiness">
+            <div class="arim-myaccount-readiness-head">
+                <div>
+                    <span class="arim-myaccount-panel-kicker"><?php esc_html_e('Hazırlık merkezi', 'arim'); ?></span>
+                    <h3><?php echo esc_html($readiness['title'] ?? __('Hesabını tamamla', 'arim')); ?></h3>
+                    <p><?php echo esc_html($readiness['text'] ?? ''); ?></p>
+                </div>
+                <strong><?php echo esc_html(number_format_i18n((int) ($readiness['percent'] ?? 0))); ?>%</strong>
+            </div>
+
+            <div class="arim-myaccount-readiness-progress" aria-hidden="true">
+                <span style="width: <?php echo esc_attr(max(0, min(100, (int) ($readiness['percent'] ?? 0)))); ?>%;"></span>
+            </div>
+
+            <?php if (!empty($readiness_items)) : ?>
+                <div class="arim-myaccount-readiness-grid">
+                    <?php foreach ($readiness_items as $item) : ?>
+                        <a class="arim-myaccount-readiness-item <?php echo !empty($item['isReady']) ? 'is-ready' : 'is-pending'; ?>" href="<?php echo esc_url($item['url'] ?? wc_get_account_endpoint_url('edit-account')); ?>">
+                            <span class="arim-myaccount-readiness-state"><?php echo !empty($item['isReady']) ? '✓' : '•'; ?></span>
+                            <span class="arim-myaccount-readiness-copy">
+                                <strong><?php echo esc_html($item['label'] ?? ''); ?></strong>
+                                <em><?php echo esc_html($item['value'] ?? ''); ?></em>
+                                <small><?php echo esc_html($item['detail'] ?? ''); ?></small>
+                            </span>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </section>
+    <?php endif; ?>
 
     <div class="arim-myaccount-cards">
         <?php foreach ($quick_actions as $action) : ?>
