@@ -5,6 +5,8 @@ $navigation_data = arim_myaccount_navigation_data();
 $nav_user        = isset($navigation_data['user']) && is_array($navigation_data['user']) ? $navigation_data['user'] : [];
 $nav_summary     = isset($navigation_data['summary']) && is_array($navigation_data['summary']) ? $navigation_data['summary'] : [];
 $nav_items       = isset($navigation_data['items']) && is_array($navigation_data['items']) ? $navigation_data['items'] : [];
+$dashboard_url   = function_exists('arim_account_url') ? arim_account_url() : wc_get_page_permalink('myaccount');
+$shop_url        = function_exists('arim_shop_url') ? arim_shop_url() : home_url('/');
 ?>
 
 <nav class="woocommerce-MyAccount-navigation arim-myaccount-nav">
@@ -57,5 +59,14 @@ $nav_items       = isset($navigation_data['items']) && is_array($navigation_data
                 </li>
             <?php endforeach; ?>
         </ul>
+
+        <div class="arim-myaccount-nav-footer">
+            <a class="arim-myaccount-nav-secondary is-primary" href="<?php echo esc_url($dashboard_url); ?>">
+                <?php esc_html_e('Panele dön', 'arim'); ?>
+            </a>
+            <a class="arim-myaccount-nav-secondary" href="<?php echo esc_url($shop_url); ?>">
+                <?php esc_html_e('Alışverişe devam et', 'arim'); ?>
+            </a>
+        </div>
     </div>
 </nav>

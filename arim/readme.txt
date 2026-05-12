@@ -193,3 +193,8 @@ Geliştirilen Özellikler
 - My Account masaüstü düzeninde WooCommerce’in varsayılan float ve genişlik kuralları nötrlenerek özel grid yerleşimin bozulması engellendi.
 - Sol navigasyon alanı daha kararlı bir genişlikte ve sticky davranışla güncellenerek büyük ekranlarda panel akışı toparlandı.
 - My Account ve WooCommerce stilleri dosya değişim zamanına göre sürümlenerek masaüstü testlerinde eski CSS önbelleği nedeniyle oluşan karışık görünüm azaltıldı.
+
+29. Hesabım Deneyimi Tam Arayüz Yenilemesi
+- My Account kabuğu masaüstünde kartlı, yumuşak geçişli ve tema diliyle uyumlu yeni bir yüzey düzenine taşınarak navigasyon ile içerik alanı daha net ayrıştırıldı.
+- Notice, form, select2, tablo ve yardımcı aksiyon bileşenleri ortak bir görsel sistem altında birleştirilerek hesap, adres ve sipariş ekranları daha tutarlı hale getirildi.
+- Sol navigasyona hızlı dönüş ve alışveriş devamı aksiyonları eklenerek kullanıcıların hesap içi dolaşımı daha akıcı ve modern bir yapıya kavuştu.
