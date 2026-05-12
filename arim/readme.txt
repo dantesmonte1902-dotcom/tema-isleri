@@ -203,3 +203,8 @@ Geliştirilen Özellikler
 - Shop/category arşivine genel görünüm, öne çıkanlar, indirimdekiler ve yeni gelenler için hızlı koleksiyon kartları eklenerek kullanıcıların filtre formuna girmeden doğru vitrine geçmesi sağlandı.
 - Sidebar alanı popüler marka rozetleriyle genişletilerek kategori filtresinden sonra marka bazlı ikinci bir hızlı keşif katmanı oluşturuldu.
 - Boş sonuç durumuna genel vitrine, öne çıkan ürünlere ve indirim rotasına dönen net CTA bağlantıları eklenerek listeleme tıkanmalarında yönlendirme deneyimi güçlendirildi.
+
+31. Ürün Detay Satın Alma Özeti Geliştirmeleri
+- Ürün detay ekranına fiyat avantajı, aktif kampanya sayısı ve stok durumunu tek bakışta özetleyen satın alma kartları eklendi.
+- Sepete ekleme alanının altına sipariş onayı, hazırlık ve teslimat akışını anlatan kısa bir yol haritası yerleştirilerek süreç görünürlüğü artırıldı.
+- Yeni özet blokları mevcut teslimat, mağaza ve kampanya kartlarıyla görsel uyum korunacak şekilde ürün detay düzenine entegre edildi.

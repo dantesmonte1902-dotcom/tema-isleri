@@ -23,12 +23,42 @@ $regular_price_value = (float) $product->get_regular_price();
 $store_name = arim_product_store_name($product_id);
 $delivery_details = arim_single_product_delivery_details($product);
 $campaigns = arim_single_product_campaigns(3);
+$campaign_count = count($campaigns);
 $store_rating = $rating > 0 ? sprintf(__('%s / 5 mağaza puanı', 'arim'), number_format((float) $rating, 1)) : __('Henüz değerlendirilmedi', 'arim');
 $store_review_count = max(0, (int) $review_count);
 $store_review_text = $store_review_count > 0
     ? sprintf(_n('%s değerlendirme', '%s değerlendirme', $store_review_count, 'arim'), number_format_i18n($store_review_count))
     : __('İlk yorumu sen bırak', 'arim');
 $store_shipping_text = $product->is_in_stock() ? __('Bugün kargoda fırsatı', 'arim') : __('Siparişe göre hazırlanır', 'arim');
+$stock_state_text = $product->is_in_stock() ? __('Stokta var', 'arim') : __('Stokta yok', 'arim');
+$discount_amount_value = max(0, $regular_price_value - $current_price_value);
+$discount_percent = ($regular_price_value > 0 && $discount_amount_value > 0)
+    ? (int) round(($discount_amount_value / $regular_price_value) * 100)
+    : 0;
+$discount_amount_text = $discount_amount_value > 0 ? wp_strip_all_tags(wc_price($discount_amount_value)) : '';
+$price_insight_title = $discount_amount_value > 0
+    ? sprintf(__('Sepette yaklaşık %s tasarruf', 'arim'), '%' . $discount_percent)
+    : __('Güncel mağaza fiyatı', 'arim');
+$price_insight_note = $discount_amount_value > 0
+    ? sprintf(__('Bu üründe yaklaşık %s avantaj öne çıkıyor.', 'arim'), $discount_amount_text)
+    : __('Fiyat düzenli olarak mağaza vitriniyle senkronize edilir.', 'arim');
+
+$purchase_journey = [
+    [
+        'title' => __('Sipariş onayı', 'arim'),
+        'text'  => __('Ödeme tamamlandığında siparişin hızla işleme alınır.', 'arim'),
+    ],
+    [
+        'title' => __('Hazırlık süreci', 'arim'),
+        'text'  => $product->is_in_stock()
+            ? __('Ürün stoktan hazırlanır ve kargo etiketine düşer.', 'arim')
+            : __('Ürün hazırlanınca öncelikli gönderim akışına alınır.', 'arim'),
+    ],
+    [
+        'title' => __('Teslimat takibi', 'arim'),
+        'text'  => sprintf(__('Tahmini teslimat günü: %s', 'arim'), $delivery_details['date']),
+    ],
+];
 
 $product_badge = '';
 if ($product->is_on_sale()) {
@@ -91,6 +121,29 @@ if ($product->is_on_sale()) {
             <div class="arim-single-price">
                 <?php echo wp_kses_post($price_html); ?>
             </div>
+
+            <section class="arim-single-price-insights" aria-label="<?php esc_attr_e('Fiyat ve satın alma özeti', 'arim'); ?>">
+                <article class="arim-single-price-insight arim-single-price-insight-primary">
+                    <strong><?php echo esc_html($price_insight_title); ?></strong>
+                    <span><?php echo esc_html($price_insight_note); ?></span>
+                </article>
+                <article class="arim-single-price-insight">
+                    <strong>
+                        <?php
+                        echo esc_html(
+                            $campaign_count > 0
+                                ? sprintf(_n('%s kampanya', '%s kampanya', $campaign_count, 'arim'), number_format_i18n($campaign_count))
+                                : __('Ek kampanya yok', 'arim')
+                        );
+                        ?>
+                    </strong>
+                    <span><?php esc_html_e('Sepet adımında aktif avantajlar yeniden hesaplanır.', 'arim'); ?></span>
+                </article>
+                <article class="arim-single-price-insight">
+                    <strong><?php echo esc_html($stock_state_text); ?></strong>
+                    <span><?php echo esc_html($store_shipping_text); ?></span>
+                </article>
+            </section>
 
             <div class="arim-single-favorite-wrap">
                 <button
@@ -191,10 +244,29 @@ if ($product->is_on_sale()) {
                 <?php woocommerce_template_single_add_to_cart(); ?>
             </div>
 
+            <section class="arim-single-purchase-guide">
+                <div class="arim-single-purchase-guide-head">
+                    <span class="arim-single-highlight-kicker"><?php esc_html_e('Satın alma akışı', 'arim'); ?></span>
+                    <h2><?php esc_html_e('Siparişten teslimata kısa yol haritası', 'arim'); ?></h2>
+                </div>
+
+                <div class="arim-single-purchase-steps">
+                    <?php foreach ($purchase_journey as $step_index => $step) : ?>
+                        <article class="arim-single-purchase-step">
+                            <span class="arim-single-purchase-step-number"><?php echo esc_html($step_index + 1); ?></span>
+                            <div>
+                                <strong><?php echo esc_html($step['title']); ?></strong>
+                                <span><?php echo esc_html($step['text']); ?></span>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+
             <div class="arim-single-meta-box">
                 <div class="arim-single-meta-item">
                     <strong><?php esc_html_e('Stok Durumu:', 'arim'); ?></strong>
-                    <span><?php echo $product->is_in_stock() ? esc_html__('Stokta var', 'arim') : esc_html__('Stokta yok', 'arim'); ?></span>
+                    <span><?php echo esc_html($stock_state_text); ?></span>
                 </div>
 
                 <?php if ($product->get_sku()) : ?>

@@ -110,6 +110,43 @@
     margin-bottom: 22px;
 }
 
+.arim-single-price-insights {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.arim-single-price-insight {
+    padding: 14px 16px;
+    border: 1px solid #ececec;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.arim-single-price-insight-primary {
+    background: linear-gradient(135deg, #fff5eb 0%, #fff 100%);
+    border-color: #f5ddc8;
+}
+
+.arim-single-price-insight strong,
+.arim-single-price-insight span {
+    display: block;
+}
+
+.arim-single-price-insight strong {
+    margin-bottom: 6px;
+    color: #222;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.arim-single-price-insight span {
+    color: #666;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
 .arim-single-confidence-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -330,6 +367,71 @@
     border-color: #e56d0d !important;
 }
 
+.arim-single-purchase-guide {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fff 0%, #f9fbff 100%);
+}
+
+.arim-single-purchase-guide-head {
+    margin-bottom: 16px;
+}
+
+.arim-single-purchase-guide-head h2 {
+    margin: 0;
+    color: #222;
+    font-size: 22px;
+    line-height: 1.35;
+}
+
+.arim-single-purchase-steps {
+    display: grid;
+    gap: 12px;
+}
+
+.arim-single-purchase-step {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #e7eefb;
+}
+
+.arim-single-purchase-step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: #3454d1;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.arim-single-purchase-step strong,
+.arim-single-purchase-step span {
+    display: block;
+}
+
+.arim-single-purchase-step strong {
+    margin-bottom: 6px;
+    color: #222;
+    font-size: 14px;
+}
+
+.arim-single-purchase-step span {
+    color: #5f5f5f;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
 .arim-single-meta-box {
     border-top: 1px solid #eee;
     padding-top: 18px;
@@ -433,6 +535,7 @@
         grid-template-columns: 1fr;
     }
 
+    .arim-single-price-insights,
     .arim-single-confidence-grid,
     .arim-single-coupon-grid {
         grid-template-columns: 1fr;
@@ -469,8 +572,17 @@
         padding: 18px;
     }
 
+    .arim-single-purchase-guide,
+    .arim-single-purchase-step {
+        padding: 16px;
+    }
+
     .arim-single-coupon-head {
         flex-direction: column;
+    }
+
+    .arim-single-purchase-guide-head h2 {
+        font-size: 20px;
     }
 
     .arim-single-cart-box form.cart {
