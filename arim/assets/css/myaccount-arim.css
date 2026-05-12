@@ -85,12 +85,19 @@
     transition: .25s ease;
 }
 
-.arim-myaccount-nav-shopping-item strong,
+.arim-myaccount-nav-shopping-item .arim-counter-badge,
 .arim-myaccount-nav-shopping-item span {
     display: block;
 }
 
-.arim-myaccount-nav-shopping-item strong {
+.arim-myaccount-nav-shopping-item .arim-counter-badge {
+    width: fit-content;
+    min-width: 0;
+    height: auto;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #fff;
     margin-bottom: 4px;
     font-size: 18px;
     line-height: 1.2;
