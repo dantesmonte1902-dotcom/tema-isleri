@@ -17,6 +17,7 @@ $items      = isset($order_data['items']) && is_array($order_data['items']) ? $o
 $highlights = isset($order_data['highlights']) && is_array($order_data['highlights']) ? $order_data['highlights'] : [];
 $timeline   = isset($order_data['timeline']) && is_array($order_data['timeline']) ? $order_data['timeline'] : [];
 $support    = isset($order_data['support']) && is_array($order_data['support']) ? $order_data['support'] : [];
+$support_links = isset($order_data['supportLinks']) && is_array($order_data['supportLinks']) ? $order_data['supportLinks'] : [];
 $contacts   = isset($order_data['contacts']) && is_array($order_data['contacts']) ? $order_data['contacts'] : [];
 $actions    = isset($order_data['actions']) && is_array($order_data['actions']) ? $order_data['actions'] : [];
 $campaigns  = isset($order_data['campaigns']) && is_array($order_data['campaigns']) ? $order_data['campaigns'] : [];
@@ -88,6 +89,34 @@ $links      = isset($order_data['links']) && is_array($order_data['links']) ? $o
                                     <?php endif; ?>
                                 </h4>
                                 <span><?php echo esc_html($item['quantity'] ?? ''); ?></span>
+
+                                <div class="arim-myaccount-view-order-item-actions">
+                                    <?php if (!empty($item['actions']) && is_array($item['actions'])) : ?>
+                                        <?php foreach ($item['actions'] as $item_action) : ?>
+                                            <a class="arim-myaccount-orders-link" href="<?php echo esc_url($item_action['url'] ?? ''); ?>">
+                                                <?php echo esc_html($item_action['label'] ?? ''); ?>
+                                            </a>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($item['productId'])) : ?>
+                                        <button
+                                            class="arim-favorite-btn arim-myaccount-item-favorite"
+                                            type="button"
+                                            aria-label="<?php esc_attr_e('Favorilere ekle', 'arim'); ?>"
+                                            data-product-id="<?php echo esc_attr($item['productId']); ?>"
+                                            data-product-title="<?php echo esc_attr($item['name'] ?? ''); ?>"
+                                            data-product-price="<?php echo esc_attr($item['price'] ?? ''); ?>"
+                                            data-product-image=""
+                                            data-product-url="<?php echo esc_url($item['url'] ?? ''); ?>"
+                                            data-product-brand="<?php echo esc_attr($item['brand'] ?? __('ARIM', 'arim')); ?>"
+                                            data-product-store="<?php echo esc_attr(__('ARIM Store', 'arim')); ?>"
+                                            data-product-badge=""
+                                            data-product-current-price=""
+                                            data-product-regular-price=""
+                                        >♡</button>
+                                    <?php endif; ?>
+                                </div>
                             </div>
 
                             <strong class="arim-myaccount-view-order-item-total"><?php echo esc_html($item['total'] ?? ''); ?></strong>
@@ -197,6 +226,16 @@ $links      = isset($order_data['links']) && is_array($order_data['links']) ? $o
                                     <span><?php echo esc_html($meta['label'] ?? ''); ?></span>
                                     <strong><?php echo esc_html($meta['value'] ?? '—'); ?></strong>
                                 </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($support_links)) : ?>
+                        <div class="arim-myaccount-view-order-support-links">
+                            <?php foreach ($support_links as $support_link) : ?>
+                                <a class="arim-myaccount-orders-link" href="<?php echo esc_url($support_link['url'] ?? ''); ?>">
+                                    <?php echo esc_html($support_link['label'] ?? ''); ?>
+                                </a>
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>

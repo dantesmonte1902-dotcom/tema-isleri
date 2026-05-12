@@ -138,3 +138,8 @@ Geliştirilen Özellikler
 - Sipariş listesine tümü, aktif, tamamlanan ve sorunlu akışları öne çıkaran filtre rozetleri eklendi.
 - Seçilen filtreye göre sipariş tablosu daraltılarak ilgili siparişleri daha hızlı tarama imkanı sağlandı.
 - Sayfalama bağlantıları seçilen filtreyi koruyacak şekilde güncellendi ve boş filtre sonuçları için ayrı yönlendirici durum kartı eklendi.
+
+18. Sipariş Detay Sayfası Hızlı Aksiyon Geliştirmeleri
+- Sipariş içeriğindeki ürün kartlarına ürün inceleme, yeniden alışverişe dönüş ve favoriye ekleme için hızlı aksiyon satırı eklendi.
+- Sipariş rehberi kartı favoriler ve adres yönetimi bağlantılarıyla zenginleştirilerek sipariş sonrası hesap akışına daha hızlı geçiş sağlandı.
+- Ürün bazlı aksiyonlar sipariş geçmişinden mağazaya geri dönmeyi kolaylaştıracak şekilde sipariş detay ekranına taşındı.

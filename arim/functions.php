@@ -1554,12 +1554,15 @@ function arim_myaccount_view_order_data($order) {
             'highlights' => [],
             'timeline'   => [],
             'support'    => [],
+            'supportLinks' => [],
             'contacts'   => [],
             'actions'   => [],
             'campaigns' => arim_single_product_campaigns(2),
             'links'     => [
                 'orders'  => function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('orders') : arim_account_url(),
                 'account' => function_exists('wc_get_account_endpoint_url') ? wc_get_account_endpoint_url('edit-account') : arim_account_url(),
+                'address' => function_exists('wc_get_endpoint_url') ? wc_get_endpoint_url('edit-address', 'billing') : arim_account_url(),
+                'favorites' => arim_favorites_url(),
                 'shop'    => arim_shop_url(),
             ],
         ];
@@ -1721,15 +1724,49 @@ function arim_myaccount_view_order_data($order) {
         }
 
         $product = $item->get_product();
+        $product_id = $product instanceof WC_Product ? $product->get_id() : 0;
+        $product_url = ($product instanceof WC_Product && $product->is_visible()) ? $product->get_permalink() : '';
+        $brand = $product_id > 0 ? get_post_meta($product_id, 'brand', true) : '';
+
+        if (!$brand && $product_id > 0) {
+            $terms = get_the_terms($product_id, 'product_brand');
+
+            if (!empty($terms) && !is_wp_error($terms)) {
+                $brand = $terms[0]->name;
+            }
+        }
+
+        $item_actions = [];
+
+        if ($product_url !== '') {
+            $item_actions[] = [
+                'type'  => 'link',
+                'label' => __('Ürünü incele', 'arim'),
+                'url'   => $product_url,
+            ];
+        }
+
+        if ($product instanceof WC_Product && $product->is_purchasable() && $product->is_in_stock()) {
+            $item_actions[] = [
+                'type'  => 'link',
+                'label' => wp_strip_all_tags($product->add_to_cart_text()),
+                'url'   => $product->add_to_cart_url(),
+            ];
+        }
+
         $items[] = [
+            'productId'  => $product_id,
             'name'      => $item->get_name(),
             'quantity'  => sprintf(
                 _n('%s adet', '%s adet', (int) $item->get_quantity(), 'arim'),
                 number_format_i18n((int) $item->get_quantity())
             ),
             'total'     => wp_strip_all_tags($order->get_formatted_line_subtotal($item)),
-            'url'       => ($product instanceof WC_Product && $product->is_visible()) ? $product->get_permalink() : '',
+            'url'       => $product_url,
             'thumbnail' => $product instanceof WC_Product ? $product->get_image('woocommerce_thumbnail') : wc_placeholder_img('woocommerce_thumbnail'),
+            'brand'     => $brand ? $brand : __('ARIM', 'arim'),
+            'price'     => $product instanceof WC_Product ? arim_product_price_text($product) : wp_strip_all_tags($order->get_formatted_line_subtotal($item)),
+            'actions'   => $item_actions,
         ];
     }
 
@@ -1761,6 +1798,17 @@ function arim_myaccount_view_order_data($order) {
         ];
     }
 
+    $support_links = [
+        [
+            'label' => __('Favorilerime git', 'arim'),
+            'url'   => arim_favorites_url(),
+        ],
+        [
+            'label' => __('Adreslerimi güncelle', 'arim'),
+            'url'   => function_exists('wc_get_endpoint_url') ? wc_get_endpoint_url('edit-address', 'billing') : arim_account_url(),
+        ],
+    ];
+
     return [
         'hero' => [
             'title' => sprintf(__('Sipariş #%s', 'arim'), $order->get_order_number()),
@@ -1781,6 +1829,7 @@ function arim_myaccount_view_order_data($order) {
             'meta'  => $support_meta,
             'state' => $support_state,
         ],
+        'supportLinks' => $support_links,
         'contacts' => $contacts,
         'actions' => wc_get_account_orders_actions($order),
         'campaigns' => arim_single_product_campaigns(2),
@@ -1794,6 +1843,8 @@ function arim_myaccount_view_order_data($order) {
         'links' => [
             'orders'  => wc_get_account_endpoint_url('orders'),
             'account' => wc_get_account_endpoint_url('edit-account'),
+            'address' => function_exists('wc_get_endpoint_url') ? wc_get_endpoint_url('edit-address', 'billing') : arim_account_url(),
+            'favorites' => arim_favorites_url(),
             'shop'    => arim_shop_url(),
         ],
     ];
