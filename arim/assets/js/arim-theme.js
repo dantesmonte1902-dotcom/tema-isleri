@@ -183,8 +183,19 @@ document.addEventListener('DOMContentLoaded', function () {
             currentIndex = 0;
         }
 
+        function syncClosedLightboxState() {
+            if (!lightbox) {
+                return;
+            }
+
+            lightbox.hidden = true;
+            lightbox.classList.remove('is-open');
+            lightbox.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('arim-gallery-lightbox-open');
+        }
+
         function isLightboxOpen() {
-            return Boolean(lightbox && !lightbox.hidden);
+            return Boolean(lightbox && lightbox.classList.contains('is-open') && !lightbox.hidden);
         }
 
         function handleGalleryKeydown(event) {
@@ -303,6 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
             lastTriggerButton = triggerButton || document.activeElement;
             updateGallery(currentIndex);
             lightbox.hidden = false;
+            lightbox.classList.add('is-open');
             lightbox.removeAttribute('aria-hidden');
             document.body.classList.add('arim-gallery-lightbox-open');
             bindKeyListener();
@@ -319,9 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            lightbox.hidden = true;
-            lightbox.setAttribute('aria-hidden', 'true');
-            document.body.classList.remove('arim-gallery-lightbox-open');
+            syncClosedLightboxState();
             unbindKeyListener();
 
             if (lastTriggerButton && typeof lastTriggerButton.focus === 'function') {
@@ -429,6 +439,7 @@ document.addEventListener('DOMContentLoaded', function () {
             lightboxImage.setAttribute('draggable', 'false');
         }
 
+        syncClosedLightboxState();
         bindSwipeNavigation(mainImage);
         bindSwipeNavigation(lightboxImage);
 

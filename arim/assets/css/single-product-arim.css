@@ -276,15 +276,25 @@
     position: fixed;
     inset: 0;
     z-index: 9999;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     padding: 24px;
     background: rgba(3, 7, 18, 0.84);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .arim-single-gallery-lightbox[hidden] {
     display: none !important;
+}
+
+.arim-single-gallery-lightbox.is-open {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
 .arim-single-gallery-dialog {
