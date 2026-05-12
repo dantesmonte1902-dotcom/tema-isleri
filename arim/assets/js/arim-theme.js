@@ -173,9 +173,45 @@ document.addEventListener('DOMContentLoaded', function () {
         let currentIndex = thumbs.findIndex(function (thumb) {
             return thumb.classList.contains('is-active');
         });
+        let isKeyListenerBound = false;
 
         if (currentIndex < 0) {
             currentIndex = 0;
+        }
+
+        function handleGalleryKeydown(event) {
+            if (event.key === 'Escape') {
+                closeLightbox();
+                return;
+            }
+
+            if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                updateGallery(currentIndex - 1);
+            }
+
+            if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                updateGallery(currentIndex + 1);
+            }
+        }
+
+        function bindKeyListener() {
+            if (isKeyListenerBound) {
+                return;
+            }
+
+            document.addEventListener('keydown', handleGalleryKeydown);
+            isKeyListenerBound = true;
+        }
+
+        function unbindKeyListener() {
+            if (!isKeyListenerBound) {
+                return;
+            }
+
+            document.removeEventListener('keydown', handleGalleryKeydown);
+            isKeyListenerBound = false;
         }
 
         function syncThumbStates() {
@@ -217,6 +253,7 @@ document.addEventListener('DOMContentLoaded', function () {
             updateGallery(currentIndex);
             lightbox.hidden = false;
             document.body.classList.add('arim-gallery-open');
+            bindKeyListener();
 
             if (closeButton) {
                 closeButton.focus();
@@ -230,6 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             lightbox.hidden = true;
             document.body.classList.remove('arim-gallery-open');
+            unbindKeyListener();
         }
 
         thumbs.forEach(function (thumb, index) {
@@ -269,29 +307,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         }
-
-        document.addEventListener('keydown', function (event) {
-            if (lightbox && !lightbox.hidden && event.key === 'Escape') {
-                closeLightbox();
-                return;
-            }
-
-            const canHandleArrows = lightbox && !lightbox.hidden;
-
-            if (!canHandleArrows) {
-                return;
-            }
-
-            if (event.key === 'ArrowLeft') {
-                event.preventDefault();
-                updateGallery(currentIndex - 1);
-            }
-
-            if (event.key === 'ArrowRight') {
-                event.preventDefault();
-                updateGallery(currentIndex + 1);
-            }
-        });
 
         updateGallery(currentIndex);
     }
