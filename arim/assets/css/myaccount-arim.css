@@ -884,6 +884,13 @@
     background: #fff;
 }
 
+.arim-myaccount-orders-search-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1 1 520px;
+}
+
 .arim-myaccount-orders-search-field {
     flex: 1 1 320px;
 }
@@ -900,6 +907,27 @@
 }
 
 .arim-myaccount-orders-search-field input:focus {
+    outline: none;
+    border-color: #f27a1a;
+    background: #fff;
+}
+
+.arim-myaccount-orders-date-filter {
+    flex: 0 0 180px;
+}
+
+.arim-myaccount-orders-date-filter select {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 0 40px 0 14px;
+    color: #222;
+    font-size: 14px;
+    background: #fafafa;
+}
+
+.arim-myaccount-orders-date-filter select:focus {
     outline: none;
     border-color: #f27a1a;
     background: #fff;
@@ -2510,6 +2538,7 @@
     .arim-myaccount-panel-head,
     .arim-myaccount-order-top,
     .arim-myaccount-order-bottom,
+    .arim-myaccount-orders-search-controls,
     .arim-myaccount-orders-search,
     .arim-myaccount-orders-filters,
     .arim-myaccount-orders-actions,
@@ -2529,6 +2558,11 @@
 
     .arim-myaccount-orders-search-meta {
         min-width: 0;
+    }
+
+    .arim-myaccount-orders-date-filter {
+        width: 100%;
+        flex-basis: auto;
     }
 
     .arim-myaccount-nav-summary {

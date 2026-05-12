@@ -72,16 +72,29 @@ if ($has_orders) : ?>
 
         <?php if (!empty($filtered_orders)) : ?>
             <div class="arim-myaccount-orders-search" data-arim-orders-search>
-                <div class="arim-myaccount-orders-search-field">
-                    <label class="screen-reader-text" for="arim-myaccount-orders-search-input"><?php esc_html_e('Siparişlerde ara', 'arim'); ?></label>
-                    <input
-                        id="arim-myaccount-orders-search-input"
-                        type="search"
-                        value=""
-                        placeholder="<?php esc_attr_e('Sipariş no, ürün adedi veya durum ara', 'arim'); ?>"
-                        data-arim-orders-search-input
-                    >
+                <div class="arim-myaccount-orders-search-controls">
+                    <div class="arim-myaccount-orders-search-field">
+                        <label class="screen-reader-text" for="arim-myaccount-orders-search-input"><?php esc_html_e('Siparişlerde ara', 'arim'); ?></label>
+                        <input
+                            id="arim-myaccount-orders-search-input"
+                            type="search"
+                            value=""
+                            placeholder="<?php esc_attr_e('Sipariş no, ürün adedi veya durum ara', 'arim'); ?>"
+                            data-arim-orders-search-input
+                        >
+                    </div>
+
+                    <div class="arim-myaccount-orders-date-filter">
+                        <label class="screen-reader-text" for="arim-myaccount-orders-date-range"><?php esc_html_e('Sipariş tarih aralığı', 'arim'); ?></label>
+                        <select id="arim-myaccount-orders-date-range" data-arim-orders-date-range>
+                            <option value="all"><?php esc_html_e('Tüm tarihler', 'arim'); ?></option>
+                            <option value="30"><?php esc_html_e('Son 30 gün', 'arim'); ?></option>
+                            <option value="180"><?php esc_html_e('Son 6 ay', 'arim'); ?></option>
+                            <option value="365"><?php esc_html_e('Son 12 ay', 'arim'); ?></option>
+                        </select>
+                    </div>
                 </div>
+
                 <div class="arim-myaccount-orders-search-meta">
                     <strong data-arim-orders-search-count><?php echo esc_html(number_format_i18n(count($filtered_orders))); ?></strong>
                     <span data-arim-orders-search-label><?php esc_html_e('sipariş bu sayfada listeleniyor', 'arim'); ?></span>
@@ -152,6 +165,7 @@ if ($has_orders) : ?>
                             <?php
                             $item_count  = $order->get_item_count() - $order->get_item_count_refunded();
                             $status_note = arim_myaccount_order_status_note($order);
+                            $order_timestamp = $order->get_date_created() ? $order->get_date_created()->getTimestamp() : 0;
                             $searchable_text = implode(' ', array_filter([
                                 '#' . $order->get_order_number(),
                                 $order->get_date_created() ? wc_format_datetime($order->get_date_created()) : '',
@@ -167,6 +181,7 @@ if ($has_orders) : ?>
                             <tr
                                 class="woocommerce-orders-table__row woocommerce-orders-table__row--status-<?php echo esc_attr($order->get_status()); ?> order"
                                 data-arim-order-search-row
+                                data-arim-order-date="<?php echo esc_attr((string) $order_timestamp); ?>"
                                 data-arim-order-search-text="<?php echo esc_attr(wp_strip_all_tags($searchable_text)); ?>"
                             >
                                 <?php foreach (wc_get_account_orders_columns() as $column_id => $column_name) : ?>

@@ -1286,6 +1286,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const input = searchWrap.querySelector('[data-arim-orders-search-input]');
+        const dateRange = searchWrap.querySelector('[data-arim-orders-date-range]');
         const countTarget = searchWrap.querySelector('[data-arim-orders-search-count]');
         const labelTarget = searchWrap.querySelector('[data-arim-orders-search-label]');
         const emptyState = document.querySelector('[data-arim-orders-search-empty]');
@@ -1304,11 +1305,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function updateSearchResults() {
             const query = normalizeSearchText(input.value);
+            const selectedRange = dateRange ? String(dateRange.value || 'all') : 'all';
+            const rangeDays = parseInt(selectedRange, 10);
+            const rangeThreshold = Number.isFinite(rangeDays) ? Date.now() - (rangeDays * 24 * 60 * 60 * 1000) : 0;
             let visibleCount = 0;
 
             rows.forEach(function (row) {
                 const searchText = normalizeSearchText(row.getAttribute('data-arim-order-search-text') || row.textContent);
-                const isVisible = !query || searchText.indexOf(query) >= 0;
+                const rowTimestamp = parseInt(row.getAttribute('data-arim-order-date') || '0', 10) * 1000;
+                const matchesQuery = !query || searchText.indexOf(query) >= 0;
+                const matchesDate = !rangeThreshold || (rowTimestamp > 0 && rowTimestamp >= rangeThreshold);
+                const isVisible = matchesQuery && matchesDate;
 
                 row.hidden = !isVisible;
                 if (isVisible) {
@@ -1321,8 +1328,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (labelTarget) {
-                labelTarget.textContent = query
-                    ? 'sipariş aramana göre görünür'
+                labelTarget.textContent = (query || selectedRange !== 'all')
+                    ? 'sipariş seçtiğin filtrelere göre görünür'
                     : 'sipariş bu sayfada listeleniyor';
             }
 
@@ -1332,6 +1339,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         input.addEventListener('input', updateSearchResults);
+        if (dateRange) {
+            dateRange.addEventListener('change', updateSearchResults);
+        }
         updateSearchResults();
     }
 

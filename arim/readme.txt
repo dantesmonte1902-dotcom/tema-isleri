@@ -178,3 +178,8 @@ Geliştirilen Özellikler
 - Sipariş detay ekranına yeniden siparişe uygun ürün için hızlı geri dönüş kartı eklenerek önceki alışverişe tek adımda dönme akışı güçlendirildi.
 - Siparişteki ürünlerden türetilen benzer ürün önerileri aynı sayfada görünür hale getirilerek alışverişe devam etme senaryosu desteklendi.
 - Yeni öneri alanı mevcut sipariş özeti ve destek kartlarıyla uyumlu, mobilde tek sütuna düşen ek bir keşif bölümü olarak düzenlendi.
+
+26. Siparişlerim Tarih Aralığı Filtreleme Geliştirmeleri
+- Siparişlerim arama alanına tüm tarihler, son 30 gün, son 6 ay ve son 12 ay seçenekleri eklenerek aynı sayfada daha hızlı sipariş daraltma akışı sağlandı.
+- Metin araması ile tarih filtresi birlikte çalışacak şekilde güncellenerek görünür sipariş sayısı ve boş durum mesajı seçilen filtrelere göre anlık yenilendi.
+- Tarih seçici mobil ve masaüstü sipariş arama bloğuyla uyumlu olacak şekilde yeniden düzenlenerek mevcut filtre deneyimine ek yük getirmeden kullanıma sunuldu.
