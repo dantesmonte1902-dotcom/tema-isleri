@@ -52,7 +52,7 @@ $checkout_url = function_exists('arim_checkout_url') ? arim_checkout_url() : hom
                 <div class="arim-footer-grid">
                     <div class="arim-footer-col arim-footer-brand">
                         <h3>ARIM</h3>
-                        <p><?php esc_html_e('Trendyol ilhamlı modern WooCommerce temasıyla hazırlanmış premium alışveriş deneyimi.', 'arim'); ?></p>
+                        <p><?php esc_html_e('Trendyol ilhamlı modern WooCommerce temasıyla hazırlanmış akıcı alışveriş deneyimi.', 'arim'); ?></p>
 
                         <div class="arim-footer-socials">
                             <a href="#" aria-label="Instagram">Instagram</a>
