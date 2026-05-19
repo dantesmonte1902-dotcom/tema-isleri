@@ -3510,7 +3510,9 @@ function arim_map_product_category_request($query_vars) {
     $term_path_parts[] = $term->slug;
     $term_path         = implode('/', $term_path_parts);
 
-    if ($term_path !== $request_path) {
+    $matches_category_request = $request_path === $term->slug || $term_path === $request_path;
+
+    if (!$matches_category_request) {
         return $query_vars;
     }
 
