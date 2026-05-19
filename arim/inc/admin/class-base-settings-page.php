@@ -80,13 +80,13 @@ abstract class ARIM_Base_Settings_Page {
         echo '<p>' . esc_html__('Bu bölüm için ayarlar hazırlanıyor.', 'arim') . '</p>';
     }
 
-    protected function get_defaults() {
+    public static function get_defaults() {
         return [];
     }
 
     protected function get_option_value($key, $default = '') {
         $options = $this->option_name ? get_option($this->option_name, []) : [];
-        $options = wp_parse_args(is_array($options) ? $options : [], $this->get_defaults());
+        $options = wp_parse_args(is_array($options) ? $options : [], static::get_defaults());
 
         return isset($options[$key]) ? $options[$key] : $default;
     }
