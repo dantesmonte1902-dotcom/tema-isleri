@@ -3453,6 +3453,75 @@ function arim_cross_sells_columns($columns) {
 }
 add_filter('woocommerce_cross_sells_columns', 'arim_cross_sells_columns');
 
+/**
+ * Kök veya hiyerarşik kategori slug isteklerini WooCommerce product_cat arşivine yönlendirir.
+ *
+ * @param array<string, mixed> $query_vars
+ * @return array<string, mixed>
+ */
+function arim_map_product_category_request($query_vars) {
+    if (is_admin() || !is_array($query_vars)) {
+        return $query_vars;
+    }
+
+    if (!empty($query_vars['taxonomy']) || !empty($query_vars['product_cat']) || !empty($query_vars['post_type'])) {
+        return $query_vars;
+    }
+
+    $request_path = '';
+
+    if (!empty($query_vars['pagename']) && is_string($query_vars['pagename'])) {
+        $request_path = trim($query_vars['pagename'], '/');
+    } elseif (!empty($query_vars['name']) && is_string($query_vars['name'])) {
+        $request_path = trim($query_vars['name'], '/');
+    }
+
+    if ($request_path === '') {
+        return $query_vars;
+    }
+
+    $existing_content = get_page_by_path($request_path, OBJECT, array_diff(get_post_types(['public' => true]), ['product']));
+    if ($existing_content instanceof WP_Post) {
+        return $query_vars;
+    }
+
+    $path_segments = array_values(array_filter(explode('/', $request_path)));
+    $term_slug     = end($path_segments);
+
+    if (!$term_slug) {
+        return $query_vars;
+    }
+
+    $term = get_term_by('slug', $term_slug, 'product_cat');
+    if (!$term instanceof WP_Term || is_wp_error($term)) {
+        return $query_vars;
+    }
+
+    $term_path_parts = [];
+    $ancestor_ids    = array_reverse(get_ancestors($term->term_id, 'product_cat', 'taxonomy'));
+
+    foreach ($ancestor_ids as $ancestor_id) {
+        $ancestor = get_term($ancestor_id, 'product_cat');
+        if ($ancestor instanceof WP_Term && !is_wp_error($ancestor)) {
+            $term_path_parts[] = $ancestor->slug;
+        }
+    }
+
+    $term_path_parts[] = $term->slug;
+    $term_path         = implode('/', $term_path_parts);
+
+    if ($term_path !== $request_path) {
+        return $query_vars;
+    }
+
+    return [
+        'product_cat' => $term->slug,
+        'taxonomy'    => 'product_cat',
+        'term'        => $term->slug,
+    ];
+}
+add_filter('request', 'arim_map_product_category_request', 5);
+
 
 /**
  * Mağaza filtreleri
