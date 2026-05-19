@@ -1,0 +1,9 @@
+⚠️ Önerilen İyileştirmeler (İleride):
+Email Entegrasyonu - Mail ile uyarı
+SMS Gönderme - Twilio API
+2FA - İki Faktörlü Kimlik Doğrulama
+API - RESTful API Geliştirme
+Mobile App - Flutter/React Native
+Payment Gateway - Ödeme Sistemi
+Real-time Notifications - WebSocket
+Advanced Reports - PDF Rapor Çıktısı
