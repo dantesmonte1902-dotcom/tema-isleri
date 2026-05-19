@@ -238,3 +238,17 @@ Geliştirilen Özellikler
  - Ana görsel üstündeki fazla agresif tam ekran tetikleyici kaldırılarak ürün görselinin istemsiz açılma hissi azaltıldı.
 - Tam ekran deneyimi alt bilgi alanındaki ayrı aksiyonla daha kontrollü hale getirildi ve lightbox üstüne kapanış yönlendirmesi eklendi.
 - Lightbox açılış/kapanış akışı odak, aria-hidden ve arka plan tıklaması davranışlarıyla daha dayanıklı hale getirildi.
+
+38. Ürün Kategorileri Sayfası Referans Eşleştirme Durumu
+- `/home/runner/work/tema-isleri/tema-isleri/arim/orjinal/urun-kategori.html` referansı incelenerek WooCommerce kategori/arşiv sayfası yeniden düzenlendi.
+- Başlık, sonuç sayısı, breadcrumb, hızlı filtreler, sıralama alanı, sol filtre sidebar yapısı ve ürün grid düzeni referans hissine yaklaştırıldı.
+- Ürün kartları görsel, mağaza/marka bilgisi, puan, fiyat, kampanya ve aksiyon alanlarıyla referans katalog mantığına daha yakın hale getirildi.
+- Değişiklikler `/home/runner/work/tema-isleri/tema-isleri/arim/woocommerce/archive-product.php`, `/home/runner/work/tema-isleri/tema-isleri/arim/woocommerce/content-product.php` ve `/home/runner/work/tema-isleri/tema-isleri/arim/assets/css/woocommerce-arim.css` dosyalarında uygulandı.
+
+39. Ürün Kategorileri Sayfası İçin Ek Öneriler
+- Referans dosyadaki yapıya daha da yaklaşmak için quick filter alanı gerçek kategori/facet verileriyle birebir eşlenebilir.
+- Referanstaki mağaza widget, sponsorlu bloklar ve özel listeleme modülleri gerekiyorsa WooCommerce içine ayrı bileşenler olarak eklenebilir.
+- Sıralama kutusu, filtre çipleri ve sidebar başlıkları için referans CSS ölçüleri tek tek çıkarılıp piksel seviyesinde ikinci tur görsel hizalama yapılabilir.
+- Mobil görünümde yatay filtre akışı, sticky sort/filter bar ve kart aralıkları ayrıca optimize edilirse birebir benzerlik daha da artar.
+- Eğer amaç tamamen birebir görünüm ise ekran görüntüsü karşılaştırmalı son bir polish turu yapılması önerilir.
+
