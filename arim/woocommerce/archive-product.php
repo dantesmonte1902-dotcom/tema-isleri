@@ -302,12 +302,10 @@ $shop_categories = get_terms([
                     <?php if (woocommerce_product_loop()) : ?>
                         <?php woocommerce_product_loop_start(); ?>
 
-                        <?php if (wc_get_loop_prop('total')) : ?>
-                            <?php while (have_posts()) : the_post(); ?>
-                                <?php do_action('woocommerce_shop_loop'); ?>
-                                <?php wc_get_template_part('content', 'product'); ?>
-                            <?php endwhile; ?>
-                        <?php endif; ?>
+                        <?php while (have_posts()) : the_post(); ?>
+                            <?php do_action('woocommerce_shop_loop'); ?>
+                            <?php wc_get_template_part('content', 'product'); ?>
+                        <?php endwhile; ?>
 
                         <?php woocommerce_product_loop_end(); ?>
 
@@ -315,14 +313,7 @@ $shop_categories = get_terms([
                             <?php do_action('woocommerce_after_shop_loop'); ?>
                         </div>
                     <?php else : ?>
-                        <div class="arim-woo-empty arim-category-empty-state">
-                            <p class="arim-woo-empty-note"><?php esc_html_e('Bu filtrelerle eşleşen ürün bulunamadı. Kategori veya fiyat aralığını gevşeterek devam edebilirsin.', 'arim'); ?></p>
-                            <div class="arim-woo-empty-actions">
-                                <a href="<?php echo esc_url($archive_reset_url); ?>" class="arim-woo-empty-link is-primary"><?php esc_html_e('Tüm ürünleri göster', 'arim'); ?></a>
-                                <a href="<?php echo esc_url(arim_shop_url()); ?>" class="arim-woo-empty-link"><?php esc_html_e('Genel kategoriye dön', 'arim'); ?></a>
-                            </div>
-                            <?php do_action('woocommerce_no_products_found'); ?>
-                        </div>
+                        <?php do_action('woocommerce_no_products_found'); ?>
                     <?php endif; ?>
                 </div>
             </div>
