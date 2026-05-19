@@ -1515,3 +1515,224 @@
         font-size: 18px;
     }
 }
+
+.arim-category-quick-filter-groups {
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.arim-category-quick-filter-section {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+}
+
+.arim-category-quick-filter-title {
+    color: #7a7a7a;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.arim-category-quick-filters {
+    gap: 8px;
+}
+
+.arim-category-quick-filter,
+.arim-category-active-filter-chip,
+.arim-category-brand-pill {
+    min-height: 40px;
+    padding: 0 15px;
+    border-color: #dfdfdf;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .03);
+}
+
+.arim-category-sort-box {
+    padding: 10px 14px;
+    border: 1px solid #e7e7e7;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, .04);
+}
+
+.arim-category-sort-box .orderby {
+    min-width: 220px;
+    min-height: 40px;
+    border: 0;
+    padding: 0 28px 0 0;
+    color: #222;
+    font-size: 13px;
+    font-weight: 700;
+    background-color: transparent;
+}
+
+.arim-category-active-filters {
+    gap: 8px;
+}
+
+.arim-category-active-filter-chip {
+    background: #fff7ef;
+    border-color: #ffd5b0;
+    color: #8b4f1c;
+}
+
+.arim-category-clear-filters {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: #fff2e8;
+}
+
+.arim-category-sidebar-card {
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .04);
+}
+
+.arim-category-sidebar-card h3 {
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -.01em;
+}
+
+.arim-category-feature-modules,
+.arim-category-store-list {
+    display: grid;
+    gap: 10px;
+}
+
+.arim-category-feature-module,
+.arim-category-store-item {
+    display: grid;
+    gap: 4px;
+    padding: 12px 14px;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    background: #fafafa;
+    color: #333;
+    text-decoration: none;
+    transition: .2s ease;
+}
+
+.arim-category-feature-module:hover,
+.arim-category-feature-module.is-active,
+.arim-category-store-item:hover {
+    border-color: #f27a1a;
+    background: #fff4ea;
+}
+
+.arim-category-feature-module-badge {
+    color: #f27a1a;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.arim-category-feature-module strong,
+.arim-category-store-item span {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.arim-category-feature-module small,
+.arim-category-store-item strong {
+    color: #666;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.arim-category-mobile-toolbar {
+    display: none;
+}
+
+@media (max-width: 992px) {
+    .arim-category-mobile-toolbar {
+        position: sticky;
+        top: 72px;
+        z-index: 12;
+        display: grid;
+        grid-template-columns: minmax(0, 120px) minmax(0, 1fr);
+        gap: 10px;
+        padding: 10px;
+        border: 1px solid #ececec;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, .96);
+        backdrop-filter: blur(14px);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, .06);
+    }
+
+    .arim-category-mobile-toolbar-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        border-radius: 12px;
+        background: #fff2e8;
+        color: #f27a1a;
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .arim-category-mobile-toolbar-ordering .orderby {
+        width: 100%;
+        min-height: 42px;
+        padding: 0 12px;
+        border: 1px solid #ececec;
+        border-radius: 12px;
+        background: #fff;
+    }
+}
+
+@media (max-width: 767px) {
+    .arim-category-search-page {
+        padding-top: 10px;
+    }
+
+    .arim-category-search-subheader {
+        gap: 14px;
+    }
+
+    .arim-category-quick-filter-groups {
+        width: 100%;
+    }
+
+    .arim-category-quick-filters {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        width: 100%;
+        padding-bottom: 4px;
+        scroll-snap-type: x proximity;
+    }
+
+    .arim-category-quick-filter {
+        scroll-snap-align: start;
+    }
+
+    .arim-category-sort-box {
+        width: 100%;
+    }
+
+    .arim-category-sort-box .orderby {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .arim-search-product-card {
+        border-radius: 12px;
+    }
+
+    .arim-search-product-body {
+        padding: 12px 10px 10px;
+    }
+
+    .arim-search-product-actions {
+        padding: 0 10px 10px;
+    }
+}

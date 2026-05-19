@@ -2842,6 +2842,198 @@ function arim_shop_archive_brand_links() {
 }
 
 /**
+ * Shop archive hızlı filtre alanı için gerçek kategori ve facet verilerini döndürür.
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function arim_shop_archive_quick_filter_sections() {
+    $sections       = [];
+    $query_args     = arim_shop_archive_query_args();
+    $base_url       = arim_shop_archive_current_url();
+    $queried_object = get_queried_object();
+
+    if ($queried_object instanceof WP_Term && $queried_object->taxonomy === 'product_cat') {
+        $child_categories = get_terms([
+            'taxonomy'   => 'product_cat',
+            'hide_empty' => true,
+            'parent'     => (int) $queried_object->term_id,
+            'number'     => 8,
+            'orderby'    => 'count',
+            'order'      => 'DESC',
+        ]);
+
+        if (!is_wp_error($child_categories) && !empty($child_categories)) {
+            $items = [];
+
+            foreach ($child_categories as $child_category) {
+                $term_link = get_term_link($child_category);
+
+                if (is_wp_error($term_link)) {
+                    continue;
+                }
+
+                $items[] = [
+                    'label'    => $child_category->name,
+                    'url'      => $term_link,
+                    'isActive' => false,
+                    'count'    => (int) $child_category->count,
+                ];
+            }
+
+            if (!empty($items)) {
+                $sections[] = [
+                    'title' => __('Alt kategoriler', 'arim'),
+                    'items' => $items,
+                ];
+            }
+        }
+    }
+
+    $attribute_taxonomies = wc_get_attribute_taxonomies();
+    $attribute_sections   = 0;
+
+    if (!empty($attribute_taxonomies)) {
+        foreach ($attribute_taxonomies as $attribute_taxonomy) {
+            if ($attribute_sections >= 2) {
+                break;
+            }
+
+            $taxonomy = wc_attribute_taxonomy_name($attribute_taxonomy->attribute_name);
+            if (!taxonomy_exists($taxonomy)) {
+                continue;
+            }
+
+            $terms = get_terms([
+                'taxonomy'   => $taxonomy,
+                'hide_empty' => true,
+                'number'     => 6,
+                'orderby'    => 'count',
+                'order'      => 'DESC',
+            ]);
+
+            if (is_wp_error($terms) || empty($terms)) {
+                continue;
+            }
+
+            $selected_terms = isset($query_args[$taxonomy]) ? (array) $query_args[$taxonomy] : [];
+            $items          = [];
+
+            foreach ($terms as $term) {
+                $section_args            = $query_args;
+                $section_args[$taxonomy] = [$term->slug];
+                unset($section_args['paged']);
+
+                $items[] = [
+                    'label'    => $term->name,
+                    'url'      => add_query_arg($section_args, $base_url),
+                    'isActive' => in_array($term->slug, $selected_terms, true),
+                    'count'    => (int) $term->count,
+                ];
+            }
+
+            if (!empty($items)) {
+                $sections[] = [
+                    'title' => $attribute_taxonomy->attribute_label,
+                    'items' => $items,
+                ];
+                $attribute_sections++;
+            }
+        }
+    }
+
+    if (empty($sections)) {
+        $archive_collections = arim_shop_archive_collection_cards();
+        $fallback_items      = [];
+
+        foreach (array_slice($archive_collections, 0, 6) as $collection) {
+            $fallback_items[] = [
+                'label'    => $collection['title'],
+                'url'      => $collection['url'],
+                'isActive' => !empty($collection['isActive']),
+                'count'    => (int) $collection['count'],
+            ];
+        }
+
+        if (!empty($fallback_items)) {
+            $sections[] = [
+                'title' => __('Hızlı keşif', 'arim'),
+                'items' => $fallback_items,
+            ];
+        }
+    }
+
+    return $sections;
+}
+
+/**
+ * Shop archive için mağaza özet kutusu verilerini döndürür.
+ *
+ * @return array<int, array<string, string|int>>
+ */
+function arim_shop_archive_store_highlights() {
+    $query_args = [
+        'post_type'      => 'product',
+        'post_status'    => 'publish',
+        'posts_per_page' => 18,
+        'fields'         => 'ids',
+    ];
+
+    $context_tax_query = arim_shop_archive_context_tax_query();
+    if (!empty($context_tax_query)) {
+        $query_args['tax_query'] = $context_tax_query;
+    }
+
+    $product_ids = get_posts($query_args);
+    if (empty($product_ids)) {
+        return [];
+    }
+
+    $store_counts = [];
+
+    foreach ($product_ids as $product_id) {
+        $store_name = trim(arim_product_store_name((int) $product_id));
+        if ($store_name === '') {
+            continue;
+        }
+
+        if (!isset($store_counts[$store_name])) {
+            $store_counts[$store_name] = 0;
+        }
+
+        $store_counts[$store_name]++;
+    }
+
+    if (empty($store_counts)) {
+        return [];
+    }
+
+    arsort($store_counts);
+
+    $stores = [];
+    foreach (array_slice($store_counts, 0, 4, true) as $store_name => $count) {
+        $stores[] = [
+            'label' => $store_name,
+            'count' => (int) $count,
+            'url'   => add_query_arg([
+                's'         => $store_name,
+                'post_type' => 'product',
+            ], home_url('/')),
+        ];
+    }
+
+    return $stores;
+}
+
+/**
+ * Shop archive için ayrı modül olarak gösterilecek vitrin bloklarını döndürür.
+ *
+ * @return array<int, array<string, string|int|bool>>
+ */
+function arim_shop_archive_feature_modules() {
+    return array_slice(arim_shop_archive_collection_cards(), 0, 3);
+}
+
+/**
  * Canlı arama için minimum karakter sayısını döndürür.
  *
  * @return int

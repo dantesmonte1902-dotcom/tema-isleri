@@ -1,0 +1,12 @@
+ARIM kategori sayfası görev notu
+
+- Ürün kategorisine tıklanınca görülen `İçerik bulunamadı.` problemi için ürün taksonomilerini WooCommerce arşivine yönlendiren `/home/runner/work/tema-isleri/tema-isleri/arim/taxonomy.php` dosyası eklendi.
+- Quick filter alanı gerçek alt kategori ve facet verileriyle genişletildi.
+- Mağaza widget, sponsorlu bloklar ve özel listeleme modülleri kategori sidebar'ına ayrı bileşenler olarak taşındı.
+- Sıralama kutusu, filtre çipleri, sidebar başlıkları ve mobil sticky filter/sort alanı referansa daha yakın olacak şekilde güncellendi.
+- Değişen dosyalar:
+  - `/home/runner/work/tema-isleri/tema-isleri/arim/functions.php`
+  - `/home/runner/work/tema-isleri/tema-isleri/arim/taxonomy.php`
+  - `/home/runner/work/tema-isleri/tema-isleri/arim/woocommerce/archive-product.php`
+  - `/home/runner/work/tema-isleri/tema-isleri/arim/assets/css/woocommerce-arim.css`
+

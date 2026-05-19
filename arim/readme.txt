@@ -252,3 +252,12 @@ Geliştirilen Özellikler
 - Mobil görünümde yatay filtre akışı, sticky sort/filter bar ve kart aralıkları ayrıca optimize edilirse birebir benzerlik daha da artar.
 - Eğer amaç tamamen birebir görünüm ise ekran görüntüsü karşılaştırmalı son bir polish turu yapılması önerilir.
 
+40. Ürün Kategorisi Arşiv Yönlendirme Düzeltmesi
+- Ürün kategorisine tıklanınca bazı taksonomi sayfalarının tema `index.php` dosyasına düşüp `İçerik bulunamadı.` göstermesi, ürün taksonomilerini doğrudan WooCommerce arşiv şablonuna yönlendiren `/home/runner/work/tema-isleri/tema-isleri/arim/taxonomy.php` dosyası eklenerek düzeltildi.
+- Böylece `product_cat`, `product_brand`, ürün etiketi ve attribute arşivleri ortak kategori/listeme deneyimiyle açılabilir hale getirildi.
+
+41. Ürün Kategorileri Sayfası Referans Yakınlaştırma Güncellemesi
+- Quick filter alanı gerçek alt kategori ve facet verileriyle yeniden kurgulanarak kategori bağlamında daha canlı bir keşif katmanı oluşturuldu.
+- Sidebar içine mağaza widget, sponsorlu bloklar ve özel listeleme modülleri ayrı bileşenler olarak eklenerek referans yapıdaki yardımcı alanlar güçlendirildi.
+- Sıralama kutusu, filtre çipleri, sidebar başlıkları ve mobil sticky filter/sort bar alanı piksel hizasına yaklaşacak şekilde ikinci tur stillendirme ile güncellendi.
+- Mobilde yatay filtre akışı, kart aralıkları ve toolbar yerleşimi sıkılaştırılarak referansa daha yakın katalog davranışı sağlandı.

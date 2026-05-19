@@ -14,6 +14,9 @@ $archive_insights    = arim_shop_archive_insights();
 $active_filters      = arim_shop_active_filter_chips();
 $archive_collections = arim_shop_archive_collection_cards();
 $archive_brand_links = arim_shop_archive_brand_links();
+$quick_filter_sections = arim_shop_archive_quick_filter_sections();
+$archive_store_highlights = arim_shop_archive_store_highlights();
+$archive_feature_modules = arim_shop_archive_feature_modules();
 $archive_reset_url   = arim_shop_archive_current_url();
 $query_object        = get_queried_object();
 $archive_title       = woocommerce_page_title(false);
@@ -22,39 +25,6 @@ $archive_total       = isset($GLOBALS['wp_query']->found_posts) ? (int) $GLOBALS
 $archive_total_text  = $archive_total > 99999
     ? __('100000+ Ürün', 'arim')
     : sprintf(_n('%s Ürün', '%s Ürün', max(1, $archive_total), 'arim'), number_format_i18n(max(1, $archive_total)));
-
-$quick_filter_links = [];
-
-if ($query_object instanceof WP_Term && isset($query_object->taxonomy) && 'product_cat' === $query_object->taxonomy) {
-    $child_categories = get_terms([
-        'taxonomy'   => 'product_cat',
-        'hide_empty' => true,
-        'parent'     => (int) $query_object->term_id,
-        'number'     => 8,
-    ]);
-
-    if (!empty($child_categories) && !is_wp_error($child_categories)) {
-        foreach ($child_categories as $child_category) {
-            $quick_filter_links[] = [
-                'label'    => $child_category->name,
-                'url'      => get_term_link($child_category),
-                'isActive' => false,
-                'count'    => (int) $child_category->count,
-            ];
-        }
-    }
-}
-
-if (empty($quick_filter_links) && !empty($archive_collections)) {
-    foreach (array_slice($archive_collections, 0, 6) as $collection) {
-        $quick_filter_links[] = [
-            'label'    => $collection['title'],
-            'url'      => $collection['url'],
-            'isActive' => !empty($collection['isActive']),
-            'count'    => (int) $collection['count'],
-        ];
-    }
-}
 
 $shop_categories = get_terms([
     'taxonomy'   => 'product_cat',
@@ -94,15 +64,22 @@ $shop_categories = get_terms([
             </section>
 
             <div class="arim-category-search-subheader">
-                <?php if (!empty($quick_filter_links)) : ?>
-                    <div class="arim-category-quick-filters" aria-label="<?php esc_attr_e('Hızlı filtreler', 'arim'); ?>">
-                        <?php foreach ($quick_filter_links as $quick_filter_link) : ?>
-                            <a class="arim-category-quick-filter<?php echo !empty($quick_filter_link['isActive']) ? ' is-active' : ''; ?>" href="<?php echo esc_url($quick_filter_link['url']); ?>">
-                                <span><?php echo esc_html($quick_filter_link['label']); ?></span>
-                                <?php if (!empty($quick_filter_link['count'])) : ?>
-                                    <strong><?php echo esc_html(number_format_i18n((int) $quick_filter_link['count'])); ?></strong>
-                                <?php endif; ?>
-                            </a>
+                <?php if (!empty($quick_filter_sections)) : ?>
+                    <div class="arim-category-quick-filter-groups" aria-label="<?php esc_attr_e('Hızlı filtreler', 'arim'); ?>">
+                        <?php foreach ($quick_filter_sections as $quick_filter_section) : ?>
+                            <div class="arim-category-quick-filter-section">
+                                <span class="arim-category-quick-filter-title"><?php echo esc_html($quick_filter_section['title']); ?></span>
+                                <div class="arim-category-quick-filters">
+                                    <?php foreach ($quick_filter_section['items'] as $quick_filter_link) : ?>
+                                        <a class="arim-category-quick-filter<?php echo !empty($quick_filter_link['isActive']) ? ' is-active' : ''; ?>" href="<?php echo esc_url($quick_filter_link['url']); ?>">
+                                            <span><?php echo esc_html($quick_filter_link['label']); ?></span>
+                                            <?php if (!empty($quick_filter_link['count'])) : ?>
+                                                <strong><?php echo esc_html(number_format_i18n((int) $quick_filter_link['count'])); ?></strong>
+                                            <?php endif; ?>
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
@@ -112,6 +89,13 @@ $shop_categories = get_terms([
                     <div class="arim-woo-ordering">
                         <?php woocommerce_catalog_ordering(); ?>
                     </div>
+                </div>
+            </div>
+
+            <div class="arim-category-mobile-toolbar">
+                <a href="#arim-category-filter-form" class="arim-category-mobile-toolbar-link"><?php esc_html_e('Filtreler', 'arim'); ?></a>
+                <div class="arim-category-mobile-toolbar-ordering">
+                    <?php woocommerce_catalog_ordering(); ?>
                 </div>
             </div>
 
@@ -132,7 +116,7 @@ $shop_categories = get_terms([
 
             <div class="arim-category-search-layout">
                 <aside class="arim-category-search-sidebar">
-                    <form class="arim-woo-filter-form arim-category-filter-form" method="get">
+                    <form id="arim-category-filter-form" class="arim-woo-filter-form arim-category-filter-form" method="get">
                         <div class="arim-category-sidebar-card arim-category-sidebar-card-highlight">
                             <span class="arim-category-sidebar-kicker"><?php echo esc_html($archive_insights['deliveryBadge']); ?></span>
                             <h3><?php esc_html_e('Kategori vitrini', 'arim'); ?></h3>
@@ -150,7 +134,24 @@ $shop_categories = get_terms([
                             </div>
                         </div>
 
+                        <?php if (!empty($archive_feature_modules)) : ?>
+                            <div class="arim-category-sidebar-card">
+                                <span class="arim-category-sidebar-kicker"><?php esc_html_e('Sponsorlu bloklar', 'arim'); ?></span>
+                                <h3><?php esc_html_e('Özel listeleme modülleri', 'arim'); ?></h3>
+                                <div class="arim-category-feature-modules">
+                                    <?php foreach ($archive_feature_modules as $feature_module) : ?>
+                                        <a class="arim-category-feature-module<?php echo !empty($feature_module['isActive']) ? ' is-active' : ''; ?>" href="<?php echo esc_url($feature_module['url']); ?>">
+                                            <span class="arim-category-feature-module-badge"><?php echo esc_html($feature_module['badge']); ?></span>
+                                            <strong><?php echo esc_html($feature_module['title']); ?></strong>
+                                            <small><?php echo esc_html($feature_module['text']); ?></small>
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
                         <div class="arim-category-sidebar-card">
+                            <span class="arim-category-sidebar-kicker"><?php esc_html_e('Gerçek kategori ağacı', 'arim'); ?></span>
                             <h3><?php esc_html_e('Kategoriler', 'arim'); ?></h3>
                             <ul class="arim-woo-category-list arim-category-list-clean">
                                 <?php if (!empty($shop_categories) && !is_wp_error($shop_categories)) : ?>
@@ -165,6 +166,7 @@ $shop_categories = get_terms([
 
                         <?php if (!empty($archive_brand_links)) : ?>
                             <div class="arim-category-sidebar-card">
+                                <span class="arim-category-sidebar-kicker"><?php esc_html_e('Facet filtreleri', 'arim'); ?></span>
                                 <h3><?php esc_html_e('Popüler markalar', 'arim'); ?></h3>
                                 <div class="arim-category-brand-list">
                                     <?php foreach ($archive_brand_links as $brand_link) : ?>
@@ -177,7 +179,23 @@ $shop_categories = get_terms([
                             </div>
                         <?php endif; ?>
 
+                        <?php if (!empty($archive_store_highlights)) : ?>
+                            <div class="arim-category-sidebar-card">
+                                <span class="arim-category-sidebar-kicker"><?php esc_html_e('Mağaza widget', 'arim'); ?></span>
+                                <h3><?php esc_html_e('Öne çıkan mağazalar', 'arim'); ?></h3>
+                                <div class="arim-category-store-list">
+                                    <?php foreach ($archive_store_highlights as $store_highlight) : ?>
+                                        <a class="arim-category-store-item" href="<?php echo esc_url($store_highlight['url']); ?>">
+                                            <span><?php echo esc_html($store_highlight['label']); ?></span>
+                                            <strong><?php echo esc_html(number_format_i18n((int) $store_highlight['count'])); ?></strong>
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
                         <div class="arim-category-sidebar-card">
+                            <span class="arim-category-sidebar-kicker"><?php esc_html_e('Referans hizalama', 'arim'); ?></span>
                             <h3><?php esc_html_e('Fiyat', 'arim'); ?></h3>
                             <div class="arim-filter-fields">
                                 <div class="arim-filter-field">
@@ -193,6 +211,7 @@ $shop_categories = get_terms([
                         </div>
 
                         <div class="arim-category-sidebar-card">
+                            <span class="arim-category-sidebar-kicker"><?php esc_html_e('Hızlı seçim', 'arim'); ?></span>
                             <h3><?php esc_html_e('Teslimat ve ürün tipi', 'arim'); ?></h3>
 
                             <label class="arim-filter-check">
@@ -232,6 +251,7 @@ $shop_categories = get_terms([
                                 $selected_terms = isset($_GET[$taxonomy]) ? (array) wp_unslash($_GET[$taxonomy]) : [];
                                 ?>
                                 <div class="arim-category-sidebar-card">
+                                    <span class="arim-category-sidebar-kicker"><?php esc_html_e('Facet', 'arim'); ?></span>
                                     <h3><?php echo esc_html($attribute->attribute_label); ?></h3>
                                     <div class="arim-attribute-filter-list">
                                         <?php foreach ($terms as $term) : ?>
