@@ -43,7 +43,7 @@ if ($product->is_on_sale() && 0 === $discount_percent) {
 }
 ?>
 <li <?php wc_product_class('arim-woo-product-item', $product); ?>>
-    <article class="arim-search-product-card">
+    <article class="<?php echo esc_attr(arim_get_shop_archive_card_classes()); ?>">
         <a href="<?php echo esc_url($product_url); ?>" class="arim-search-product-link">
             <div class="arim-search-product-media">
                 <img src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($product->get_name()); ?>">

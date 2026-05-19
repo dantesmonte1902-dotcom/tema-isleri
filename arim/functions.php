@@ -26,6 +26,170 @@ function arim_theme_setup() {
 }
 add_action('after_setup_theme', 'arim_theme_setup');
 
+/**
+ * Theme options admin class dosyalarını yükle.
+ */
+function arim_load_theme_options_classes() {
+    $class_files = [
+        '/inc/admin/class-base-settings-page.php',
+        '/inc/admin/class-admin-menu.php',
+        '/inc/admin/class-homepage-settings.php',
+        '/inc/admin/class-header-settings.php',
+        '/inc/admin/class-footer-settings.php',
+        '/inc/admin/class-shop-settings.php',
+        '/inc/admin/class-product-settings.php',
+        '/inc/admin/class-category-settings.php',
+        '/inc/admin/class-cart-settings.php',
+        '/inc/admin/class-checkout-settings.php',
+        '/inc/admin/class-blog-settings.php',
+        '/inc/admin/class-mobile-settings.php',
+        '/inc/admin/class-typography-settings.php',
+        '/inc/admin/class-colors-settings.php',
+        '/inc/admin/class-performance-settings.php',
+        '/inc/admin/class-custom-code-settings.php',
+        '/inc/admin/class-seo-settings.php',
+        '/inc/admin/class-social-media-settings.php',
+    ];
+
+    foreach ($class_files as $class_file) {
+        $absolute_path = get_template_directory() . $class_file;
+
+        if (file_exists($absolute_path)) {
+            require_once $absolute_path;
+        }
+    }
+}
+arim_load_theme_options_classes();
+
+/**
+ * Theme options section nesnelerini oluştur.
+ *
+ * @return array<int, ARIM_Base_Settings_Page>
+ */
+function arim_get_theme_options_sections() {
+    static $sections = null;
+
+    if (null !== $sections) {
+        return $sections;
+    }
+
+    $sections = [
+        new ARIM_Homepage_Settings(),
+        new ARIM_Header_Settings(),
+        new ARIM_Footer_Settings(),
+        new ARIM_Shop_Settings(),
+        new ARIM_Product_Settings(),
+        new ARIM_Category_Settings(),
+        new ARIM_Cart_Settings(),
+        new ARIM_Checkout_Settings(),
+        new ARIM_Blog_Settings(),
+        new ARIM_Mobile_Settings(),
+        new ARIM_Typography_Settings(),
+        new ARIM_Colors_Settings(),
+        new ARIM_Performance_Settings(),
+        new ARIM_Custom_Code_Settings(),
+        new ARIM_SEO_Settings(),
+        new ARIM_Social_Media_Settings(),
+    ];
+
+    return $sections;
+}
+
+/**
+ * Merkezi theme options panelini başlat.
+ */
+function arim_boot_theme_options_panel() {
+    if (!is_admin() || !class_exists('ARIM_Admin_Menu')) {
+        return;
+    }
+
+    static $booted = false;
+
+    if ($booted) {
+        return;
+    }
+
+    $booted   = true;
+    $sections = arim_get_theme_options_sections();
+    $menu     = new ARIM_Admin_Menu($sections);
+
+    $menu->boot();
+
+    foreach ($sections as $section) {
+        $section->boot();
+    }
+
+    remove_action('admin_menu', 'arim_register_homepage_manager_menu');
+    remove_action('admin_init', 'arim_save_homepage_manager');
+}
+add_action('after_setup_theme', 'arim_boot_theme_options_panel', 20);
+
+/**
+ * Shop archive ayarlarını döndür.
+ *
+ * @return array<string, mixed>
+ */
+function arim_get_shop_archive_settings() {
+    if (class_exists('ARIM_Shop_Settings')) {
+        return ARIM_Shop_Settings::get_settings();
+    }
+
+    return [
+        'columns'         => 4,
+        'show_sidebar'    => '1',
+        'show_filters'    => '1',
+        'default_view'    => 'grid',
+        'card_style'      => 'default',
+        'infinite_scroll' => '0',
+        'pagination_type' => 'numbers',
+        'hover_effect'    => 'lift',
+    ];
+}
+
+/**
+ * Shop archive bağlamı kontrolü.
+ *
+ * @return bool
+ */
+function arim_is_shop_archive_context() {
+    return function_exists('is_shop') && (is_shop() || is_product_taxonomy());
+}
+
+/**
+ * Shop archive için çözümlenmiş pagination modunu döndür.
+ *
+ * @return string
+ */
+function arim_get_shop_archive_pagination_mode() {
+    $settings = arim_get_shop_archive_settings();
+
+    if (!empty($settings['infinite_scroll']) && '1' === (string) $settings['infinite_scroll']) {
+        return 'infinite';
+    }
+
+    return isset($settings['pagination_type']) ? (string) $settings['pagination_type'] : 'numbers';
+}
+
+/**
+ * Shop archive ürün kart sınıfları.
+ *
+ * @return string
+ */
+function arim_get_shop_archive_card_classes() {
+    if (!arim_is_shop_archive_context()) {
+        return 'arim-search-product-card';
+    }
+
+    $settings = arim_get_shop_archive_settings();
+    $classes  = [
+        'arim-search-product-card',
+        'is-card-style-' . sanitize_html_class(isset($settings['card_style']) ? (string) $settings['card_style'] : 'default'),
+        'is-hover-effect-' . sanitize_html_class(isset($settings['hover_effect']) ? (string) $settings['hover_effect'] : 'lift'),
+    ];
+
+    return implode(' ', $classes);
+}
+
 
 /**
  * CSS ve JS yükle
@@ -3415,7 +3579,13 @@ remove_action('woocommerce_sidebar', 'woocommerce_get_sidebar', 10);
  * Shop kolon
  */
 function arim_loop_columns() {
-    return 4;
+    if (!arim_is_shop_archive_context()) {
+        return 4;
+    }
+
+    $settings = arim_get_shop_archive_settings();
+
+    return isset($settings['columns']) ? max(2, min(6, (int) $settings['columns'])) : 4;
 }
 add_filter('loop_shop_columns', 'arim_loop_columns');
 
@@ -3424,7 +3594,21 @@ add_filter('loop_shop_columns', 'arim_loop_columns');
  * Ürün listesi başlangıcı
  */
 function arim_product_loop_start($html) {
-    return '<ul class="products arim-products-grid">';
+    if (!arim_is_shop_archive_context()) {
+        return $html;
+    }
+
+    $settings        = arim_get_shop_archive_settings();
+    $columns         = isset($settings['columns']) ? max(2, min(6, (int) $settings['columns'])) : 4;
+    $default_view    = isset($settings['default_view']) ? sanitize_html_class((string) $settings['default_view']) : 'grid';
+    $pagination_mode = sanitize_html_class(arim_get_shop_archive_pagination_mode());
+
+    return sprintf(
+        '<ul class="products arim-products-grid arim-shop-view-%1$s arim-pagination-mode-%2$s columns-%3$d">',
+        esc_attr($default_view),
+        esc_attr($pagination_mode),
+        esc_attr($columns)
+    );
 }
 add_filter('woocommerce_product_loop_start', 'arim_product_loop_start');
 

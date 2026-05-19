@@ -18,13 +18,29 @@ $quick_filter_sections = arim_shop_archive_quick_filter_sections();
 $archive_store_highlights = arim_shop_archive_store_highlights();
 $archive_feature_modules = arim_shop_archive_feature_modules();
 $archive_reset_url   = arim_shop_archive_current_url();
+$shop_settings       = arim_get_shop_archive_settings();
+$show_sidebar        = isset($shop_settings['show_sidebar']) && '1' === (string) $shop_settings['show_sidebar'];
+$show_filters        = isset($shop_settings['show_filters']) && '1' === (string) $shop_settings['show_filters'];
+$default_view        = isset($shop_settings['default_view']) ? (string) $shop_settings['default_view'] : 'grid';
+$card_style          = isset($shop_settings['card_style']) ? (string) $shop_settings['card_style'] : 'default';
+$hover_effect        = isset($shop_settings['hover_effect']) ? (string) $shop_settings['hover_effect'] : 'lift';
+$pagination_mode     = arim_get_shop_archive_pagination_mode();
 $query_object        = get_queried_object();
 $archive_title       = woocommerce_page_title(false);
 $archive_description = trim(wp_strip_all_tags(do_shortcode(term_description())));
 $archive_total       = isset($GLOBALS['wp_query']->found_posts) ? (int) $GLOBALS['wp_query']->found_posts : 0;
+$max_pages           = isset($GLOBALS['wp_query']->max_num_pages) ? (int) $GLOBALS['wp_query']->max_num_pages : 1;
+$next_page_url       = $max_pages > 1 ? get_next_posts_page_link($max_pages) : '';
 $archive_total_text  = $archive_total > 99999
     ? __('100000+ Ürün', 'arim')
     : sprintf(_n('%s Ürün', '%s Ürün', max(1, $archive_total), 'arim'), number_format_i18n(max(1, $archive_total)));
+$layout_classes      = 'arim-category-search-layout' . (!$show_sidebar ? ' is-sidebar-hidden' : '');
+$results_classes     = trim(
+    'arim-category-search-results is-view-' . sanitize_html_class($default_view) .
+    ' is-card-style-' . sanitize_html_class($card_style) .
+    ' is-hover-effect-' . sanitize_html_class($hover_effect) .
+    ' is-pagination-' . sanitize_html_class($pagination_mode)
+);
 
 $shop_categories = get_terms([
     'taxonomy'   => 'product_cat',
@@ -64,7 +80,7 @@ $shop_categories = get_terms([
             </section>
 
             <div class="arim-category-search-subheader">
-                <?php if (!empty($quick_filter_sections)) : ?>
+                <?php if ($show_filters && !empty($quick_filter_sections)) : ?>
                     <div class="arim-category-quick-filter-groups" aria-label="<?php esc_attr_e('Hızlı filtreler', 'arim'); ?>">
                         <?php foreach ($quick_filter_sections as $quick_filter_section) : ?>
                             <div class="arim-category-quick-filter-section">
@@ -92,14 +108,16 @@ $shop_categories = get_terms([
                 </div>
             </div>
 
-            <div class="arim-category-mobile-toolbar">
-                <a href="#arim-category-filter-form" class="arim-category-mobile-toolbar-link"><?php esc_html_e('Filtreler', 'arim'); ?></a>
+            <div class="arim-category-mobile-toolbar<?php echo !$show_filters ? ' is-filter-hidden' : ''; ?>">
+                <?php if ($show_filters) : ?>
+                    <a href="#arim-category-filter-form" class="arim-category-mobile-toolbar-link"><?php esc_html_e('Filtreler', 'arim'); ?></a>
+                <?php endif; ?>
                 <div class="arim-category-mobile-toolbar-ordering">
                     <?php woocommerce_catalog_ordering(); ?>
                 </div>
             </div>
 
-            <?php if (!empty($active_filters)) : ?>
+            <?php if ($show_filters && !empty($active_filters)) : ?>
                 <div class="arim-category-active-filters" aria-label="<?php esc_attr_e('Aktif filtreler', 'arim'); ?>">
                     <?php foreach ($active_filters as $filter_chip) : ?>
                         <a href="<?php echo esc_url($filter_chip['url']); ?>" class="arim-category-active-filter-chip">
@@ -114,8 +132,10 @@ $shop_categories = get_terms([
                 </div>
             <?php endif; ?>
 
-            <div class="arim-category-search-layout">
-                <aside class="arim-category-search-sidebar">
+            <div class="<?php echo esc_attr($layout_classes); ?>">
+                <?php if ($show_sidebar) : ?>
+                <aside class="arim-category-search-sidebar<?php echo !$show_filters ? ' is-filter-disabled' : ''; ?>">
+                    <?php if ($show_filters) : ?>
                     <form id="arim-category-filter-form" class="arim-woo-filter-form arim-category-filter-form" method="get">
                         <div class="arim-category-sidebar-card arim-category-sidebar-card-highlight">
                             <span class="arim-category-sidebar-kicker"><?php echo esc_html($archive_insights['deliveryBadge']); ?></span>
@@ -296,9 +316,37 @@ $shop_categories = get_terms([
                             </a>
                         </div>
                     </form>
-                </aside>
+                    <?php else : ?>
+                        <div class="arim-category-sidebar-card arim-category-sidebar-card-highlight">
+                            <span class="arim-category-sidebar-kicker"><?php echo esc_html($archive_insights['deliveryBadge']); ?></span>
+                            <h3><?php esc_html_e('Sidebar aktif', 'arim'); ?></h3>
+                            <p><?php esc_html_e('Shop Archive ayarlarından filtre alanı kapatıldı. Kategori vitrini sade görünümde gösteriliyor.', 'arim'); ?></p>
+                        </div>
 
-                <div class="arim-category-search-results">
+                        <div class="arim-category-sidebar-card">
+                            <span class="arim-category-sidebar-kicker"><?php esc_html_e('Kategori ağacı', 'arim'); ?></span>
+                            <h3><?php esc_html_e('Kategoriler', 'arim'); ?></h3>
+                            <ul class="arim-woo-category-list arim-category-list-clean">
+                                <?php if (!empty($shop_categories) && !is_wp_error($shop_categories)) : ?>
+                                    <?php foreach ($shop_categories as $category) : ?>
+                                        <li>
+                                            <a href="<?php echo esc_url(get_term_link($category)); ?>"><?php echo esc_html($category->name); ?></a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
+                </aside>
+                <?php endif; ?>
+
+                <div
+                    class="<?php echo esc_attr($results_classes); ?>"
+                    data-arim-shop-results
+                    data-view-mode="<?php echo esc_attr($default_view); ?>"
+                    data-card-style="<?php echo esc_attr($card_style); ?>"
+                    data-hover-effect="<?php echo esc_attr($hover_effect); ?>"
+                >
                     <?php if (woocommerce_product_loop()) : ?>
                         <?php woocommerce_product_loop_start(); ?>
 
@@ -310,7 +358,27 @@ $shop_categories = get_terms([
                         <?php woocommerce_product_loop_end(); ?>
 
                         <div class="arim-woo-pagination arim-category-pagination">
-                            <?php do_action('woocommerce_after_shop_loop'); ?>
+                            <?php if ('numbers' === $pagination_mode) : ?>
+                                <?php do_action('woocommerce_after_shop_loop'); ?>
+                            <?php elseif ($next_page_url) : ?>
+                                <div
+                                    class="arim-shop-archive-pager"
+                                    data-arim-shop-pagination
+                                    data-mode="<?php echo esc_attr($pagination_mode); ?>"
+                                    data-next-url="<?php echo esc_url($next_page_url); ?>"
+                                    data-loading-label="<?php echo esc_attr__('Ürünler yükleniyor...', 'arim'); ?>"
+                                    data-button-label="<?php echo esc_attr__('Daha fazla ürün yükle', 'arim'); ?>"
+                                    data-error-label="<?php echo esc_attr__('Sonraki ürünler yüklenemedi.', 'arim'); ?>"
+                                >
+                                    <button type="button" class="arim-shop-archive-load-more">
+                                        <?php esc_html_e('Daha fazla ürün yükle', 'arim'); ?>
+                                    </button>
+                                    <div class="arim-shop-archive-status" aria-live="polite"></div>
+                                    <?php if ('infinite' === $pagination_mode) : ?>
+                                        <div class="arim-shop-archive-sentinel" data-arim-shop-sentinel></div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     <?php else : ?>
                         <?php do_action('woocommerce_no_products_found'); ?>

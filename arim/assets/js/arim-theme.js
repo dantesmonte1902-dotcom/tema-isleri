@@ -1893,6 +1893,135 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function initShopArchivePagination() {
+        const paginationRoot = document.querySelector('[data-arim-shop-pagination]');
+        const resultsRoot = document.querySelector('[data-arim-shop-results]');
+        const productList = resultsRoot ? resultsRoot.querySelector('ul.products') : null;
+        const loadMoreButton = paginationRoot ? paginationRoot.querySelector('.arim-shop-archive-load-more') : null;
+        const statusNode = paginationRoot ? paginationRoot.querySelector('.arim-shop-archive-status') : null;
+        const sentinel = paginationRoot ? paginationRoot.querySelector('[data-arim-shop-sentinel]') : null;
+
+        if (!paginationRoot || !resultsRoot || !productList || !loadMoreButton) {
+            return;
+        }
+
+        let nextUrl = String(paginationRoot.getAttribute('data-next-url') || '').trim();
+        let isLoading = false;
+        let observer = null;
+        const mode = String(paginationRoot.getAttribute('data-mode') || 'load_more').trim();
+        const loadingLabel = String(paginationRoot.getAttribute('data-loading-label') || 'Ürünler yükleniyor...');
+        const buttonLabel = String(paginationRoot.getAttribute('data-button-label') || 'Daha fazla ürün yükle');
+        const errorLabel = String(paginationRoot.getAttribute('data-error-label') || 'Sonraki ürünler yüklenemedi.');
+
+        if (!nextUrl) {
+            return;
+        }
+
+        function setStatus(text) {
+            if (statusNode) {
+                statusNode.textContent = text;
+            }
+        }
+
+        function syncControls() {
+            const hasNextPage = Boolean(nextUrl);
+
+            loadMoreButton.hidden = !hasNextPage;
+            loadMoreButton.disabled = isLoading || !hasNextPage;
+            loadMoreButton.textContent = buttonLabel;
+
+            if (!hasNextPage) {
+                setStatus('');
+
+                if (observer) {
+                    observer.disconnect();
+                }
+            }
+        }
+
+        function appendProductsFromDocument(documentNode) {
+            const nextResultsRoot = documentNode.querySelector('[data-arim-shop-results]');
+            const nextProductList = nextResultsRoot ? nextResultsRoot.querySelector('ul.products') : null;
+
+            if (!nextProductList) {
+                return false;
+            }
+
+            Array.prototype.slice.call(nextProductList.children).forEach(function (itemNode) {
+                productList.appendChild(itemNode.cloneNode(true));
+            });
+
+            const nextPaginationRoot = documentNode.querySelector('[data-arim-shop-pagination]');
+            nextUrl = nextPaginationRoot ? String(nextPaginationRoot.getAttribute('data-next-url') || '').trim() : '';
+
+            updateFavoriteButtons();
+            updateCompareButtons();
+            updateFavoriteCounters();
+            updateCompareCounters();
+
+            return true;
+        }
+
+        function loadNextPage() {
+            if (isLoading || !nextUrl) {
+                return;
+            }
+
+            isLoading = true;
+            loadMoreButton.disabled = true;
+            setStatus(loadingLabel);
+
+            window.fetch(nextUrl, { credentials: 'same-origin' })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Archive pagination request failed');
+                    }
+
+                    return response.text();
+                })
+                .then(function (html) {
+                    const parser = new DOMParser();
+                    const documentNode = parser.parseFromString(html, 'text/html');
+
+                    if (!appendProductsFromDocument(documentNode)) {
+                        throw new Error('Archive pagination parse failed');
+                    }
+
+                    setStatus('');
+                    syncControls();
+                })
+                .catch(function () {
+                    setStatus(errorLabel);
+                })
+                .finally(function () {
+                    isLoading = false;
+                    syncControls();
+                });
+        }
+
+        loadMoreButton.addEventListener('click', function () {
+            loadNextPage();
+        });
+
+        if ('infinite' === mode && sentinel && 'IntersectionObserver' in window) {
+            observer = new IntersectionObserver(function (entries) {
+                const visibleEntry = entries.find(function (entry) {
+                    return entry.isIntersecting;
+                });
+
+                if (visibleEntry) {
+                    loadNextPage();
+                }
+            }, {
+                rootMargin: '240px 0px',
+            });
+
+            observer.observe(sentinel);
+        }
+
+        syncControls();
+    }
+
     document.addEventListener('click', function (event) {
         const favoriteButton = event.target.closest('.arim-favorite-btn[data-product-id]');
 
@@ -1998,4 +2127,5 @@ document.addEventListener('DOMContentLoaded', function () {
     initMyAccountOrderSearch();
     requestRecommendations();
     initLiveSearch();
+    initShopArchivePagination();
 });
